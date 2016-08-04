@@ -26,90 +26,58 @@ Author URI: http://www.strangerstudios.com
 	** Any time pmpro_changeMembershipLevel() is called, you will have to make sure that it respects the new settings.
 */
 
-/**
- * Change membership levels admin page to show groups.
- */
-function pmprommpu_pmpro_membership_levels_table($original_html, $reordered_levels) {
-	ob_start();
-	?>
-	<script>
-		jQuery( document ).ready(function() {
-				jQuery('#add-new-group').insertAfter( "h2 .add-new-h2" );
-		});
-	</script>
-	<a id="add-new-group" class="add-new-h2" href="#">Add New Group</a>
-	<style>
-		tbody.membership-level-groups th {background: #FAFAFA; border-right: 1px solid #CCC; border-top: 5px solid #AAA; }
-		tbody.membership-level-groups tr:nth-child(even) td {background: #FAFAFA; }
-		.membership-level-groups tr:first-child td {border-top: 5px solid #AAA; }
-	</style>
-	<table class="widefat membership-levels">
-		<thead>
-			<tr>
-				<th width="20%"><?php _e('Group', 'pmpro');?></th>
-				<th><?php _e('ID', 'pmpro');?></th>
-				<th><?php _e('Name', 'pmpro');?></th>
-				<th><?php _e('Billing Details', 'pmpro');?></th>
-				<th><?php _e('Expiration', 'pmpro');?></th>
-				<th><?php _e('Allow Signups', 'pmpro');?></th>
-				<th width="15%"></th>
-			</tr>
-		</thead>
-		<!-- 
-			Repeat tbody here for each group present.
-		-->
-		<tbody id="membership-level-group-1" class="membership-level-groups">
-		<?php
-			$count = 0;
-			?>
-			<tr class="<?php if($count++ % 2 == 1) { ?>alternate<?php } ?> <?php if(!$level->allow_signups) { ?>pmpro_gray<?php } ?> <?php if(!pmpro_checkLevelForStripeCompatibility($level) || !pmpro_checkLevelForBraintreeCompatibility($level) || !pmpro_checkLevelForPayflowCompatibility($level) || !pmpro_checkLevelForTwoCheckoutCompatibility($level)) { ?>pmpro_error<?php } ?>">
-				<th rowspan="<?php echo count($reordered_levels); ?>" scope="rowgroup" valign="top">
-					<h2>Default Group</h2>
-					<p><em>Users can only choose one level from this group.</em></p>
-					<p><a title="<?php _e('edit','pmpro'); ?>" href="admin.php?page=pmpro-membershiplevels&edit=<?php echo $level->id?>" class="button-primary"><?php _e('edit','pmpro'); ?></a>&nbsp;<a title="<?php _e('delete','pmpro'); ?>" href="javascript: askfirst('<?php echo str_replace("'", "\'", sprintf(__("Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", "pmpro"), $level->name));?>','admin.php?page=pmpro-membershiplevels&action=delete_membership_level&deleteid=<?php echo $level->id?>'); void(0);" class="button-secondary"><?php _e('delete','pmpro'); ?></a></p>
-				</th>
-			<?php
-				foreach($reordered_levels as $level)
-				{
-			?>
-				<td scope="row"><?php echo $level->id?></td>
-				<td class="level_name"><a href="admin.php?page=pmpro-membershiplevels&edit=<?php echo $level->id?>"><?php echo $level->name?></a></td>
-				<td>
-					<?php if(pmpro_isLevelFree($level)) { ?>
-						<?php _e('FREE', 'pmpro');?>
-					<?php } else { ?>
-						<?php echo str_replace( 'The price for membership is', '', pmpro_getLevelCost($level)); ?>
-					<?php } ?>
-				</td>
-				<td>
-					<?php if(!pmpro_isLevelExpiring($level)) { ?>
-						--
-					<?php } else { ?>		
-						<?php _e('After', 'pmpro');?> <?php echo $level->expiration_number?> <?php echo sornot($level->expiration_period,$level->expiration_number)?>
-					<?php } ?>
-				</td>
-				<td><?php if($level->allow_signups) { ?><a href="<?php echo pmpro_url("checkout", "?level=" . $level->id);?>"><?php _e('Yes', 'pmpro');?></a><?php } else { ?><?php _e('No', 'pmpro');?><?php } ?></td>
-	
-				<td><a title="<?php _e('edit','pmpro'); ?>" href="admin.php?page=pmpro-membershiplevels&edit=<?php echo $level->id?>" class="button-primary"><?php _e('edit','pmpro'); ?></a>&nbsp;<a title="<?php _e('copy','pmpro'); ?>" href="admin.php?page=pmpro-membershiplevels&copy=<?php echo $level->id?>&edit=-1" class="button-secondary"><?php _e('copy','pmpro'); ?></a>&nbsp;<a title="<?php _e('delete','pmpro'); ?>" href="javascript: askfirst('<?php echo str_replace("'", "\'", sprintf(__("Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", "pmpro"), $level->name));?>','admin.php?page=pmpro-membershiplevels&action=delete_membership_level&deleteid=<?php echo $level->id?>'); void(0);" class="button-secondary"><?php _e('delete','pmpro'); ?></a></td>
-			</tr>
-			<?php
-				}
-			?>
-		</tbody>
-	</table>
+define("PMPROMMPU_DIR", dirname(__FILE__)); // signals our presence to the mother ship, and other add-ons
 
-	<?php
+require_once(PMPROMMPU_DIR . "/includes/upgrades.php");		// to handle upgrades and to do initial setup
+require_once(PMPROMMPU_DIR . "/includes/functions.php");		// misc helper functions
+require_once(PMPROMMPU_DIR . "/includes/pageoverrides.php");	// to override the default PMPro pages (front-end and admin)
 
-	$table_html = ob_get_clean();
-
-	return $table_html;
+if(is_admin()) {
+	pmprommpu_setup_and_upgrade();
 }
-add_filter('pmpro_membership_levels_table', 'pmprommpu_pmpro_membership_levels_table', 10, 2);
 
-/**
- * Add + new group button to membership levels page
- */
+// On activation, set a wp_option and set up initial group of all current levels if there are no groups.
+function pmprommpu_activation() {
+	if (! in_array( 'paid-memberships-pro/paid-memberships-pro.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+		deactivate_plugins( plugin_basename( __FILE__ ) );
+		wp_die( "Paid Memberships Pro must be active in order to activate the MMPU add-on.", 'Plugin dependency check', array( 'back_link' => true ) );
+	}
 
-/**
- * Change text of drag/drop message.
- */
+	// No groups in the DB? Create one with all levels, to maintain backward-compatibility out of the box.
+	$curgroups = pmprommpu_get_groups();
+	if(count($curgroups)==0) {
+		$newgroupid = pmprommpu_create_group("Main Group", false);
+		
+		$alllevels = pmpro_getAllLevels(true, true);
+		foreach($alllevels as $levelid => $leveldetail) {
+			pmprommpu_set_level_for_group($levelid, $newgroupid);
+		}
+	}
+	
+	update_option( 'pmprommpu_installed', 1, true);
+}
+
+function pmprommpu_deactivation() {
+	delete_option( 'pmprommpu_installed');
+}
+
+register_activation_hook(__FILE__, 'pmprommpu_activation');
+register_deactivation_hook(__FILE__, 'pmprommpu_deactivation');
+
+function pmprommpu_init() {
+	if(is_admin()) {
+		$csspath = plugins_url("css/jquery-ui.min.css", __FILE__);
+		wp_enqueue_style( 'pmprommpu_jquery_ui', $csspath, array(), 1.0, "screen");
+		$csspath = plugins_url("css/jquery-ui.structure.min.css", __FILE__);
+		wp_enqueue_style( 'pmprommpu_jquery_ui_structure', $csspath, array(), 1.0, "screen");
+		$csspath = plugins_url("css/jquery-ui.theme.min.css", __FILE__);
+		wp_enqueue_style( 'pmprommpu_jquery_ui_theme', $csspath, array(), 1.0, "screen");
+
+		$csspath = plugins_url("css/admin.css", __FILE__);
+		wp_enqueue_style( 'pmprommpu_admin', $csspath, array(), 1.0, "screen");
+	} else {
+		$csspath = plugins_url("css/frontend.css", __FILE__);
+		wp_enqueue_style( 'pmprommpu_frontend', $csspath, array(), 1.0, "screen");
+	}
+}
+add_action( 'init', "pmprommpu_init");

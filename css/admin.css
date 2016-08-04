@@ -1,0 +1,4 @@
+
+tbody.membership-level-groups th {background: #FAFAFA; border-right: 1px solid #CCC; border-top: 5px solid #AAA; }
+tbody.membership-level-groups tr:nth-child(even) td {background: #FAFAFA; }
+.membership-level-groups tr:first-child td, .membership-level-groups tr:nth-child(2)  td {border-top: 5px solid #AAA; }
