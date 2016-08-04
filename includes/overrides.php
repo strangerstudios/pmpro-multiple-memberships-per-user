@@ -1,6 +1,6 @@
 <?php
 
-// This file is where we override the default PMPro pages as needed. (Which is a lot.)
+// This file is where we override the default PMPro functionality & pages as needed. (Which is a lot.)
 
 // First, the user pages - the actual function is in functions.php
 add_filter( 'pmpro_pages_custom_template_path', 'pmprommpu_override_user_pages', 10, 5 );
@@ -12,6 +12,108 @@ function pmprommpu_addin_jquery_dialog($pagehook) {
 	}
 }
 add_action( 'admin_enqueue_scripts', 'pmprommpu_addin_jquery_dialog' );
+
+// Filter the text on the checkout page that tells the user what levels they're getting
+function pmprommpu_checkout_level_text($intext, $levelids_adding, $levelids_deleting) {
+	$levelarr = pmpro_getAllLevels(true);
+	$outstring = "<p>You have selected the following level";
+	if(count($levelids_adding)>1) { $outstring .= "s"; }
+	$outstring .= ":</p>";
+	foreach($levelids_adding as $curlevelid) {
+		$outstring .= "<p class='levellist'><strong><span class='levelnametext'>".$levelarr[$curlevelid]->name."</span></strong>";
+		if(! empty($levelarr[$curlevelid]->description)) {
+			$outstring .= "<br /><span class='leveldesctext'>".stripslashes($levelarr[$curlevelid]->description)."</span>";
+		}
+		$outstring .= "</p>";
+	}
+	if(count($levelids_deleting)>0) {
+		$outstring .= print_r($levelids_deleting); // delete me 
+		$outstring .= "<p>You are removing the following level";
+		if(count($levelids_deleting)>1) { $outstring .= "s"; }
+		$outstring .= ":</p>";
+		foreach($levelids_deleting as $curlevelid) {
+			$outstring .= "<p class='levellist'><strong><span class='levelnametext'>".$levelarr[$curlevelid]->name."</span></strong>";
+			if(! empty($levelarr[$curlevelid]->description)) {
+				$outstring .= "<br /><span class='leveldesctext'>".stripslashes($levelarr[$curlevelid]->description)."</span>";
+			}
+			$outstring .= "</p>";
+		}
+	}
+	return $outstring;
+}
+add_filter( 'pmprommpu_checkout_level_text', 'pmprommpu_checkout_level_text', 10, 3);
+
+// Ensure than when a membership level is changed, it doesn't delete the old one or unsubscribe them at the gateway. We'll 
+// handle both later in the process.
+function pmprommpu_pmpro_deactivate_old_levels($insetting) {
+	return false;
+}
+add_filter( 'pmpro_deactivate_old_levels', 'pmprommpu_pmpro_deactivate_old_levels', 10, 1);
+
+function pmprommpu_pmpro_cancel_previous_subscriptions($insetting) {
+	return false;
+}
+add_filter( 'pmpro_cancel_previous_subscriptions', 'pmprommpu_pmpro_cancel_previous_subscriptions', 10, 1);
+
+// Called after the checkout process, we are going to do two things here:
+// First, any unsubscriptions that the user opted for (whose level ids are in $_REQUEST['dellevels']) will be dropped.
+// Then, any remaining conflicts will be dropped.
+function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
+	global $wpdb;
+	
+	if(array_key_exists('dellevels', $_REQUEST) && strlen($_REQUEST['dellevels'])>0) {
+		$dellevelids = explode(',', $_REQUEST['dellevels']);
+		$dellevelids = array_map('intval', $dellevelids); // these should always be integers
+		foreach($dellevelids as $idtodel) {
+			$sql = "UPDATE $wpdb->pmpro_memberships_users SET `status`='changed', `enddate`='" . current_time('mysql') . "' WHERE `user_id` = '". $user_id . "' AND `status`='active' AND `membership_id`=".$idtodel;
+			$wpdb->query($sql);
+			
+			$order_ids_todel = $wpdb->get_col("SELECT id FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . $user_id . "' AND membership_id = " . $idtodel . " AND status = 'success' ORDER BY id DESC");
+			foreach($order_ids_todel as $order_id)
+			{
+				$c_order = new MemberOrder($order_id);
+				$c_order->cancel();
+			}
+		}
+	}
+
+	// OK, levels are added, levels are removed. Let's check once more for any conflict, and resolve them - with extreme prejudice.
+	$currentlevels = pmpro_getMembershipLevelsForUser($user_id);
+	$currentlevelids = array();
+	foreach($currentlevels as $curlevel) {
+		$currentlevelids[] = $curlevel->id;
+	}
+	$levelsandgroups = pmprommpu_get_levels_and_groups_in_order();
+	$allgroups = pmprommpu_get_groups();
+	
+	$levelgroupstoprune = array();
+	foreach($levelsandgroups as $curgp => $gplevels) {
+		if(array_key_exists($curgp, $allgroups) && $allgroups[$curgp]->allow_multiple_selections == 0) { // we only care about groups that restrict to one level within it
+			$conflictlevels = array();
+			foreach($gplevels as $curlevel) {
+				if(in_array($curlevel->id, $currentlevelids)) { $conflictlevels[] = $curlevel->id; }
+			}
+			if(count($conflictlevels)>1) { $levelgroupstoprune[] = $conflictlevels; }
+		}
+	}
+	if(count($levelgroupstoprune)>0) { // we've got some resolutions to do.
+		foreach($levelgroupstoprune as $curgroup) {
+			$groupstring = implode(',', $curgroup);
+
+			$sql = "UPDATE $wpdb->pmpro_memberships_users SET `status`='changed', `enddate`='" . current_time('mysql') . "' WHERE `user_id` = '". $user_id . "' AND `status`='active' AND `membership_id` IN (".$groupstring.")";
+			$wpdb->query($sql);
+
+			$order_ids = $wpdb->get_col("SELECT id FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . $user_id . "' AND membership_id IN (" . $groupstring . ") AND status = 'success' ORDER BY id DESC");
+			array_shift($order_ids); // keep the newest one
+			foreach($order_ids_todel as $order_id)
+			{
+				$c_order = new MemberOrder($order_id);
+				$c_order->cancel();
+			}
+		}
+	}
+}
+add_action( 'pmpro_after_all_checkouts', 'pmprommpu_unsub_after_all_checkouts', 10, 2);
 
 // Now, on to the admin pages. Let's start with membership levels...
 
