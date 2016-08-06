@@ -29,8 +29,9 @@ Author URI: http://www.square-lines.com
 define("PMPROMMPU_DIR", dirname(__FILE__)); // signals our presence to the mother ship, and other add-ons
 
 require_once(PMPROMMPU_DIR . "/includes/upgrades.php");		// to handle upgrades and to do initial setup
-require_once(PMPROMMPU_DIR . "/includes/functions.php");		// misc helper functions
+require_once(PMPROMMPU_DIR . "/includes/functions.php");	// misc helper functions
 require_once(PMPROMMPU_DIR . "/includes/overrides.php");	// to override the default PMPro functionality, and the admin pages
+require_once(PMPROMMPU_DIR . "/includes/invoice.php");		// to extend the MemberOrder class for multi-order invoices
 
 if(is_admin()) {
 	pmprommpu_setup_and_upgrade();
