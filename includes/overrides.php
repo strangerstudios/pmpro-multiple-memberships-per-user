@@ -61,8 +61,8 @@ add_filter( 'pmpro_cancel_previous_subscriptions', 'pmprommpu_pmpro_cancel_previ
 function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
 	global $wpdb;
 	
-	if(array_key_exists('dellevels', $_REQUEST) && strlen($_REQUEST['dellevels'])>0) {
-		$dellevelids = explode(',', $_REQUEST['dellevels']);
+	if(array_key_exists('levelstodel', $_REQUEST) && strlen($_REQUEST['levelstodel'])>0) {
+		$dellevelids = explode(',', $_REQUEST['levelstodel']);
 		$dellevelids = array_map('intval', $dellevelids); // these should always be integers
 		foreach($dellevelids as $idtodel) {
 			$sql = "UPDATE $wpdb->pmpro_memberships_users SET `status`='changed', `enddate`='" . current_time('mysql') . "' WHERE `user_id` = '". $user_id . "' AND `status`='active' AND `membership_id`=".$idtodel;
@@ -80,8 +80,10 @@ function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
 	// OK, levels are added, levels are removed. Let's check once more for any conflict, and resolve them - with extreme prejudice.
 	$currentlevels = pmpro_getMembershipLevelsForUser($user_id);
 	$currentlevelids = array();
-	foreach($currentlevels as $curlevel) {
-		$currentlevelids[] = $curlevel->id;
+	if(is_array($currentlevels)) {
+		foreach($currentlevels as $curlevel) {
+			$currentlevelids[] = $curlevel->id;
+		}
 	}
 	$levelsandgroups = pmprommpu_get_levels_and_groups_in_order();
 	$allgroups = pmprommpu_get_groups();
@@ -132,7 +134,10 @@ function pmprommpu_pmpro_membership_levels_table($intablehtml, $inlevelarr) {
 				jQuery('#add-new-group').insertAfter( "h2 .add-new-h2" );
 		});
 	</script>
+<!-- 
 	<a id="add-new-group" class="add-new-h2" href="admin.php?page=pmpro-level-groups&edit=-1"><?php _e('Add New Group', 'pmprommpu'); ?></a>
+ -->
+	<a id="add-new-group" class="add-new-h2" href="#"><?php _e('Add New Group', 'pmprommpu'); ?></a>
 	
     <table class="widefat mmpu-membership-levels">		
 		<thead>
@@ -166,9 +171,12 @@ function pmprommpu_pmpro_membership_levels_table($intablehtml, $inlevelarr) {
 						<p><em><?php _e('Users can only choose one level from this group.', 'pmprommpu');?></em></p>
 					<?php } ?>
 					<p>
+						<a data-groupid="<?=$curgroup ?>" title="<?php _e('edit','pmpro'); ?>" href="#" class="editgrpbutt button-primary"><?php _e('edit','pmpro'); ?></a>						
+<!-- 
 						<a data-groupid="<?=$curgroup ?>" title="<?php _e('edit','pmpro'); ?>" href="admin.php?page=pmpro-membershiplevels&edit=<?php echo $level->id?>" class="editgrpbutt button-primary"><?php _e('edit','pmpro'); ?></a>						
+ -->
 						<?php if(count($itslevels)==0) { ?>
-							<a title="<?php _e('delete','pmpro'); ?>" href="javascript: void(0);" class="delgroupbutt button-secondary"><?php _e('delete','pmpro'); ?></a>
+							<a title="<?php _e('delete','pmpro'); ?>" data-groupid="<?=$curgroup ?>" href="javascript: void(0);" class="delgroupbutt button-secondary"><?php _e('delete','pmpro'); ?></a>
 						<?php } ?>
 					</p>
 				</th>
@@ -382,7 +390,7 @@ function pmprommpu_save_group_on_level_edit($levelid) {
 add_action( 'pmpro_save_membership_level', 'pmprommpu_save_group_on_level_edit' );
 
 /*
-	Delete group data when a level is delted
+	Delete group data when a level is deleted
 */
 function pmprommpu_on_del_level($levelid) {
 	global $wpdb;
