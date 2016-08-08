@@ -32,6 +32,7 @@ require_once(PMPROMMPU_DIR . "/includes/upgrades.php");		// to handle upgrades a
 require_once(PMPROMMPU_DIR . "/includes/functions.php");	// misc helper functions
 require_once(PMPROMMPU_DIR . "/includes/overrides.php");	// to override the default PMPro functionality, and the admin pages
 require_once(PMPROMMPU_DIR . "/includes/invoice.php");		// to extend the MemberOrder class for multi-order invoices
+require_once(PMPROMMPU_DIR . "/includes/email.php");		// functions to amend/replace the PMPro email functions
 
 if(is_admin()) {
 	pmprommpu_setup_and_upgrade();
