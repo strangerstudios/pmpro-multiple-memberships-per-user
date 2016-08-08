@@ -4,7 +4,7 @@
 
 class MemberInvoice extends MemberOrder {
 	// Returns an order object that represents one or more orders on an invoice (consolidating amounts, etc)
-	// If there isn't a recent invoice, or the last one didn't have any matching atatuses, then return false.
+	// If there isn't a recent invoice, or the last one didn't have any matching statuses, then return false.
 	function getLastMemberInvoice($user_id = NULL, $status = 'success') {
 		global $current_user, $wpdb;
 
@@ -17,9 +17,14 @@ class MemberInvoice extends MemberOrder {
 		//build query
 		$this->sqlQuery = "SELECT MAX(checkout_id) FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . $user_id . "' ";
 		if(!empty($status) && is_array($status))
-			$this->sqlQuery .= "AND status IN('" . implode("','", $status) . "') ";
+			$this->sqlQuery .= "AND (status IN('" . implode("','", $status) . "') ";
 		elseif(!empty($status))
-			$this->sqlQuery .= "AND status = '" . esc_sql($status) . "' ";
+			$this->sqlQuery .= "AND (status = '" . esc_sql($status) . "' ";
+		else
+			$this->sqlQuery .= "AND (1=1 ";
+
+		// need to add back in free orders, because they don't get a success status.
+		$this->sqlQuery .= " OR `gateway`='free')";
 
 		//get id
 		$checkoutid = $wpdb->get_var($this->sqlQuery);
@@ -27,13 +32,19 @@ class MemberInvoice extends MemberOrder {
 		
 		$this->sqlQuery = "SELECT id FROM $wpdb->pmpro_membership_orders WHERE checkout_id=$checkoutid ";
 		if(!empty($status) && is_array($status))
-			$this->sqlQuery .= "AND status IN('" . implode("','", $status) . "') ";
+			$this->sqlQuery .= "AND (status IN('" . implode("','", $status) . "') ";
 		elseif(!empty($status))
-			$this->sqlQuery .= "AND status = '" . esc_sql($status) . "' ";
+			$this->sqlQuery .= "AND (status = '" . esc_sql($status) . "' ";
+		else
+			$this->sqlQuery .= "AND (1=1 ";
+
+		// need to add back in free orders, because they don't get a success status.
+		$this->sqlQuery .= " OR `gateway`='free')";
 
 		$idarray = $wpdb->get_col($this->sqlQuery);
 		$orderarray = array();
 		$ordercount = 1;
+		if(count($idarray)<1) { return false; }
 		foreach($idarray as $curid) {
 			$temporder = new MemberOrder();
 			$temporder->getMemberOrderByID($curid);
@@ -107,6 +118,7 @@ class MemberInvoice extends MemberOrder {
 				$ordercount++;
 			}
 		}
+		return true;
 	}
 	
 	// This function returns an array of the membership levels for this invoice and adds the levels to the invoice.
