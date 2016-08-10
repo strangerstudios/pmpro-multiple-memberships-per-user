@@ -215,12 +215,11 @@ function pmprommpu_update_level_and_group_order() {
 // This function returns an array of the successfully-purchased levels from the most recent checkout
 // for the user specified by user_id. If user_id isn't specified, the current user will be used.
 // If there are no successful levels, or no checkout, will return an empty array.
-function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to_check = 'status') {
-	global $wpdb;
+function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to_check = 'success') {
+	global $wpdb, $current_user;
 	
 	if(empty($user_id))
 	{
-		global $current_user;
 		$user_id = $current_user->ID;
 	}
 
@@ -238,7 +237,7 @@ function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to
 	$checkoutid = $wpdb->get_var("SELECT MAX(checkout_id) FROM $wpdb->pmpro_membership_orders WHERE user_id=$user_id");
 	if(empty($checkoutid) || intval($checkoutid)<1) { return $retval; }
 	
-	$querySql = "SELECT membership_id FROM $wpdb->pmpro_membership_orders WHERE checkout_id=$checkoutid AND gateway='free' OR ";
+	$querySql = "SELECT membership_id FROM $wpdb->pmpro_membership_orders WHERE checkout_id=$checkoutid AND (gateway='free' OR ";
 	if(!empty($statuses_to_check) && is_array($statuses_to_check)) {
 		$querySql .= "status IN('" . implode("','", $statuses_to_check) . "') ";
 	} elseif(!empty($statuses_to_check)) {
@@ -246,6 +245,7 @@ function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to
 	} else {
 		$querySql .= "status = 'success'";
 	}
+	$querySql .= ")";
 		
 	$levelids = $wpdb->get_col($querySql);
 	foreach($levelids as $thelevel) {
@@ -264,7 +264,7 @@ function pmprommpu_join_with_and($inarray) {
 	$lastone = array_pop($inarray);
 	if(count($inarray)>0) {
 		$outstring .= implode(', ', $inarray);
-		if(count($inarray)>1) { $outstring .= ', '; }
+		if(count($inarray)>1) { $outstring .= ', '; } else { $outstring .= " "; }
 		$outstring .= "and ";
 	}
 	$outstring .= "$lastone";
