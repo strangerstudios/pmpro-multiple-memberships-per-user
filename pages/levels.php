@@ -2,11 +2,11 @@
 global $wpdb, $pmpro_msg, $pmpro_msgt, $current_user;
 
 $pmpro_levels = pmpro_getAllLevels(false, true);
-$pmpro_groups = mmpu_get_groups();
+$pmpro_groups = pmprommpu_get_groups();
 
 $incoming_levels = pmpro_getMembershipLevelsForUser();
 
-$displayorder = mmpu_get_levels_and_groups_in_order();
+$displayorder = pmprommpu_get_levels_and_groups_in_order();
 
 $pmpro_levels = apply_filters("pmpro_levels_array", $pmpro_levels);
 if($pmpro_msg)
@@ -152,13 +152,13 @@ jQuery(document).ready(function() {
 		}
 	});
 	jQuery("#mmpu_checkout").click(function() {
-		var addlevs = joinObjectProps(",", addedlevels);
-		var dellevs = joinObjectProps(",", removedlevels);
+		var addlevs = joinObjectKeys(",", addedlevels);
+		var dellevs = joinObjectKeys(",", removedlevels);
 		var newForm = jQuery('<form>', {
 			'action': '<?php echo pmpro_url("checkout", "", "https"); ?>',
 			'method': 'POST'
 		}).append(jQuery('<input>', {
-			'name': 'addlevels',
+			'name': 'level',
 			'value': addlevs,
 			'type': 'hidden'
 		})).append(jQuery('<input>', {
@@ -225,6 +225,14 @@ function joinObjectProps(separator, object) {
 	for (var k in object) if (object.hasOwnProperty(k)) {
 		if(result.length>0) { result += separator; }
 		result += object[k];
+	}
+	return result;
+}
+function joinObjectKeys(separator, object) {
+	var result = "";
+	for (var k in object) if (object.hasOwnProperty(k)) {
+		if(result.length>0) { result += separator; }
+		result += k;
 	}
 	return result;
 }

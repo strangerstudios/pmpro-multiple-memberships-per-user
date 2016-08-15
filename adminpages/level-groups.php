@@ -58,7 +58,9 @@
 						<select name="type" id="type" />
 							<option value="legacy">Users can only choose one level from this group.</option>
 							<option value="multiple">Users can choose multiple levels from this group.</option>		
+<!-- 
 							<option value="super">Super Levels: Users who select these levels will have all other memberships cancelled.</option>
+ -->
 						</select>
 					</td>
 				</tr>	
