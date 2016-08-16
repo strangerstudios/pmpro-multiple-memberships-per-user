@@ -2,10 +2,23 @@
 
 // This file is where we override the default PMPro functionality & pages as needed. (Which is a lot.)
 
-// First, the user pages - the actual function is in functions.php
+// if a list of level ids is passed to checkout, pull out the first as the main level and save the rest
+function pmprommpu_init_checkout_levels() {
+	if(!empty($_REQUEST['level']) && strpos($_REQUEST['level'], ',') !== false) {
+		global $pmpro_checkout_level_ids;
+		$pmpro_checkout_level_ids = explode(",", preg_replace("[^0-9^\,]", "", $_REQUEST['level']));
+
+		$_REQUEST['level'] = $pmpro_checkout_level_ids[0];
+		$_GET['level'] = $_REQUEST['level'];
+		$_POST['level'] = $_POST['level'];
+	}
+}
+add_action('init', 'pmprommpu_init_checkout_levels', 1);
+
+// user pages - the actual function is in functions.php
 add_filter( 'pmpro_pages_custom_template_path', 'pmprommpu_override_user_pages', 10, 5 );
 
-// Next, let's make sure jQuery UI Dialog is present on the admin side.
+// let's make sure jQuery UI Dialog is present on the admin side.
 function pmprommpu_addin_jquery_dialog($pagehook) {
 	if(strpos($pagehook, "pmpro-membershiplevels") !== FALSE) { // only add the overhead on the membership levels page.
 		wp_enqueue_script('jquery-ui-dialog');
@@ -160,7 +173,7 @@ function pmprommpu_pmpro_membership_levels_table($intablehtml, $inlevelarr) {
 				<th><?php _e('Billing Details', 'pmpro');?></th>
 				<th><?php _e('Expiration', 'pmpro');?></th>
 				<th><?php _e('Allow Signups', 'pmpro');?></th>
-				<th width="15%"></th>
+				<th width="18%"></th>
 			</tr>
 		</thead>
 		<?php 
@@ -178,10 +191,15 @@ function pmprommpu_pmpro_membership_levels_table($intablehtml, $inlevelarr) {
 			<tbody data-groupid="<?=$curgroup ?>" class="membership-level-groups">
 			<tr class="grouprow <?=$onerowclass ?>">
 				<th rowspan="<?php echo max(count($itslevels)+1,2); ?>" scope="rowgroup" valign="top">
-					<h2><?php echo $groupname;?></h2>
-					<?php if(! $groupallowsmult) { ?>
-						<p><em><?php _e('Users can only choose one level from this group.', 'pmprommpu');?></em></p>
-					<?php } ?>
+					<h2 id="group<?php echo $curgroup;?>name"><?php echo $groupname;?></h2>
+					<p><em>
+						<?php 
+							if(!$groupallowsmult)
+								_e('Users can only choose one level from this group.', 'pmprommpu');
+							else
+								_e('Users can choose multiple levels from this group.', 'pmprommpu');
+						?>
+					</em></p>					
 					<p>
 						<a data-groupid="<?=$curgroup ?>" title="<?php _e('edit','pmpro'); ?>" href="#" class="editgrpbutt button-primary"><?php _e('edit','pmpro'); ?></a>						
 <!-- 
@@ -210,7 +228,7 @@ function pmprommpu_pmpro_membership_levels_table($intablehtml, $inlevelarr) {
 						if(array_key_exists($curlevelid, $alllevels)) { // Just in case there's a level artifact in the groups table that wasn't removed - it won't show here.
 							$level = $alllevels[$curlevelid];
 					?>
-							<tr class="<?php if($count++ % 2 == 1) { ?>alternate<?php } ?> levelrow <?php if(!$level->allow_signups) { ?>pmpro_gray<?php } ?> <?php if(!pmpro_checkLevelForStripeCompatibility($level) || !pmpro_checkLevelForBraintreeCompatibility($level) || !pmpro_checkLevelForPayflowCompatibility($level) || !pmpro_checkLevelForTwoCheckoutCompatibility($level)) { ?>pmpro_error<?php } ?>">			
+							<tr class="levelrow <?php if(!$level->allow_signups) { ?>pmpro_gray<?php } ?> <?php if(!pmpro_checkLevelForStripeCompatibility($level) || !pmpro_checkLevelForBraintreeCompatibility($level) || !pmpro_checkLevelForPayflowCompatibility($level) || !pmpro_checkLevelForTwoCheckoutCompatibility($level)) { ?>pmpro_error<?php } ?>">			
 								
 								<td class="levelid"><?php echo $level->id?></td>
 								<td class="level_name"><a href="admin.php?page=pmpro-membershiplevels&edit=<?php echo $level->id?>"><?php echo $level->name?></a></td>
@@ -248,8 +266,16 @@ function pmprommpu_pmpro_membership_levels_table($intablehtml, $inlevelarr) {
 		<p>Can users choose more than one level in this group? <input type="checkbox" id="groupallowmult" value="1"></p>
 	</div>
 	<script type="text/javascript">
+	//put group data in a var
+	var pmprogroups = <?php echo json_encode($allgroups);?>;
+	
 	jQuery(document).ready(function() {
 		jQuery("#add-new-group").click(function() {
+			//clear out the modal form values
+			jQuery("#groupname").val('');
+			jQuery("#groupallowmult").attr('checked', false);
+			
+			//open the dialog
 			dialog = jQuery("#addeditgroupdialog").dialog({
 				autoOpen: false,
 				title: "Add Group",
@@ -277,7 +303,7 @@ function pmprommpu_pmpro_membership_levels_table($intablehtml, $inlevelarr) {
 			var groupid = parseInt(jQuery(this).attr("data-groupid"), 10);
 			if(groupid>0) {
 				jQuery("#groupname").val(jQuery("#group" + groupid + "name").text());
-				if(parseInt(jQuery("#group" + groupid + "allowmult").text(), 10)>0) {
+				if(pmprogroups[groupid].allow_multiple_selections == 1) {
 					jQuery("#groupallowmult").attr('checked', true);
 				} else {
 					jQuery("#groupallowmult").attr('checked', false);
@@ -287,7 +313,7 @@ function pmprommpu_pmpro_membership_levels_table($intablehtml, $inlevelarr) {
 					title: "Edit Group",
 					modal: true,
 					buttons: {
-						"Edit": function() {
+						"Save": function() {
 							if(jQuery("#groupname").val().length>0) {
 								var groupname = jQuery("#groupname").val();
 								var allowmult = 0;

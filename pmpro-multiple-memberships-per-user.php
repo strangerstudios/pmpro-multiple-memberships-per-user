@@ -66,6 +66,7 @@ function pmprommpu_deactivation() {
 register_activation_hook(__FILE__, 'pmprommpu_activation');
 register_deactivation_hook(__FILE__, 'pmprommpu_deactivation');
 
+//include CSS and styles
 function pmprommpu_init() {
 	if(is_admin()) {
 		$csspath = plugins_url("css/jquery-ui.min.css", __FILE__);

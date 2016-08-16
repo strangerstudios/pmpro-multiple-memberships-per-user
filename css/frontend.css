@@ -1,0 +1,181 @@
+
+#pmpro_mmpu_levels {
+	border-bottom: 1px solid #CCC;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: row;
+	flex-direction: row;
+	margin-bottom: 3rem;
+}
+
+/*---------------------------------------
+	Buttons
+---------------------------------------*/
+#pmpro_mmpu_groups .pmpro_level-select {
+	text-align: center;
+	cursor: pointer;
+}
+
+/*---------------------------------------
+	Membership Groups and Levels
+---------------------------------------*/
+#pmpro_mmpu_groups {
+	-webkit-flex: 2 0 0; 
+	flex: 2 0 0;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group {
+	border-bottom: 1px solid #CCC;
+	border-top: 5px solid #EFEFEF;
+	margin-bottom: 3rem;
+	padding-top: 3rem;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group:nth-child(1) {
+	border-top: none;
+	padding-top: 0;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group h2.pmpro_mmpu_group-name {
+	margin: 0; 
+	padding: 0;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group p.pmpro_mmpu_group-type {
+	color: #666;
+	margin: 0 0 2rem 0;
+	padding: 0;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group .pmpro_mmpu_level {
+	border-top: 1px solid #CCC; 
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: row;
+	flex-direction: row;
+}
+#pmpro_mmpu_groups .pmpro_mmpu_group .pmpro_mmpu_level:nth-child(odd) {
+	background: rgba(125,125,125,.1);
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group .pmpro_level-info {
+	-webkit-flex: 2 0 0; 
+	flex: 2 0 0;
+	padding: 1em;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group .pmpro_level-info p {
+	margin: .5rem 0 0 0;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group .pmpro_mmpu_level .pmpro_level-name {
+	font-weight: 700;
+	margin: 0;
+	padding: 0;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group .pmpro_mmpu_level .pmpro_level-price, 
+#pmpro_mmpu_groups .pmpro_mmpu_group .pmpro_mmpu_level .pmpro_level-expiration {
+	display: inline-block;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group .pmpro_mmpu_level .pmpro_level-expiration {
+	color: #666;
+	font-style: italic;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group .pmpro_level-action {
+	-webkit-flex: 1 0 0;
+	flex: 1 0 0;
+	padding: 1em; 	
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_group .pmpro_mmpu_level .pmpro_level-action label {
+	display: block;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_checkout {
+	
+}
+#pmpro_mmpu_groups .pmpro_mmpu_checkout .pmpro_mmpu_level {
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: row;
+	flex-direction: row;
+}
+
+/*---------------------------------------
+	Membership Selections
+---------------------------------------*/
+#pmpro_mmpu_level_selections {
+	-webkit-flex: 1 0 0;
+	flex: 1 0 0;
+}
+
+#pmpro_mmpu_level_selections .widget {
+	border: 1px solid #CCC;
+	margin: 0 0 0 2rem;
+	padding: 0;
+}
+
+#pmpro_mmpu_level_selections .widget-title {
+	background: rgba(125,125,125,.1);
+	border-bottom: 1px solid #CCC;
+	color: #444;
+	font-weight: bold;
+	margin: 0;
+	padding: 1.5rem;
+}
+
+#pmpro_mmpu_level_selections p {
+	margin: 0;
+	padding: 1.5rem;
+}
+
+#pmpro_mmpu_level_selections label {
+	display: block;
+	font-size: 90%;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+#pmpro_mmpu_level_selections .mmpu_currentlevels label {
+	color: black;
+}
+
+#pmpro_mmpu_level_selections .mmpu_addedlevels label {
+	color: green;
+}
+
+#pmpro_mmpu_level_selections .mmpu_removedlevels label {
+	color: red;
+}
+
+#pmpro_mmpu_level_selections .pmpro_mmpu_checkout:before {
+	clear: both;
+	content: "";
+	display: table;
+}
+
+@media (max-width:768px) {
+	#pmpro_mmpu_levels,
+	#pmpro_mmpu_groups,
+	#pmpro_mmpu_groups .pmpro_mmpu_level,
+	#pmpro_mmpu_groups .pmpro_mmpu_level .pmpro_level-info,
+	#pmpro_mmpu_groups .pmpro_mmpu_level .pmpro_level-action,
+	#pmpro_mmpu_level_selections {
+		display: block;
+	}
+	#pmpro_mmpu_groups .pmpro_mmpu_level .pmpro_level-action {
+		padding-top: 0;
+	}
+	#pmpro_mmpu_groups {
+		text-align: center; 
+	}
+	#pmpro_mmpu_groups .pmpro_btn {
+		margin: 1rem 0;
+	}
+	#pmpro_mmpu_level_selections {
+		margin-bottom: 2rem;
+	}
+}
