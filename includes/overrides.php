@@ -2,10 +2,24 @@
 
 // This file is where we override the default PMPro functionality & pages as needed. (Which is a lot.)
 
-// First, the user pages - the actual function is in functions.php
+// if a list of level ids is passed to checkout, pull out the first as the main level and save the rest
+function pmprommpu_init_checkout_levels() {	
+	if(!empty($_REQUEST['level']) && strpos($_REQUEST['level'], '+') !== false) {
+		global $pmpro_checkout_level_ids;
+				
+		$pmpro_checkout_level_ids = explode("+", preg_replace("[^0-9^\+]", "", $_REQUEST['level']));
+
+		$_REQUEST['level'] = $pmpro_checkout_level_ids[0];
+		$_GET['level'] = $_REQUEST['level'];
+		$_POST['level'] = $_POST['level'];
+	}
+}
+add_action('init', 'pmprommpu_init_checkout_levels', 1);
+
+// the user pages - the actual function is in functions.php
 add_filter( 'pmpro_pages_custom_template_path', 'pmprommpu_override_user_pages', 10, 5 );
 
-// Next, let's make sure jQuery UI Dialog is present on the admin side.
+// let's make sure jQuery UI Dialog is present on the admin side.
 function pmprommpu_addin_jquery_dialog($pagehook) {
 	if(strpos($pagehook, "pmpro-membershiplevels") !== FALSE) { // only add the overhead on the membership levels page.
 		wp_enqueue_script('jquery-ui-dialog');
@@ -62,7 +76,7 @@ function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
 	global $wpdb;
 	
 	if(array_key_exists('levelstodel', $_REQUEST) && strlen($_REQUEST['levelstodel'])>0) {
-		$dellevelids = explode(',', $_REQUEST['levelstodel']);
+		$dellevelids = explode('+', $_REQUEST['levelstodel']);
 		$dellevelids = array_map('intval', $dellevelids); // these should always be integers
 		foreach($dellevelids as $idtodel) {
 			$sql = "UPDATE $wpdb->pmpro_memberships_users SET `status`='changed', `enddate`='" . current_time('mysql') . "' WHERE `user_id` = '". $user_id . "' AND `status`='active' AND `membership_id`=".$idtodel;

@@ -90,7 +90,7 @@ if($pmpro_msg)
 			<div class="pmpro_mmpu_level">
 				<div class="pmpro_level-info"></div> <!-- end pmpro_level-info -->
 				<div class="pmpro_level-action">	
-					<input class="pmpro_mmpu_checkout-button" id="mmpu_checkout" type="button" value="Checkout" disabled>
+					<input class="pmpro_mmpu_checkout-button" type="button" value="Checkout" disabled>
 				</div> <!-- end pmpro_level-action -->
 			</div> <!-- end pmpro_mmpu_level -->
 		</div> <!-- end pmpro_mmpu_checkout -->
@@ -100,7 +100,7 @@ if($pmpro_msg)
 		<aside class="widget">
 			<h3 class="widget-title"><?php _e('Membership Selections', 'pmprommpu'); ?></h3>
 			<div id="pmpro_mmpu_level_summary"><?php _e('Select levels to complete checkout.', 'pmprommpu'); ?></div>
-			<p><input class="pmpro_mmpu_checkout-button" id="mmpu_checkout" type="button" value="Checkout" disabled></p>
+			<p><input class="pmpro_mmpu_checkout-button" type="button" value="Checkout" disabled></p>
 		</aside> 
 	</div> <!-- end pmpro_mmpu_level_selections -->	
 </div> <!-- end #pmpro_mmpu_levels -->
@@ -199,22 +199,15 @@ jQuery(document).ready(function() {
 		}	
 	updateLevelSummary();	
 	});
-	jQuery("#mmpu_checkout").click(function() {
-		var addlevs = joinObjectKeys(",", addedlevels);
-		var dellevs = joinObjectKeys(",", removedlevels);
-		var newForm = jQuery('<form>', {
-			'action': '<?php echo pmpro_url("checkout", "", "https"); ?>',
-			'method': 'POST'
-		}).append(jQuery('<input>', {
-			'name': 'level',
-			'value': addlevs,
-			'type': 'hidden'
-		})).append(jQuery('<input>', {
-			'name': 'dellevels',
-			'value': dellevs,
-			'type': 'hidden'
-		}));
-		newForm.submit();
+	jQuery(".pmpro_mmpu_checkout-button").click(function() {
+		var addlevs = joinObjectKeys("+", addedlevels);
+		var dellevs = joinObjectKeys("+", removedlevels);
+		var url = '<?php echo pmpro_url("checkout", ""); ?>';
+		if(url.indexOf('?') > -1)
+			url = url + '&level=' + addlevs + '&dellevels=' + dellevs;
+		else
+			url = url + '?level=' + addlevs + '&dellevels=' + dellevs;
+		window.location.href = url;
 	});
 });
 function updateLevelSummary() {
@@ -250,9 +243,9 @@ function updateLevelSummary() {
 	}
 	jQuery("#pmpro_mmpu_level_summary").html(message);
 	if(cancheckout) {
-		jQuery("#mmpu_checkout").prop('disabled', false);
+		jQuery('.pmpro_mmpu_checkout-button').prop('disabled', false);
 	} else {
-		jQuery("#mmpu_checkout").prop('disabled', true);
+		jQuery('.pmpro_mmpu_checkout-button').prop('disabled', true);
 	}
 }
 function removeFromArray(elemtoremove, array) {
