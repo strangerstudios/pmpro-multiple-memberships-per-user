@@ -12,8 +12,37 @@
 	Buttons
 ---------------------------------------*/
 #pmpro_mmpu_groups .pmpro_level-select {
-	text-align: center;
+	background-color: #FAFAFA;
+	border: 1px solid #DADADA;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	color: #777;
 	cursor: pointer;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.5em;
+	margin: .5em 0;
+	padding: 10px 15px;
+	text-align: center;
+}
+
+#pmpro_mmpu_groups .pmpro_level-select-selected {
+	background-color: #dff0d8;
+	border-color: #d6e9c6;
+	color: #3c763d;
+}
+
+#pmpro_mmpu_groups .pmpro_level-select-removed {
+	background-color: #f2dede;
+	border-color: #ebccd1;
+	color: #a94442;
+}
+
+#pmpro_mmpu_groups .pmpro_level-select-current {
+	background-color: #dff0d8;
+	border-color: #d6e9c6;
+	color: #3c763d;
 }
 
 /*---------------------------------------
@@ -97,11 +126,28 @@
 #pmpro_mmpu_groups .pmpro_mmpu_checkout {
 	
 }
+
 #pmpro_mmpu_groups .pmpro_mmpu_checkout .pmpro_mmpu_level {
 	display: -webkit-flex;
 	display: flex;
 	-webkit-flex-direction: row;
 	flex-direction: row;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_checkout .pmpro_mmpu_level .pmpro_level-info {
+	-webkit-flex: 2 0 0; 
+	flex: 2 0 0;
+	padding: 1em;
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_checkout .pmpro_mmpu_level .pmpro_level-action {
+	-webkit-flex: 1 0 0;
+	flex: 1 0 0;
+	padding: 1em; 	
+}
+
+#pmpro_mmpu_groups .pmpro_mmpu_checkout .pmpro_mmpu_checkout-button {
+	width: 100%;
 }
 
 /*---------------------------------------
@@ -123,13 +169,18 @@
 	border-bottom: 1px solid #CCC;
 	color: #444;
 	font-weight: bold;
-	margin: 0;
+	margin: 0 0 1.5rem 0;
 	padding: 1.5rem;
 }
 
-#pmpro_mmpu_level_selections p {
+#pmpro_mmpu_level_summary, #pmpro_mmpu_level_selections p {
 	margin: 0;
-	padding: 1.5rem;
+	padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+#pmpro_mmpu_level_summary p {
+	margin: 1.5rem 0 0 0;
+	padding: 0;
 }
 
 #pmpro_mmpu_level_selections label {
@@ -151,20 +202,27 @@
 	color: red;
 }
 
-#pmpro_mmpu_level_selections .pmpro_mmpu_checkout:before {
-	clear: both;
-	content: "";
-	display: table;
+#pmpro_mmpu_level_selections .pmpro_mmpu_checkout-button {
+	width: 100%;
 }
 
 @media (max-width:768px) {
 	#pmpro_mmpu_levels,
+	.pmpro_mmpu_level
+	{
+		display: block !important;	
+	}
 	#pmpro_mmpu_groups,
-	#pmpro_mmpu_groups .pmpro_mmpu_level,
 	#pmpro_mmpu_groups .pmpro_mmpu_level .pmpro_level-info,
 	#pmpro_mmpu_groups .pmpro_mmpu_level .pmpro_level-action,
-	#pmpro_mmpu_level_selections {
-		display: block;
+	#pmpro_mmpu_level_selections,
+	#pmpro_mmpu_groups .pmpro_mmpu_checkout .pmpro_mmpu_level .pmpro_level-info,
+	#pmpro_mmpu_groups .pmpro_mmpu_checkout .pmpro_mmpu_level .pmpro_level-action
+	{			
+		
+	}
+	#pmpro_mmpu_groups .pmpro_mmpu_checkout .pmpro_mmpu_level .pmpro_level-info {
+		display: none;
 	}
 	#pmpro_mmpu_groups .pmpro_mmpu_level .pmpro_level-action {
 		padding-top: 0;
@@ -172,10 +230,7 @@
 	#pmpro_mmpu_groups {
 		text-align: center; 
 	}
-	#pmpro_mmpu_groups .pmpro_btn {
-		margin: 1rem 0;
-	}
-	#pmpro_mmpu_level_selections {
-		margin-bottom: 2rem;
+	#pmpro_mmpu_level_selections .widget {
+		margin: 0;
 	}
 }

@@ -1,14 +1,6 @@
 <?php 
 global $wpdb, $pmpro_msg, $pmpro_msgt, $current_user;
 
-$current_levels = array();
-$current_user->membership_levels = pmpro_getMembershipLevelsForUser($current_user->ID);
-if(!empty($current_user->membership_levels)) {
-	foreach($current_user->membership_levels as $level) {
-		$current_levels[] = $level->id;
-	}
-}
-
 $pmpro_levels = pmpro_getAllLevels(false, true);
 $pmpro_groups = pmprommpu_get_groups();
 
@@ -27,25 +19,25 @@ if($pmpro_msg)
 <div id="pmpro_mmpu_levels">
 	<div id="pmpro_mmpu_groups">
 	<?php	
-		//$count = 0;
+		//$count = 0;				
 		foreach($displayorder as $group => $grouplevels) 
 		{
 			?>
-			<div id="pmpro_mmpu_group-<?php echo $pmpro_groups[$group]->id; ?>" class="pmpro_mmpu_group">
+			<div id="pmpro_mmpu_group-<?php echo $pmpro_groups[$group]->id; ?>" class="pmpro_mmpu_group <?php if(intval($pmpro_groups[$group]->allow_multiple_selections) == 0) { ?>selectone<?php } ?>">
 				<h2 class="pmpro_mmpu_group-name"><?php echo $pmpro_groups[$group]->name ?></h2>
 				<p class="pmpro_mmpu_group-type">
 					<?php 
-						if($pmpro_groups[$group]->allow_multiple_selections > 0) 
-							_e('You can only choose one level from this group.', 'pmprommpu');
+						if(intval($pmpro_groups[$group]->allow_multiple_selections) > 0) 
+							_e('You can choose multiple levels from this group.', 'pmprommpu');
 						else
-							_e('You can choose Choose multiple levels from this group.', 'pmprommpu');
+							_e('You can only choose one level from this group.', 'pmprommpu');							
 					?>
 				</p>
 				<?php
 					foreach($grouplevels as $level)
 					{
 					?>
-					<div id="pmpro_mmpu_level-<?php echo $pmpro_levels[$level]->id?>" class="pmpro_mmpu_level group<?php echo $group; ?> <?php if($pmpro_groups[$group]->allow_multiple_selections>0) { echo 'selectone'; } ?>">
+					<div id="pmpro_mmpu_level-<?php echo $pmpro_levels[$level]->id?>" class="pmpro_mmpu_level group<?php echo $group; ?> <?php if(intval($pmpro_groups[$group]->allow_multiple_selections) == 0) { echo 'selectone'; } ?>">
 						<div class="pmpro_level-info">
 							<h3 class="pmpro_level-name"><?php echo $pmpro_levels[$level]->name?></h3>
 							<p class="pmpro_level-price">
@@ -74,14 +66,14 @@ if($pmpro_msg)
 							{
 								?>
 								<!-- change message class wrap to success for selected or error if removing -->
-								<label class="pmpro_level-select pmpro_message pmpro_default" for="level-<?php echo $pmpro_levels[$level]->id ?>"><input type="checkbox" id="level-<?php echo $pmpro_levels[$level]->id ?>" data-groupid="<?php echo $group ?>" <?php checked(in_array($pmpro_levels[$level]->id, $current_levels), 1);?>>&nbsp;&nbsp;<?php _e('Select', 'pmprommpu'); ?></label>
+								<label class="pmpro_level-select <?php if(pmpro_hasMembershipLevel($pmpro_levels[$level]->id)) { echo __("pmpro_level-select-current", "pmprommpu"); }?>" for="level-<?php echo $pmpro_levels[$level]->id ?>"><input type="checkbox" id="level-<?php echo $pmpro_levels[$level]->id ?>" data-groupid="<?php echo $group ?>" <?php checked(pmpro_hasMembershipLevel($pmpro_levels[$level]->id), true);?>>&nbsp;&nbsp;<?php _e('Add', 'pmprommpu'); ?></label>
 								<?php
 							}
 							else
 							{
 								?>
 								<!-- change message class wrap to success for selected or error if removing -->
-								<label class="pmpro_level-select pmpro_message pmpro_default" for="level-<?php echo $pmpro_levels[$level]->id ?>"><input type="radio" id="level-<?php echo $pmpro_levels[$level]->id ?>" name="group-<?php echo $group; ?>" data-groupid="<?php echo $group; ?>" <?php checked(in_array($pmpro_levels[$level]->id, $current_levels), 1);?>>&nbsp;&nbsp;<?php _e('Select', 'pmprommpu'); ?></label>
+								<label class="pmpro_level-select <?php if(pmpro_hasMembershipLevel($pmpro_levels[$level]->id)) { echo __("pmpro_level-select-current", "pmprommpu"); }?>" for="level-<?php echo $pmpro_levels[$level]->id ?>"><input type="checkbox" id="level-<?php echo $pmpro_levels[$level]->id ?>" data-groupid="<?php echo $group; ?>" <?php checked(pmpro_hasMembershipLevel($pmpro_levels[$level]->id), true);?>>&nbsp;&nbsp;<?php _e('Select', 'pmprommpu'); ?></label>
 								<?php
 							}
 						?>
@@ -145,69 +137,67 @@ var alllevels = {};
 <?php foreach($pmpro_levels as $onelev) { ?>
 alllevels[<?php echo $onelev->id ?>] = "<?php echo $onelev->name ?>";
 <?php } ?>
-jQuery(document).ready(function() {	
-	jQuery(".pmpro_level-select input").bind('change', function() {
-		if(this.type == 'radio') {
-			//they clicked on a radio button
-			var mygroup = jQuery(this).attr('data-groupid');
-			var groupradio = jQuery('input[name=group-'+mygroup+']');
-			var checkedradio = jQuery('input[name=group-'+mygroup+']:checked');
-						
-			//remove all levels from this group
-			for (var item of groupradio) {
-				var item_id = parseInt(jQuery(item).attr('id').replace(/\D/g,''));				
-				jQuery('#level-'+item_id).removeClass('selected');
-				delete selectedlevels[item_id];
-				delete removedlevels[item_id];
-				delete addedlevels[item_id];
+jQuery(document).ready(function() {		
+	jQuery(".pmpro_level-select input").bind('change', function() {		
+		//they clicked on a checkbox
+		var checked = jQuery(this).is(':checked');
+		var mygroup = jQuery(this).attr('data-groupid');		
+		
+		if(!checked) {
+			// we are deselecting a level
+			var mygroup = jQuery(this).attr('data-groupid');			
+			var newlevelid = parseInt(jQuery(this).attr('id').replace(/\D/g,''));
+			selectedlevels = removeFromArray(jQuery(this).attr('id'), selectedlevels);
+			jQuery(this).parent().removeClass("pmpro_level-select-current");
+			jQuery(this).parent().removeClass("pmpro_level-select-selected");
+			//? change wording of label?
+			delete addedlevels[newlevelid];
+			if(currentlevels.hasOwnProperty(newlevelid)) {
+				removedlevels[newlevelid] = alllevels[newlevelid];
+				jQuery(this).parent().addClass("pmpro_level-select-removed");
+			}
+		} else { 
+			// we selecting a level
+			
+			//if a one-of, deselect all levels in this group			
+			if(jQuery(this).parents('div.selectone').length>0) {				
+				var groupinputs = jQuery('input[data-groupid='+mygroup+']');
+							
+				//remove all levels from this group
+				for (var item of groupinputs) {
+					var item = jQuery(item);
+					var item_id = parseInt(item.attr('id').replace(/\D/g,''));				
+					
+					//deselect
+					item.prop('checked', false);
+					
+					//update arrays
+					selectedlevels = removeFromArray(item.attr('id'), selectedlevels);
+					delete removedlevels[item_id];
+					delete addedlevels[item_id];
+					
+					//update styles
+					item.parent().removeClass("pmpro_level-select-current");
+					item.parent().removeClass("pmpro_level-select-selected");
+				}
 			}
 			
-			//add the selected one
-			selectedlevels.push(checkedradio.attr('id'));
-			var newlevelid = parseInt(checkedradio.attr('id').replace(/\D/g,''));
-			checkedradio.addClass("selected");
+			//select the one we just clicked on
+			jQuery(this).prop('checked', true);
+			selectedlevels.push(jQuery(this).attr('id'));
+			var newlevelid = parseInt(jQuery(this).attr('id').replace(/\D/g,''));
+			jQuery(this).parent().removeClass("pmpro_level-select-removed");				
 			//? change the wording of the label?
 			delete removedlevels[newlevelid];
 			if(currentlevels.hasOwnProperty(newlevelid)) {
 				delete addedlevels[newlevelid];
+				jQuery(this).parent().addClass("pmpro_level-select-current");
 			} else {
 				addedlevels[newlevelid] = alllevels[newlevelid];
+				jQuery(this).parent().addClass("pmpro_level-select-selected");
 			}
-		} else {
-			//they clicked on a checkbox
-			var checked = jQuery(this).is(':checked');			
-			if(!checked) {
-				var mygroup = jQuery(this).attr('data-groupid');
-				// we are deselecting a level
-				var newlevelid = parseInt(jQuery(this).attr('id').replace(/\D/g,''));
-				selectedlevels = removeFromArray(jQuery(this).attr('id'), selectedlevels);
-				jQuery(this).removeClass("selected");
-				//? change wording of label?
-				delete addedlevels[newlevelid];
-				if(currentlevels.hasOwnProperty(newlevelid)) {
-					removedlevels[newlevelid] = alllevels[newlevelid];
-				}
-				// if we've deselected a level in a one-level-only group, we need to enable the others in the group again.
-				if(jQuery(this).parents("div.selectone").length>0) {
-					jQuery("input[data-groupid='" + mygroup + "']").map(function() {
-						jQuery(this).prop('disabled', false);
-					});
-				}		
-			} else { 
-				// we are selecting a level					
-				selectedlevels.push(jQuery(this).attr('id'));
-				var newlevelid = parseInt(jQuery(this).attr('id').replace(/\D/g,''));
-				jQuery(this).addClass("selected");
-				//? change the wording of the label?
-				delete removedlevels[newlevelid];
-				if(currentlevels.hasOwnProperty(newlevelid)) {
-					delete addedlevels[newlevelid];
-				} else {
-					addedlevels[newlevelid] = alllevels[newlevelid];
-				}
-			}
-		}
-		updateLevelSummary();	
+		}	
+	updateLevelSummary();	
 	});
 	jQuery("#mmpu_checkout").click(function() {
 		var addlevs = joinObjectKeys(",", addedlevels);
