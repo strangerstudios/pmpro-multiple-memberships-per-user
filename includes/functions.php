@@ -271,4 +271,48 @@ function pmprommpu_join_with_and($inarray) {
 	return $outstring;
 }
 
-?>
+/**
+ * Checks if a user has any membership level within a certain group
+ */
+function pmprommpu_hasMembershipGroup($groups = NULL, $user_id = NULL) {
+	global $current_user, $wpdb;
+
+	//assume false
+	$return = false;
+
+	//default to current user
+	if(empty($user_id)) {
+		$user_id = $current_user->ID;
+	}
+	
+	//get membership levels (or not) for given user
+	if(!empty($user_id) && is_numeric($user_id)) 
+		$membership_levels = pmpro_getMembershipLevelsForUser($user_id);
+	else
+		$membership_levels = NULL;
+		
+	//make an array out of a single element so we can use the same code
+	if(!is_array($groups)) {
+		$groups = array($groups);
+	}
+	
+	//no levels, so no groups
+	if(empty($membership_levels)) {		
+		$return = false;
+	} else {
+		//we have levels, so test against groups given
+		foreach($groups as $group_id) {
+			foreach($membership_levels as $level) {
+				$levelgroup = pmprommpu_get_group_for_level($level->id);
+				if($levelgroup == $group_id) {
+					$return = true;	//found one!
+					break 2;
+				}
+			}
+		}
+	}
+	
+	//filter just in case
+	$return = apply_filters("pmprommpu_has_membership_group", $return, $user_id, $groups);
+	return $return;
+}

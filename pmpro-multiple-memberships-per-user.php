@@ -31,6 +31,7 @@ define("PMPROMMPU_DIR", dirname(__FILE__)); // signals our presence to the mothe
 require_once(PMPROMMPU_DIR . "/includes/upgrades.php");		// to handle upgrades and to do initial setup
 require_once(PMPROMMPU_DIR . "/includes/functions.php");	// misc helper functions
 require_once(PMPROMMPU_DIR . "/includes/overrides.php");	// to override the default PMPro functionality, and the admin pages
+require_once(PMPROMMPU_DIR . "/includes/profile.php");		// updates to the edit user/profile page in the admin
 require_once(PMPROMMPU_DIR . "/includes/invoice.php");		// to extend the MemberOrder class for multi-order invoices
 require_once(PMPROMMPU_DIR . "/includes/email.php");		// functions to amend/replace the PMPro email functions
 
