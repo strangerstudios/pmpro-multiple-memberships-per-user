@@ -39,9 +39,9 @@ global $current_user;
 														LIMIT 1");*/
 	$user->membership_level = pmpro_getMembershipLevelForUser($user->ID);
 
-	$levels = $wpdb->get_results( "SELECT * FROM {$wpdb->pmpro_membership_levels}", OBJECT );
+	$alllevels = $wpdb->get_results( "SELECT * FROM {$wpdb->pmpro_membership_levels}", OBJECT_K );
 
-	if(!$levels)
+	if(!$alllevels)
 		return "";
 ?>
 <h3><?php _e("Membership Levels", "pmprommpu"); ?></h3>
@@ -51,7 +51,7 @@ global $current_user;
 	if($show_membership_level)
 	{
 	?>
-	<table class="wp-list-table widefat fixed" width="100%" cellpadding="0" cellspacing="0" border="0">
+	<table class="wp-list-table widefat fixed pmprommpu_levels" width="100%" cellpadding="0" cellspacing="0" border="0">
 	<thead>
 		<tr>
 			<th>Group</th>
@@ -89,11 +89,27 @@ global $current_user;
 						<td width="25%">
 							<?php
 								if($allgroups[$group_id]->allow_multiple_selections == 0) {
-									//can only select one level from this group, so show old style dropdown to change
-									echo $level->name;
+									//can only select one level from this group, so show old style dropdown to change									
+									?>
+									<select class="membership_level_id" name="membership_levels[]">
+										<option value="">-- <?php _e("None", "pmpro");?> --</option>
+									<?php
+										foreach($levelsandgroups[$level->group] as $glevel_id)
+										{
+											$glevel = pmpro_getLevel($glevel_id);
+									?>
+										<option value="<?php echo $glevel->id?>" <?php selected($glevel->id, $level->id);?> ><?php echo $glevel->name?></option>
+									<?php
+										}
+									?>
+									</select>
+									<?php
 								} else {
 									//can select more than one level from this group, so show new style table
 									echo $level->name;
+									?>
+									<input class="membership_level_id" type="hidden" name="membership_levels[]" value="<?php echo esc_attr($level->id);?>" />
+									<?php
 								}
 							?>
 						</td>
@@ -123,13 +139,13 @@ global $current_user;
 									$selected_expires_year = (int)$current_year + 1;
 							}
 							?>
-							<select class="expires" name="expires">
+							<select class="expires" name="expires[]">
 								<option value="0" <?php if(!$end_date) { ?>selected="selected"<?php } ?>><?php _e("No", "pmpro");?></option>
 								<option value="1" <?php if($end_date) { ?>selected="selected"<?php } ?>><?php _e("Yes", "pmpro");?></option>
 							</select>
 							<span class="expires_date" <?php if(!$end_date) { ?>style="display: none;"<?php } ?>>
 								on
-								<select name="expires_month">
+								<select name="expires_month[]">
 									<?php																
 										for($i = 1; $i < 13; $i++)
 										{
@@ -139,11 +155,11 @@ global $current_user;
 										}
 									?>
 								</select>
-								<input name="expires_day" type="text" size="2" value="<?php echo $selected_expires_day?>" />
-								<input name="expires_year" type="text" size="4" value="<?php echo $selected_expires_year?>" />
+								<input name="expires_day[]" type="text" size="2" value="<?php echo $selected_expires_day?>" />
+								<input name="expires_year[]" type="text" size="4" value="<?php echo $selected_expires_year?>" />
 							</span>												
 						</td>
-						<td width="25%"><a href="#">Remove</a></td>
+						<td width="25%"><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmprommpu');?></a></td>
 					</tr>
 					<?php
 					}
@@ -151,18 +167,124 @@ global $current_user;
 			}
 		}				
 	?>
+	<tr id="new_levels_tr_template" class="new_levels_tr" style="display: none;">
+		<td>
+			<select class="new_levels_group" name="new_levels_group[]">
+				<option value="">-- <?php _e("Choose a Group", "pmpro");?> --</option>
+				<?php foreach($allgroups as $group) { ?>
+					<option value="<?php echo $group->id;?>"><?php echo $group->name;?></option>
+				<?php } ?>
+			</select>
+		</td>
+		<td>
+			<em><?php _e('Choose a group first.', 'pmprommpu');?></em>
+		</td>
+		<td>
+			<select class="expires new_levels_expires" name="new_levels_expires[]">
+				<option value="0" <?php if(!$end_date) { ?>selected="selected"<?php } ?>><?php _e("No", "pmpro");?></option>
+				<option value="1" <?php if($end_date) { ?>selected="selected"<?php } ?>><?php _e("Yes", "pmpro");?></option>
+			</select>
+			<span class="expires_date new_levels_expires_date" <?php if(!$end_date) { ?>style="display: none;"<?php } ?>>
+				on
+				<select name="new_levels_expires_month[]">
+					<?php																
+						for($i = 1; $i < 13; $i++)
+						{
+						?>
+						<option value="<?php echo $i?>" <?php if($i == $selected_expires_month) { ?>selected="selected"<?php } ?>><?php echo date("M", strtotime($i . "/1/" . $current_year, current_time("timestamp")))?></option>
+						<?php
+						}
+					?>
+				</select>
+				<input name="new_levels_expires_day[]" type="text" size="2" value="<?php echo $selected_expires_day?>" />
+				<input name="new_levels_expires_year[]" type="text" size="4" value="<?php echo $selected_expires_year?>" />
+			</span>
+		</td>
+		<td><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmprommpu');?></a></td>
+	</tr>
 	<tr>
-		<td colspan="4"><a href="#">+ Add Level</a></td>
+		<td colspan="4"><a href="javascript:void(0);" class="add_level">+ <?php _e('Add Level', 'pmprommpu');?></a></td>
 	</tr>
 	</tbody>
 	</table>
 	<script>
-		//hide/show expiration dates
-		jQuery('select.expires').change(function() {
-			if(jQuery(this).val() == 1)
-				jQuery(this).next('span.expires_date').show();
-			else
-				jQuery(this).next('span.expires_date').hide();
+		//vars with levels and groups
+		var alllevels = <?php echo json_encode($alllevels);?>;
+		var allgroups = <?php echo json_encode($allgroups);?>;
+		var levelsandgroups = <?php echo json_encode($levelsandgroups);?>;
+		
+		//update levels when a group dropdown changes
+		function updateLevelSelect(e) {
+			var groupselect = jQuery(e.target);
+			var leveltd = groupselect.parent().next('td');
+			var group_id = groupselect.val();
+			
+			leveltd.html('');
+			
+			//group chosen?	
+			if(group_id.length > 0) {
+				//add level select				
+				var levelselect = jQuery('<select class="new_levels_level" name="new_levels_level[]"></select>').appendTo(leveltd);				
+				levelselect.append('<option value="">-- '+<?php echo json_encode(__('Choose a Level', 'pmprommpu'));?>+' --</option>');
+				for(item in levelsandgroups[group_id]) {					
+					levelselect.append('<option value="'+alllevels[levelsandgroups[group_id][item]].id+'">'+alllevels[levelsandgroups[group_id][item]].name+'</option>');
+				}
+			} else {
+				leveltd.html('<em>'+<?php echo json_encode(__('Choose a group first.', 'pmprommpu'));?>+'</em>');
+			}
+		}
+		
+		//remove level
+		function removeLevel(e) {
+			var removelink = jQuery(e.target);
+			var removetr = removelink.closest('tr');
+						
+			if(removetr.hasClass('new_levels_tr')) {
+				//new level? just delete the row
+				removetr.remove();
+			} else if(removetr.hasClass('remove_level')) { 
+				removetr.removeClass('remove_level');
+				removelink.html(<?php echo json_encode(__('Remove', 'pmprommpu'));?>);
+				removelink.next('input').remove();
+			} else {
+				//existing level? red it out and add to be removed
+				removetr.addClass('remove_level');
+				removelink.html(<?php echo json_encode(__('Undo', 'pmprommpu'));?>);
+				var olevelid = removelink.closest('tr').find('input.membership_level_id').val();
+				jQuery('<input type="hidden" name="remove_levels_id[]" value="'+olevelid+'">').insertAfter(removelink);
+			}
+		}
+		
+		//bindings
+		function pmprommpu_updateBindings() {
+			//hide/show expiration dates
+			jQuery('select.expires').unbind('change.pmprommpu');
+			jQuery('select.expires').bind('change.pmprommpu', function() {
+				if(jQuery(this).val() == 1)
+					jQuery(this).next('span.expires_date').show();
+				else
+					jQuery(this).next('span.expires_date').hide();
+			});
+			
+			//update level selects when groups are updated
+			jQuery('select.new_levels_group').unbind('change.pmprommpu');
+			jQuery('select.new_levels_group').bind('change.pmprommpu', updateLevelSelect);
+			
+			//remove buttons
+			jQuery('a.remove_level').unbind('click.pmprommpu');
+			jQuery('a.remove_level').bind('click.pmprommpu', removeLevel);
+
+			//clone new level tr
+			jQuery('a.add_level').unbind('click.pmprommpu');
+			jQuery('a.add_level').bind('click.pmprommpu', function() {				
+				var newleveltr = jQuery('#new_levels_tr_template').clone().attr('id', '').css('display', '').insertBefore(jQuery('a.add_level').closest('tr'));
+				pmprommpu_updateBindings();
+			});				
+		}
+		
+		//on load
+		jQuery(document).ready(function() {
+			pmprommpu_updateBindings();
 		});
 	</script>	
 	<?php

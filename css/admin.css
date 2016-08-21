@@ -1,4 +1,6 @@
 
 tbody.membership-level-groups th {background: #FAFAFA; border-right: 1px solid #CCC; border-top: 5px solid #AAA; }
 tbody.membership-level-groups tr:nth-child(even) td {background: #FAFAFA; }
+table.pmprommpu_levels tr.remove_level td {background: #F2DEDE; }
 .membership-level-groups tr:first-child td, .membership-level-groups tr:nth-child(2)  td {border-top: 5px solid #AAA; }
+
