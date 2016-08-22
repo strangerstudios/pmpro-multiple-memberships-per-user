@@ -88,30 +88,9 @@ global $current_user;
 						<td width="25%"><?php echo $allgroups[$group_id]->name;?></td>
 						<td width="25%">
 							<?php
-								if($allgroups[$group_id]->allow_multiple_selections == 0) {
-									//can only select one level from this group, so show old style dropdown to change									
-									?>
-									<select class="membership_level_id" name="membership_levels[]">
-										<option value="">-- <?php _e("None", "pmpro");?> --</option>
-									<?php
-										foreach($levelsandgroups[$level->group] as $glevel_id)
-										{
-											$glevel = pmpro_getLevel($glevel_id);
-									?>
-										<option value="<?php echo $glevel->id?>" <?php selected($glevel->id, $level->id);?> ><?php echo $glevel->name?></option>
-									<?php
-										}
-									?>
-									</select>
-									<?php
-								} else {
-									//can select more than one level from this group, so show new style table
-									echo $level->name;
-									?>
-									<input class="membership_level_id" type="hidden" name="membership_levels[]" value="<?php echo esc_attr($level->id);?>" />
-									<?php
-								}
+								echo $level->name;
 							?>
+							<input class="membership_level_id" type="hidden" name="membership_levels[]" value="<?php echo esc_attr($level->id);?>" />
 						</td>
 						<td width="25%">
 						<?php
@@ -160,6 +139,13 @@ global $current_user;
 							</span>												
 						</td>
 						<td width="25%"><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmprommpu');?></a></td>
+					</tr>
+					<tr class="old_levels_delsettings_tr_template remove_level">
+						<td></td>
+						<td colspan="3">
+							<label for="send_admin_change_email"><input value="1" id="send_admin_change_email" name="send_admin_change_email[]" type="checkbox"> Send the user an email about this change.</label><br>
+			                <label for="cancel_subscription"><input value="1" id="cancel_subscription" name="cancel_subscription[]" type="checkbox"> Cancel this user's subscription at the gateway.</label>
+						</td>
 					</tr>
 					<?php
 					}
@@ -212,6 +198,7 @@ global $current_user;
 		var alllevels = <?php echo json_encode($alllevels);?>;
 		var allgroups = <?php echo json_encode($allgroups);?>;
 		var levelsandgroups = <?php echo json_encode($levelsandgroups);?>;
+		var delsettingsrow = jQuery(".old_levels_delsettings_tr_template").detach();
 		
 		//update levels when a group dropdown changes
 		function updateLevelSelect(e) {
@@ -246,12 +233,14 @@ global $current_user;
 				removetr.removeClass('remove_level');
 				removelink.html(<?php echo json_encode(__('Remove', 'pmprommpu'));?>);
 				removelink.next('input').remove();
+				removetr.nextAll('.old_levels_delsettings_tr_template').first().remove();
 			} else {
 				//existing level? red it out and add to be removed
 				removetr.addClass('remove_level');
 				removelink.html(<?php echo json_encode(__('Undo', 'pmprommpu'));?>);
 				var olevelid = removelink.closest('tr').find('input.membership_level_id').val();
 				jQuery('<input type="hidden" name="remove_levels_id[]" value="'+olevelid+'">').insertAfter(removelink);
+				removetr.next('tr').after(delsettingsrow.clone());
 			}
 		}
 		
@@ -297,5 +286,25 @@ global $current_user;
  *  add_action( 'edit_user_profile_update', 'pmprommpu_membership_level_profile_fields_update' );
 */
 function pmprommpu_membership_level_profile_fields_update() {
-
+	// OK. First, we're going to remove them from any levels that they should be dropped from - and keep an array of the levels we're dropping (so we don't adjust expiration later)
+	if(array_key_exists('remove_levels_id', $_REQUEST)) {
+		foreach($_REQUEST['remove_levels_id'] as $leveltodel) {
+			
+		}
+	}
+	
+	// Next, let's update the expiration on any existing levels - as long as the level isn't in one of the ones we dropped them from.
+	if(array_key_exists('expires', $_REQUEST)) {
+		foreach($_REQUEST['expires'] as $leveltoalter) {
+			
+		}
+	}
+	// Finally, we'll add any new levels requested. First, we'll try it without forcing, and then if need be, we'll force it (but then we'll know to give a warning about it.)
+	if(array_key_exists('new_levels_level', $_REQUEST)) {
+		foreach($_REQUEST['new_levels_level'] as $leveltoalter) {
+			
+		}
+	}
+// 	var_dump($_REQUEST); exit();
+	
 }
