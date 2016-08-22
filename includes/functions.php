@@ -316,3 +316,47 @@ function pmprommpu_hasMembershipGroup($groups = NULL, $user_id = NULL) {
 	$return = apply_filters("pmprommpu_has_membership_group", $return, $user_id, $groups);
 	return $return;
 }
+
+// Given a membership level (required) and a user ID (or current user, if empty), add them. If an admin wants to force
+// the addition even if it's illegal, they can set force_add to true.
+// Checks group constraints to make sure it's legal first, then uses pmpro_changeMembershipLevel from PMPro core
+// to do the heavy lifting. If the addition isn't legal, returns false. Returns true on success.
+function pmprommpu_addMembershipLevel($inlevel = NULL, $user_id = NULL, $force_add = false) {
+	global $current_user, $wpdb;
+
+	//assume false
+	$return = false;
+
+	$levelid = -1;
+	if(is_object($inlevel) && !empty($inlevel->id)) {
+		$levelid = intval($inlevel->id);
+	} elseif(is_numeric($inlevel) && intval($inlevel)>0) {
+		$levelid = intval($inlevel);
+	}
+	if($levelid<1) { return $return; }
+
+	//default to current user
+	if(empty($user_id)) {
+		$user_id = $current_user->ID;
+	} else {
+		$user_id = intval($user_id);
+	}
+	
+	$allgroups = pmprommpu_get_groups();
+	
+	// OK, we have the user and the level. Let's check to see if adding it is legal. Is it in a group where they can have only one?
+	if(!$force_add) {
+		$groupid = pmprommpu_get_group_for_level($levelid);
+		if(array_key_exists($groupid, $allgroups) && $allgroups[$groupid]->allow_multiple_selections<1) { // There can be only one.
+			// Do they already have one in this group?
+			$otherlevels = $wpdb->get_col("SELECT level FROM $wpdb->pmpro_membership_levels_groups WHERE group=$groupid AND level != $levelid");
+			foreach($otherlevels as $thelevel) {
+				if(pmpro_hasMembershipLevel($thelevel, $user_id)) { return $return; }
+			}
+		}
+	}
+	
+	// OK, we're legal (or don't care). Let's add it. Set elsewhere by filter, changeMembershipLevel should not disable old levels.
+	$result = pmpro_changeMembershipLevel
+	
+}
