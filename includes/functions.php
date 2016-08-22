@@ -357,6 +357,6 @@ function pmprommpu_addMembershipLevel($inlevel = NULL, $user_id = NULL, $force_a
 	}
 	
 	// OK, we're legal (or don't care). Let's add it. Set elsewhere by filter, changeMembershipLevel should not disable old levels.
-	$result = pmpro_changeMembershipLevel
-	
+	$result = pmpro_changeMembershipLevel($levelid, $user_id);
+	return $result;
 }
