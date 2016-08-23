@@ -198,7 +198,8 @@ global $current_user;
 		var alllevels = <?php echo json_encode($alllevels);?>;
 		var allgroups = <?php echo json_encode($allgroups);?>;
 		var levelsandgroups = <?php echo json_encode($levelsandgroups);?>;
-		var delsettingsrow = jQuery(".old_levels_delsettings_tr_template").detach();
+		var delsettingsrow = jQuery(".old_levels_delsettings_tr_template").first().detach();
+		jQuery(".old_levels_delsettings_tr_template").detach();
 		
 		//update levels when a group dropdown changes
 		function updateLevelSelect(e) {
@@ -240,7 +241,7 @@ global $current_user;
 				removelink.html(<?php echo json_encode(__('Undo', 'pmprommpu'));?>);
 				var olevelid = removelink.closest('tr').find('input.membership_level_id').val();
 				jQuery('<input type="hidden" name="remove_levels_id[]" value="'+olevelid+'">').insertAfter(removelink);
-				removetr.next('tr').after(delsettingsrow.clone());
+				removetr.after(delsettingsrow.clone());
 			}
 		}
 		
@@ -286,25 +287,92 @@ global $current_user;
  *  add_action( 'edit_user_profile_update', 'pmprommpu_membership_level_profile_fields_update' );
 */
 function pmprommpu_membership_level_profile_fields_update() {
+	//get the user id
+	global $wpdb, $current_user;
+	wp_get_current_user();
+	
+	if(!empty($_REQUEST['user_id'])) {
+		$user_id = $_REQUEST['user_id'];
+	} else {
+		$user_id = $current_user->ID;
+	}
+
+	$membership_level_capability = apply_filters("pmpro_edit_member_capability", "manage_options");
+	if(!current_user_can($membership_level_capability))
+		return false;
+
 	// OK. First, we're going to remove them from any levels that they should be dropped from - and keep an array of the levels we're dropping (so we don't adjust expiration later)
+	$droppedlevels = array();
+	$old_levels = pmpro_getMembershipLevelsForUser($user_id);
 	if(array_key_exists('remove_levels_id', $_REQUEST)) {
-		foreach($_REQUEST['remove_levels_id'] as $leveltodel) {
-			
+		foreach($_REQUEST['remove_levels_id'] as $arraykey => $leveltodel) {
+			$subscription_id = -1;
+			foreach($old_levels as $checklevel) {
+				if($checklevel->id == $leveltodel) {
+					$subscription_id = $checklevel->subscription_id;
+					break;
+				}
+			}
+			$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET `status`='admin_cancelled', `enddate`='".current_time('mysql')."' WHERE `id`=$subscription_id");
+			if(array_key_exists($arraykey, $_REQUEST['cancel_subscription']) && !empty($_REQUEST['cancel_subscription'][$arraykey])) {
+				$other_order_ids = $wpdb->get_col("SELECT id FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . $user_id . "' AND status = 'success' AND membership_id = $leveltodel ORDER BY id DESC");
+
+				foreach($other_order_ids as $order_id)
+				{
+					$c_order = new MemberOrder($order_id);
+					$c_order->cancel();
+				}
+			}
+			//email to admin
+			$pmproemail = new PMProEmail();
+			$pmproemail->sendAdminChangeAdminEmail(get_userdata($user_id));
+	
+			//send email
+			if(array_key_exists($arraykey, $_REQUEST['send_admin_change_email']) && !empty($_REQUEST['send_admin_change_email'][$arraykey])) {
+				//email to member
+				$pmproemail = new PMProEmail();
+				$pmproemail->sendAdminChangeEmail(get_userdata($user_id));
+			}
+			$droppedlevels[] = $leveltodel;
 		}
 	}
 	
 	// Next, let's update the expiration on any existing levels - as long as the level isn't in one of the ones we dropped them from.
 	if(array_key_exists('expires', $_REQUEST)) {
-		foreach($_REQUEST['expires'] as $leveltoalter) {
-			
+		foreach($_REQUEST['expires'] as $expkey => $doesitexpire) {
+			$thislevel = $_REQUEST['membership_levels'][$expkey];
+			if(!in_array($thislevel, $droppedlevels)) { // we don't change expiry for a level we've dropped.
+				if(!empty($doesitexpire)) { // we're going to expire.
+					//update the expiration date
+					$expiration_date = intval($_REQUEST['expires_year'][$expkey]) . "-" . str_pad(intval($_REQUEST['expires_month'][$expkey]), 2, "0", STR_PAD_LEFT) . "-" . str_pad(intval($_REQUEST['expires_day'][$expkey]), 2, "0", STR_PAD_LEFT);
+					$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = '" . $expiration_date . "' WHERE status = 'active' AND membership_id = '" . intval($thislevel) . "' AND user_id = '" . $user_id . "' LIMIT 1");
+				} else { // No expiration for me!
+					$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = NULL WHERE status = 'active' AND membership_id = '" . intval($thislevel) . "' AND user_id = '" . $user_id . "' LIMIT 1");
+				}
+			}
 		}
 	}
 	// Finally, we'll add any new levels requested. First, we'll try it without forcing, and then if need be, we'll force it (but then we'll know to give a warning about it.)
 	if(array_key_exists('new_levels_level', $_REQUEST)) {
-		foreach($_REQUEST['new_levels_level'] as $leveltoalter) {
-			
+		$hadtoforce = false;
+		foreach($_REQUEST['new_levels_level'] as $newkey => $leveltoadd) {
+			$result = pmprommpu_addMembershipLevel($leveltoadd, $user_id, false);
+			if(! $result) {
+				pmprommpu_addMembershipLevel($leveltoadd, $user_id, true);
+				$hadtoforce = true;
+			}
+			$doweexpire = $_REQUEST['new_levels_expires'][$newkey];
+			if(!empty($doweexpire)) { // we're going to expire.
+				//update the expiration date
+				$expiration_date = intval($_REQUEST['new_levels_expires_year'][$newkey]) . "-" . str_pad(intval($_REQUEST['new_levels_expires_month'][$newkey]), 2, "0", STR_PAD_LEFT) . "-" . str_pad(intval($_REQUEST['new_levels_expires_day'][$newkey]), 2, "0", STR_PAD_LEFT);
+				$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = '" . $expiration_date . "' WHERE status = 'active' AND membership_id = '" . intval($leveltoadd) . "' AND user_id = '" . $user_id . "' LIMIT 1");
+			} else { // No expiration for me!
+				$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = NULL WHERE status = 'active' AND membership_id = '" . intval($leveltoadd) . "' AND user_id = '" . $user_id . "' LIMIT 1");
+			}
+		}
+		if($hadtoforce) {
+			// TODO: Should flag some kind of message to alert the admin that we had to force it (and the consequences of that).
 		}
 	}
-// 	var_dump($_REQUEST); exit();
 	
 }
