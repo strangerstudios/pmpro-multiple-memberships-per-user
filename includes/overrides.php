@@ -436,3 +436,16 @@ function pmprommpu_stop_default_checkout_emails($inflag) {
 	return false;
 }
 add_filter( 'pmpro_send_checkout_emails', 'pmprommpu_stop_default_checkout_emails', 10, 1);
+
+function pmprommpu_show_multiple_levels_in_memlist($inuser) {
+	$allmylevels = pmpro_getMembershipLevelsForUser($inuser->ID);
+	$memlevels = array();
+	foreach($allmylevels as $curlevel) {
+		$memlevels[] = $curlevel->name;
+	}
+	
+	$inuser->membership = implode(', ', $memlevels);
+	
+	return $inuser;
+}
+add_filter( 'pmpro_members_list_user', 'pmprommpu_show_multiple_levels_in_memlist', 10, 1);
