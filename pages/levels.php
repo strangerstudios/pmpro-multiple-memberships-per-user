@@ -208,6 +208,10 @@ jQuery(document).ready(function() {
 		var addlevs = joinObjectKeys("+", addedlevels);
 		var dellevs = joinObjectKeys("+", removedlevels);
 		var url = '<?php echo pmpro_url("checkout", ""); ?>';
+
+		if(addedlevels.length<1 && removedlevels.length>0) {
+			url = '<?php echo pmpro_url("cancel", ""); ?>';
+		}
 		if(url.indexOf('?') > -1)
 			url = url + '&level=' + addlevs + '&dellevels=' + dellevs;
 		else
