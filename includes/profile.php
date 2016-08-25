@@ -314,7 +314,7 @@ function pmprommpu_membership_level_profile_fields_update() {
 				}
 			}
 			$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET `status`='admin_cancelled', `enddate`='".current_time('mysql')."' WHERE `id`=$subscription_id");
-			if(array_key_exists($arraykey, $_REQUEST['cancel_subscription']) && !empty($_REQUEST['cancel_subscription'][$arraykey])) {
+			if(is_array($_REQUEST['cancel_subscription']) && array_key_exists($arraykey, $_REQUEST['cancel_subscription']) && !empty($_REQUEST['cancel_subscription'][$arraykey])) {
 				$other_order_ids = $wpdb->get_col("SELECT id FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . $user_id . "' AND status = 'success' AND membership_id = $leveltodel ORDER BY id DESC");
 
 				foreach($other_order_ids as $order_id)
@@ -328,7 +328,7 @@ function pmprommpu_membership_level_profile_fields_update() {
 			$pmproemail->sendAdminChangeAdminEmail(get_userdata($user_id));
 	
 			//send email
-			if(array_key_exists($arraykey, $_REQUEST['send_admin_change_email']) && !empty($_REQUEST['send_admin_change_email'][$arraykey])) {
+			if(is_array($_REQUEST['send_admin_change_email']) && array_key_exists($arraykey, $_REQUEST['send_admin_change_email']) && !empty($_REQUEST['send_admin_change_email'][$arraykey])) {
 				//email to member
 				$pmproemail = new PMProEmail();
 				$pmproemail->sendAdminChangeEmail(get_userdata($user_id));
