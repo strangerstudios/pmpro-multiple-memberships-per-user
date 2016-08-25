@@ -1,7 +1,7 @@
 <?php
 	global $gateway, $pmpro_review, $skip_account_fields, $pmpro_paypal_token, $wpdb, $current_user, $pmpro_msg, $pmpro_msgt, $pmpro_requirebilling, $pmpro_level, $pmpro_levels, $tospage, $pmpro_show_discount_code, $pmpro_error_fields;
 	global $discount_code, $username, $password, $password2, $bfirstname, $blastname, $baddress1, $baddress2, $bcity, $bstate, $bzipcode, $bcountry, $bphone, $bemail, $bconfirmemail, $CardType, $AccountNumber, $ExpirationMonth,$ExpirationYear;
-	global $checkout_levels;
+	global $pmpro_checkout_levels, $pmpro_checkout_level_ids, $pmpro_checkout_del_level_ids;
 
 	/**
 	 * Filter to set if PMPro uses email or text as the type for email field inputs.
@@ -10,17 +10,10 @@
 	 *
 	 * @param bool $use_email_type, true to use email type, false to use text type
 	 */
-	$pmpro_email_field_type = apply_filters('pmpro_email_field_type', true);
-	$inlevelids = explode(',', $_REQUEST['level']);
-	$inlevelids = array_map('intval', $inlevelids); // these should always be integers
-	$dellevelids = array();
-	if(strlen($_REQUEST['dellevels'])>0) { 
-		$dellevelids = explode(',', $_REQUEST['dellevels']);
-		$dellevelids = array_map('intval', $dellevelids);
-	}
+	$pmpro_email_field_type = apply_filters('pmpro_email_field_type', true);	
 ?>
 <div id="pmpro_level-mmpu">
-<form id="pmpro_form" class="pmpro_form" action="<?php if(!empty($_REQUEST['review'])) echo pmpro_url("checkout", "?level=" . $inlevelids); ?>" method="post">
+<form id="pmpro_form" class="pmpro_form" action="<?php if(!empty($_REQUEST['review'])) echo pmpro_url("checkout", "?level=" . $pmpro_checkout_level_ids); ?>" method="post">
 	<input type="hidden" id="level" name="level" value="<?=$_REQUEST['level'] ?>" />
 	<input type="hidden" id="levelstodel" name="levelstodel" value="<?php echo esc_attr($_REQUEST['dellevels']) ?>" />
 	<input type="hidden" id="checkjavascript" name="checkjavascript" value="1" />
@@ -47,7 +40,7 @@
 	<thead>
 		<tr>
 			<th>
-				<?php if(count($inlevelids)>1) { ?>
+				<?php if(count($pmpro_checkout_level_ids)>1) { ?>
 					<span class="pmpro_thead-name"><?php _e('Membership Levels', 'mmpu');?></span>
 				<?php } else { ?>
 					<span class="pmpro_thead-name"><?php _e('Membership Level', 'pmpro');?></span>
@@ -61,17 +54,17 @@
 			<td>
 				<?php 
 					$defaultstring = "<p>".sprintf(__('You have selected the <strong>%s</strong> membership level.', 'pmpro'), $pmpro_level->name)."</p>";
-					if(count($inlevelids)<2 && !empty($pmpro_level->description)) {
+					if(count($pmpro_checkout_level_ids)<2 && !empty($pmpro_level->description)) {
 						$defaultstring .= apply_filters("the_content", stripslashes($pmpro_level->description));
 					}
-					echo apply_filters("pmprommpu_checkout_level_text", $defaultstring, $inlevelids, $dellevelids);
+					echo apply_filters("pmprommpu_checkout_level_text", $defaultstring, $pmpro_checkout_level_ids, $pmpro_checkout_del_level_ids);
 				?>
 				<div id="pmpro_level_cost">
 					<?php if($discount_code && pmpro_checkDiscountCode($discount_code)) { ?>
 						<?php printf(__('<p class="pmpro_level_discount_applied">The <strong>%s</strong> code has been applied to your order.</p>', 'pmpro'), $discount_code);?>
 					<?php } ?>
-					<?php echo wpautop(pmpro_getLevelsCost($checkout_levels)); ?>
-					<?php echo wpautop(pmpro_getLevelsExpiration($checkout_levels)); ?>
+					<?php echo wpautop(pmpro_getLevelsCost($pmpro_checkout_levels)); ?>
+					<?php echo wpautop(pmpro_getLevelsExpiration($pmpro_checkout_levels)); ?>
 				</div>
 
 				<?php do_action("pmpro_checkout_after_level_cost"); ?>
@@ -183,7 +176,7 @@
 		<tr>
 			<th>
 				<span class="pmpro_thead-name"><?php _e('Account Information', 'pmpro');?></span>
-				<span class="pmpro_thead-msg"><?php _e('Already have an account?', 'pmpro');?> <a href="<?php echo wp_login_url(pmpro_url("checkout", "?level=" . $inlevelids))?>"><?php _e('Log in here', 'pmpro');?></a></span>
+				<span class="pmpro_thead-msg"><?php _e('Already have an account?', 'pmpro');?> <a href="<?php echo wp_login_url(pmpro_url("checkout", "?level=" . $pmpro_checkout_level_ids))?>"><?php _e('Log in here', 'pmpro');?></a></span>
 			</th>
 		</tr>
 	</thead>
@@ -262,7 +255,7 @@
 				<div class="pmpro_captcha">
 				<?php
 					global $recaptcha, $recaptcha_publickey;
-					if($recaptcha == 2 || ($recaptcha == 1 && pmpro_areLevelsFree($checkout_levels)))
+					if($recaptcha == 2 || ($recaptcha == 1 && pmpro_areLevelsFree($pmpro_checkout_levels)))
 					{
 						echo pmpro_recaptcha_get_html($recaptcha_publickey, NULL, true);
 					}

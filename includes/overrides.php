@@ -4,14 +4,38 @@
 
 // if a list of level ids is passed to checkout, pull out the first as the main level and save the rest
 function pmprommpu_init_checkout_levels() {	
-	if(!empty($_REQUEST['level']) && strpos($_REQUEST['level'], '+') !== false) {
-		global $pmpro_checkout_level_ids;
-				
-		$pmpro_checkout_level_ids = explode("+", preg_replace("[^0-9^\+]", "", $_REQUEST['level']));
+	//update and save pmpro checkout levels
+	if(!empty($_REQUEST['level'])) {
+		global $pmpro_checkout_level_ids, $pmpro_checkout_levels;
+		
+		//convert spaces back to +
+		$_REQUEST['level'] = str_replace(array(' ', '%20'), '+', $_REQUEST['level']);
+		
+		//get the ids
+		$pmpro_checkout_level_ids = array_map('intval', explode("+", preg_replace("[^0-9^\+]", "", $_REQUEST['level'])));
 
+		//setup pmpro_checkout_levels global
+		$pmpro_checkout_levels = array();
+		foreach($pmpro_checkout_level_ids as $level_id) {
+			$pmpro_checkout_levels[] = pmpro_getLevelAtCheckout($level_id);
+		}
+		
+		//update default request vars to only point to one (main) level
 		$_REQUEST['level'] = $pmpro_checkout_level_ids[0];
 		$_GET['level'] = $_REQUEST['level'];
 		$_POST['level'] = $_POST['level'];
+	}
+	
+	//update and save pmpro checkout deleted levels
+	if(!empty($_REQUEST['dellevels'])) {
+		global $pmpro_checkout_del_level_ids;
+		
+		//convert spaces back to +
+		$_REQUEST['dellevels'] = str_replace(array(' ', '%20'), '+', $_REQUEST['dellevels']);
+		
+		//get the ids
+		$pmpro_checkout_del_level_ids = array();		
+		$pmpro_checkout_del_level_ids = array_map('intval', explode("+", preg_replace("[^0-9^\+]", "", $_REQUEST['dellevels'])));	
 	}
 }
 add_action('init', 'pmprommpu_init_checkout_levels', 1);
@@ -30,9 +54,7 @@ add_action( 'admin_enqueue_scripts', 'pmprommpu_addin_jquery_dialog' );
 // Filter the text on the checkout page that tells the user what levels they're getting
 function pmprommpu_checkout_level_text($intext, $levelids_adding, $levelids_deleting) {
 	$levelarr = pmpro_getAllLevels(true);
-	$outstring = "<p>You have selected the following level";
-	if(count($levelids_adding)>1) { $outstring .= "s"; }
-	$outstring .= ":</p>";
+	$outstring = '<p>' . _n('You have selected the following level', 'You have selected the following levels', count($levelids_adding), 'pmprommpu') . ':</p>';
 	foreach($levelids_adding as $curlevelid) {
 		$outstring .= "<p class='levellist'><strong><span class='levelnametext'>".$levelarr[$curlevelid]->name."</span></strong>";
 		if(! empty($levelarr[$curlevelid]->description)) {
@@ -41,10 +63,7 @@ function pmprommpu_checkout_level_text($intext, $levelids_adding, $levelids_dele
 		$outstring .= "</p>";
 	}
 	if(count($levelids_deleting)>0) {
-		$outstring .= print_r($levelids_deleting); // delete me 
-		$outstring .= "<p>You are removing the following level";
-		if(count($levelids_deleting)>1) { $outstring .= "s"; }
-		$outstring .= ":</p>";
+		$outstring .= '<p>' . _n('You are removing the following level', 'You are removing the following levels', count($levelids_adding), 'pmprommpu') . ':</p>';			
 		foreach($levelids_deleting as $curlevelid) {
 			$outstring .= "<p class='levellist'><strong><span class='levelnametext'>".$levelarr[$curlevelid]->name."</span></strong>";
 			if(! empty($levelarr[$curlevelid]->description)) {
@@ -73,12 +92,14 @@ add_filter( 'pmpro_cancel_previous_subscriptions', 'pmprommpu_pmpro_cancel_previ
 // First, any unsubscriptions that the user opted for (whose level ids are in $_REQUEST['dellevels']) will be dropped.
 // Then, any remaining conflicts will be dropped.
 function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
-	global $wpdb;
+	global $wpdb, $pmpro_checkout_del_level_ids;
+
+	//process extra checkouts
+	/* TODO */
 	
-	if(array_key_exists('levelstodel', $_REQUEST) && strlen($_REQUEST['levelstodel'])>0) {
-		$dellevelids = explode('+', $_REQUEST['levelstodel']);
-		$dellevelids = array_map('intval', $dellevelids); // these should always be integers
-		foreach($dellevelids as $idtodel) {
+	//remove levels to be removed
+	if(!empty($pmpro_checkout_del_level_ids)) {		
+		foreach($pmpro_checkout_del_level_ids as $idtodel) {
 			$sql = "UPDATE $wpdb->pmpro_memberships_users SET `status`='changed', `enddate`='" . current_time('mysql') . "' WHERE `user_id` = '". $user_id . "' AND `status`='active' AND `membership_id`=".$idtodel;
 			$wpdb->query($sql);
 			
@@ -128,8 +149,11 @@ function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
 			}
 		}
 	}
+	
+	//make sure we only call this once
+	remove_action( 'pmpro_after_checkout', 'pmprommpu_unsub_after_all_checkouts', 99, 2);	
 }
-add_action( 'pmpro_after_all_checkouts', 'pmprommpu_unsub_after_all_checkouts', 10, 2);
+add_action( 'pmpro_after_checkout', 'pmprommpu_unsub_after_all_checkouts', 99, 2);
 
 // Now, on to the admin pages. Let's start with membership levels...
 
