@@ -169,11 +169,16 @@ jQuery(document).ready(function() {
 					var item_id = parseInt(item.attr('id').replace(/\D/g,''));				
 					
 					//deselect
+					if(item.prop('checked') && currentlevels.hasOwnProperty(item_id)) {
+						item.parent().addClass("pmpro_level-select-removed");
+						removedlevels[item_id] = alllevels[item_id];
+					} else {
+						delete removedlevels[item_id];
+					}
 					item.prop('checked', false);
 					
 					//update arrays
 					selectedlevels = removeFromArray(item.attr('id'), selectedlevels);
-					delete removedlevels[item_id];
 					delete addedlevels[item_id];
 					
 					//update styles
@@ -203,6 +208,10 @@ jQuery(document).ready(function() {
 		var addlevs = joinObjectKeys("+", addedlevels);
 		var dellevs = joinObjectKeys("+", removedlevels);
 		var url = '<?php echo pmpro_url("checkout", ""); ?>';
+
+		if(addedlevels.length<1 && removedlevels.length>0) {
+			url = '<?php echo pmpro_url("cancel", ""); ?>';
+		}
 		if(url.indexOf('?') > -1)
 			url = url + '&level=' + addlevs + '&dellevels=' + dellevs;
 		else
