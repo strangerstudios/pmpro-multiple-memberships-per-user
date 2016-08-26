@@ -306,33 +306,34 @@ function pmprommpu_membership_level_profile_fields_update() {
 	$old_levels = pmpro_getMembershipLevelsForUser($user_id);
 	if(array_key_exists('remove_levels_id', $_REQUEST)) {
 		foreach($_REQUEST['remove_levels_id'] as $arraykey => $leveltodel) {
-			$subscription_id = -1;
-			foreach($old_levels as $checklevel) {
-				if($checklevel->id == $leveltodel) {
-					$subscription_id = $checklevel->subscription_id;
-					break;
-				}
-			}
-			$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET `status`='admin_cancelled', `enddate`='".current_time('mysql')."' WHERE `id`=$subscription_id");
-			if(is_array($_REQUEST['cancel_subscription']) && array_key_exists($arraykey, $_REQUEST['cancel_subscription']) && !empty($_REQUEST['cancel_subscription'][$arraykey])) {
-				$other_order_ids = $wpdb->get_col("SELECT id FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . $user_id . "' AND status = 'success' AND membership_id = $leveltodel ORDER BY id DESC");
-
-				foreach($other_order_ids as $order_id)
-				{
-					$c_order = new MemberOrder($order_id);
-					$c_order->cancel();
-				}
-			}
-			//email to admin
-			$pmproemail = new PMProEmail();
-			$pmproemail->sendAdminChangeAdminEmail(get_userdata($user_id));
-	
-			//send email
-			if(is_array($_REQUEST['send_admin_change_email']) && array_key_exists($arraykey, $_REQUEST['send_admin_change_email']) && !empty($_REQUEST['send_admin_change_email'][$arraykey])) {
-				//email to member
-				$pmproemail = new PMProEmail();
-				$pmproemail->sendAdminChangeEmail(get_userdata($user_id));
-			}
+// 			$subscription_id = -1;
+// 			foreach($old_levels as $checklevel) {
+// 				if($checklevel->id == $leveltodel) {
+// 					$subscription_id = $checklevel->subscription_id;
+// 					break;
+// 				}
+// 			}
+// 			$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET `status`='admin_cancelled', `enddate`='".current_time('mysql')."' WHERE `id`=$subscription_id");
+// 			if(is_array($_REQUEST['cancel_subscription']) && array_key_exists($arraykey, $_REQUEST['cancel_subscription']) && !empty($_REQUEST['cancel_subscription'][$arraykey])) {
+// 				$other_order_ids = $wpdb->get_col("SELECT id FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . $user_id . "' AND status = 'success' AND membership_id = $leveltodel ORDER BY id DESC");
+// 
+// 				foreach($other_order_ids as $order_id)
+// 				{
+// 					$c_order = new MemberOrder($order_id);
+// 					$c_order->cancel();
+// 				}
+// 			}
+// 			//email to admin
+// 			$pmproemail = new PMProEmail();
+// 			$pmproemail->sendAdminChangeAdminEmail(get_userdata($user_id));
+// 	
+// 			//send email
+// 			if(is_array($_REQUEST['send_admin_change_email']) && array_key_exists($arraykey, $_REQUEST['send_admin_change_email']) && !empty($_REQUEST['send_admin_change_email'][$arraykey])) {
+// 				//email to member
+// 				$pmproemail = new PMProEmail();
+// 				$pmproemail->sendAdminChangeEmail(get_userdata($user_id));
+// 			}
+			pmpro_cancelMembershipLevel($leveltodel, $user_id, 'admin_cancelled');
 			$droppedlevels[] = $leveltodel;
 		}
 	}
