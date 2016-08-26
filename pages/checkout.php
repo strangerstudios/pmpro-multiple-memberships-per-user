@@ -14,7 +14,7 @@
 ?>
 <div id="pmpro_level-mmpu">
 <form id="pmpro_form" class="pmpro_form" action="<?php if(!empty($_REQUEST['review'])) echo pmpro_url("checkout", "?level=" . $pmpro_checkout_level_ids); ?>" method="post">
-	<input type="hidden" id="level" name="level" value="<?=$_REQUEST['level'] ?>" />
+	<input type="hidden" id="level" name="level" value="<?php echo implode('+', $pmpro_checkout_level_ids); ?>" />
 	<input type="hidden" id="levelstodel" name="levelstodel" value="<?php echo esc_attr($_REQUEST['dellevels']) ?>" />
 	<input type="hidden" id="checkjavascript" name="checkjavascript" value="1" />
 
