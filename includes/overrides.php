@@ -619,3 +619,15 @@ function pmprommpu_show_multiple_levels_in_memlist($inuser) {
 	return $inuser;
 }
 add_filter( 'pmpro_members_list_user', 'pmprommpu_show_multiple_levels_in_memlist', 10, 1);
+
+function pmprommpu_set_checkout_id($inorder) {
+	global $pmpro_checkout_id;
+	
+	if(! empty($pmpro_checkout_id)) {
+		$inorder->checkout_id = $pmpro_checkout_id;
+	}
+
+	return $inorder;
+}
+add_filter( 'pmpro_checkout_order', 'pmprommpu_set_checkout_id', 10, 1);
+add_filter( 'pmpro_checkout_order_free', 'pmprommpu_set_checkout_id', 10, 1);
