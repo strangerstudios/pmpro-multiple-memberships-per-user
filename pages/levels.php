@@ -172,8 +172,6 @@ jQuery(document).ready(function() {
 					if(item.prop('checked') && currentlevels.hasOwnProperty(item_id)) {
 						item.parent().addClass("pmpro_level-select-removed");
 						removedlevels[item_id] = alllevels[item_id];
-					} else {
-						delete removedlevels[item_id];
 					}
 					item.prop('checked', false);
 					
