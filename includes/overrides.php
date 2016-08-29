@@ -94,7 +94,7 @@ add_filter( 'pmpro_cancel_previous_subscriptions', 'pmprommpu_pmpro_cancel_previ
 // First, any unsubscriptions that the user opted for (whose level ids are in $_REQUEST['dellevels']) will be dropped.
 // Then, any remaining conflicts will be dropped.
 function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
-	global $wpdb, $gateway, $discount_code, $discount_code_id, $pmpro_msg, $pmpro_msgt, $pmpro_level, $pmpro_checkout_levels, $pmpro_checkout_del_level_ids;
+	global $wpdb, $current_user, $gateway, $discount_code, $discount_code_id, $pmpro_msg, $pmpro_msgt, $pmpro_level, $pmpro_checkout_levels, $pmpro_checkout_del_level_ids;
 
 	//make sure we only call this once
 	remove_action( 'pmpro_after_checkout', 'pmprommpu_unsub_after_all_checkouts', 99, 2);
@@ -262,6 +262,16 @@ function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
 			}						
 		}
 	}
+	
+	$invoice = new MemberInvoice();
+	$invoice->getLastMemberInvoice($user_id);
+	//send email to member
+	$pmproemail = new PMProEmail();
+	$pmproemail->sendCheckoutEmail( $current_user, $invoice );
+
+	//send email to admin
+	$pmproemail = new PMProEmail();
+	$pmproemail->sendCheckoutAdminEmail( $current_user, $invoice );
 	
 	//remove levels to be removed
 	if(!empty($pmpro_checkout_del_level_ids)) {		
