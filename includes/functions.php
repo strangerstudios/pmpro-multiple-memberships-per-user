@@ -215,7 +215,7 @@ function pmprommpu_update_level_and_group_order() {
 // This function returns an array of the successfully-purchased levels from the most recent checkout
 // for the user specified by user_id. If user_id isn't specified, the current user will be used.
 // If there are no successful levels, or no checkout, will return an empty array.
-function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to_check = 'success') {
+function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to_check = 'success', $checkout_id = -1) {
 	global $wpdb, $current_user;
 	
 	if(empty($user_id))
@@ -232,10 +232,13 @@ function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to
 	$user_id = intval($user_id);
 
 	$retval = array();
-	$all_levels = pmpro_getAllLevels(true);
+	$all_levels = pmpro_getAllLevels(true, true);
 
-	$checkoutid = $wpdb->get_var("SELECT MAX(checkout_id) FROM $wpdb->pmpro_membership_orders WHERE user_id=$user_id");
-	if(empty($checkoutid) || intval($checkoutid)<1) { return $retval; }
+	$checkoutid = intval($checkout_id);
+	if($checkoutid<1) {
+		$checkoutid = $wpdb->get_var("SELECT MAX(checkout_id) FROM $wpdb->pmpro_membership_orders WHERE user_id=$user_id");
+		if(empty($checkoutid) || intval($checkoutid)<1) { return $retval; }
+	}
 	
 	$querySql = "SELECT membership_id FROM $wpdb->pmpro_membership_orders WHERE checkout_id=$checkoutid AND (gateway='free' OR ";
 	if(!empty($statuses_to_check) && is_array($statuses_to_check)) {

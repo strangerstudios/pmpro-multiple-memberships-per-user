@@ -118,28 +118,19 @@ class MemberInvoice extends MemberOrder {
 				$ordercount++;
 			}
 		}
+		$this->membership_levels = pmprommpu_get_levels_from_latest_checkout($user_id, $status, $checkoutid);
 		return true;
 	}
 	
 	// This function returns an array of the membership levels for this invoice and adds the levels to the invoice.
 	// It works similarly to MemberOrder::getMembershipLevel(), but with an array, not a single level.
-	function getMembershipLevels() {
-		global $wpdb;
-
-		if(strlen($this->membership_id)<1) { return false; }
-
-		$levelarr = array();
-
-		//check if there is an entry in memberships_users first
-		if(!empty($this->user_id))
-		{
-			$this->membership_levels = $wpdb->get_results("SELECT l.id as level_id, l.id as `id`, l.name, l.description, l.allow_signups, l.expiration_number, l.expiration_period, mu.*, UNIX_TIMESTAMP(mu.startdate) as startdate, UNIX_TIMESTAMP(mu.enddate) as enddate, l.name, l.description, l.allow_signups FROM $wpdb->pmpro_membership_levels l LEFT JOIN $wpdb->pmpro_memberships_users mu ON l.id = mu.membership_id WHERE mu.status = 'active' AND l.id IN (" . $this->membership_id . ") AND mu.user_id = '" . $this->user_id . "'");
-
-		} else {
-			$this->membership_level = $wpdb->get_row("SELECT l.* FROM $wpdb->pmpro_membership_levels l WHERE l.id IN (" . $this->membership_id . ")");
-		}
-
-
+// 	function getMembershipLevels($checkout_id = -1) {
+// 		global $wpdb;
+// 
+// 		if($checkout_id<1) { return false; }
+// 
+// 		$this->membership_levels = $wpdb->get_results("SELECT l.id as level_id, l.id as `id`, l.name, l.description, l.allow_signups, l.expiration_number, l.expiration_period, mu.*, UNIX_TIMESTAMP(mu.startdate) as startdate, UNIX_TIMESTAMP(mu.enddate) as enddate, l.name, l.description, l.allow_signups FROM $wpdb->pmpro_membership_levels l LEFT JOIN $wpdb->pmpro_memberships_users mu ON l.id = mu.membership_id WHERE mu.status = 'active' AND l.id IN (" . $this->membership_id . ") AND mu.user_id = '" . $this->user_id . "'");
+// 
 // Leaving this discount code piece commented out because not sure if there's a need to adapt to this circumstance.
 // TODO: Confirm with testing.
 // 		foreach($this->membership_levels as &$curlevel) {
@@ -156,9 +147,9 @@ class MemberInvoice extends MemberOrder {
 // 				$this->membership_level = $wpdb->get_row($sqlQuery);
 // 			}
 // 		}
-		return $this->membership_levels;
-
-	}
+// 		return $this->membership_levels;
+// 
+// 	}
 }
 
 ?>

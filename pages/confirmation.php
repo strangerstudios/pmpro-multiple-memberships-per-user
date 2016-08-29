@@ -23,7 +23,7 @@
 		$levelnames[] = $thelevel->name;
 		$levelnums[] = $thelevel->id;
 	}
-	
+
 	if(empty($theselevels)) {
 		$confirmation_message = "<p>" . __('Your payment has been submitted. Your membership will be activated shortly.', 'pmpro') . "</p>";
 	} elseif(count($theselevels) == 1) {
@@ -46,7 +46,7 @@
 	<?php
 		$pmpro_invoice->getUser();
 		$pmpro_invoice->getMembershipLevel();			
-				
+		
 		$confirmation_message .= "<p>" . sprintf(__('Below are details about your membership account and a receipt for your initial membership invoice. A welcome email with a copy of your initial membership invoice has been sent to %s.', 'pmpro'), $pmpro_invoice->user->user_email) . "</p>";
 		
 		//check instructions		
