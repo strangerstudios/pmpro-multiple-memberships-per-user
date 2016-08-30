@@ -227,6 +227,7 @@ jQuery(document).ready(function() {
 		
 		window.location.href = url;
 	});
+	jQuery(".pmpro_level-select input").change();
 });
 function updateLevelSummary() {
 	var message = "";
