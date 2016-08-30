@@ -5,14 +5,14 @@
 // if a list of level ids is passed to checkout, pull out the first as the main level and save the rest
 function pmprommpu_init_checkout_levels() {		
 	//update and save pmpro checkout levels
-	if(!empty($_REQUEST['level'])) {
+	if(!is_admin() && !empty($_REQUEST['level']) && $_REQUEST['level'] != 'all') {
 		global $pmpro_checkout_level_ids, $pmpro_checkout_levels;
 		
 		//convert spaces back to +
 		$_REQUEST['level'] = str_replace(array(' ', '%20'), '+', $_REQUEST['level']);
 		
 		//get the ids
-		$pmpro_checkout_level_ids = array_map('intval', explode("+", preg_replace("[^0-9^\+]", "", $_REQUEST['level'])));
+		$pmpro_checkout_level_ids = array_map('intval', explode("+", preg_replace("[^0-9\+]", "", $_REQUEST['level'])));
 
 		//setup pmpro_checkout_levels global
 		$pmpro_checkout_levels = array();
@@ -27,7 +27,7 @@ function pmprommpu_init_checkout_levels() {
 	}
 	
 	//update and save pmpro checkout deleted levels
-	if(!empty($_REQUEST['dellevels'])) {
+	if(!is_admin() && !empty($_REQUEST['dellevels'])) {
 		global $pmpro_checkout_del_level_ids;
 		
 		//convert spaces back to +
@@ -35,7 +35,7 @@ function pmprommpu_init_checkout_levels() {
 		
 		//get the ids
 		$pmpro_checkout_del_level_ids = array();		
-		$pmpro_checkout_del_level_ids = array_map('intval', explode("+", preg_replace("[^0-9^\+]", "", $_REQUEST['dellevels'])));	
+		$pmpro_checkout_del_level_ids = array_map('intval', explode("+", preg_replace("[^0-9\+]", "", $_REQUEST['dellevels'])));	
 	}	
 }
 add_action('init', 'pmprommpu_init_checkout_levels', 1);
@@ -79,30 +79,41 @@ add_filter( 'pmprommpu_checkout_level_text', 'pmprommpu_checkout_level_text', 10
 // Ensure than when a membership level is changed, it doesn't delete the old one or unsubscribe them at the gateway. 
 // We'll handle both later in the process.
 function pmprommpu_pmpro_deactivate_old_levels($insetting) {
-	//don't deactivate other levels
-	return false;
+	global $pmpro_pages;
+	
+	//don't deactivate other levels, unless we're on the cancel page and set to cancel all
+	if(!is_page($pmpro_pages['cancel']) && (empty($_REQUEST['level']) || $_REQUEST['level'] != 'all'))
+		$insetting = false;
+	
+	return $insetting;
 }
 add_filter( 'pmpro_deactivate_old_levels', 'pmprommpu_pmpro_deactivate_old_levels', 10, 1);
 
 function pmprommpu_pmpro_cancel_previous_subscriptions($insetting) {
-	//don't cancel other subscriptions
-	return false;
+	global $pmpro_pages;
+	
+	//don't cancel other subscriptions, unless we're on the cancel page and set to cancel all
+	if(!is_page($pmpro_pages['cancel']) && (empty($_REQUEST['level']) || $_REQUEST['level'] != 'all'))
+		$insetting = false;
+		
+	return $insetting;
 }
 add_filter( 'pmpro_cancel_previous_subscriptions', 'pmprommpu_pmpro_cancel_previous_subscriptions', 10, 1);
 
-// Called after the checkout process, we are going to do two things here:
-// First, any unsubscriptions that the user opted for (whose level ids are in $_REQUEST['dellevels']) will be dropped.
+// Called after the checkout process, we are going to do three things here:
+// First, process any extra levels that need to be charged/subbed for 
+// Then, any unsubscriptions that the user opted for (whose level ids are in $_REQUEST['dellevels']) will be dropped.
 // Then, any remaining conflicts will be dropped.
-function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
+function pmprommpu_pmpro_after_checkout($user_id, $checkout_statuses) {
 	global $wpdb, $gateway, $discount_code, $discount_code_id, $pmpro_msg, $pmpro_msgt, $pmpro_level, $pmpro_checkout_levels, $pmpro_checkout_del_level_ids;
 
 	//make sure we only call this once
-	remove_action( 'pmpro_after_checkout', 'pmprommpu_unsub_after_all_checkouts', 99, 2);
+	remove_action( 'pmpro_after_checkout', 'pmprommpu_pmpro_after_checkout', 99, 2);
 		
 	//process extra checkouts
 	if(!empty($pmpro_checkout_levels)) {		
 		global $username, $password, $password2, $bfirstname, $blastname, $baddress1, $baddress2, $bcity, $bstate, $bzipcode, $bcountry, $bphone, $bemail, $bconfirmemail, $CardType, $AccountNumber, $ExpirationMonth, $ExpirationYear;
-		
+				
 		foreach($pmpro_checkout_levels as $level) {			
 			//skip the "main" level we already processed
 			if($level->id == $pmpro_level->id)
@@ -117,7 +128,7 @@ function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
 				$morder->InitialPayment   = $level->initial_payment;
 				$morder->PaymentAmount    = $level->billing_amount;
 				$morder->ProfileStartDate = date( "Y-m-d", current_time( "timestamp" ) ) . "T0:0:0";
-				$morder->BillingPeriod    = $pmpro_level->cycle_period;
+				$morder->BillingPeriod    = $level->cycle_period;
 				$morder->BillingFrequency = $level->cycle_number;
 
 				if($level->billing_limit ) {
@@ -181,11 +192,33 @@ function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
 					$pmpro_msgt      = "pmpro_success";
 					$pmpro_confirmed = true;
 				} else {
-					$pmpro_msg = $morder->error;
-					if ( empty( $pmpro_msg ) ) {
-						$pmpro_msg = __( "Unknown error generating account. Please contact us to set up your membership.", "pmpro" );
+					//Payment failed. We need to backout this order and all previous orders.
+					
+					//give the user back the levels they had when they started.
+					
+
+					//find all orders for this checkout, refund and cancel them
+					$checkout_orders = pmpro_getMemberOrdersByCheckoutID($morder->checkout_id);					
+					foreach($checkout_orders as $checkout_order) {
+						if($checkout_order->status != 'error')
+							$checkout_order->cancel();
 					}
+					
+					//set the error message
+					$pmpro_msg = __( "ERROR: This checkout included several payments. Some of them were processed successfully and some failed. We have refunded the payments made. You should contact the site owner to resolve this issue.", "pmprommpu" );
+
+					if(!empty($morder->error))
+						$pmpro_msg .= " " . __("More information:", "pmprommpu") . " " . $morder->error;					
 					$pmpro_msgt = "pmpro_error";
+
+					//don't send an email
+					add_filter('pmpro_send_checkout_emails', '__return_false');
+
+					//don't redirect
+					add_filter('pmpro_confirmation_url', '__return_false');
+
+					//bail from this function
+					return;
 				}
 			} else {
 				//empty order for free levels
@@ -250,7 +283,7 @@ function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
 				'enddate'         => $enddate
 			);
 
-			if ( pmpro_changeMembershipLevel( $level, $user_id, 'changed' ) ) {
+			if ( pmpro_changeMembershipLevel( $custom_level, $user_id, 'changed' ) ) {
 				//we're good				
 
 				//add an item to the history table, cancel old subscriptions
@@ -299,7 +332,7 @@ function pmprommpu_unsub_after_all_checkouts($user_id, $checkout_statuses) {
 		}
 	}	
 }
-add_action( 'pmpro_after_checkout', 'pmprommpu_unsub_after_all_checkouts', 99, 2);
+add_action( 'pmpro_after_checkout', 'pmprommpu_pmpro_after_checkout', 99, 2);
 
 // Now, on to the admin pages. Let's start with membership levels...
 
