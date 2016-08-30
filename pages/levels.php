@@ -205,15 +205,26 @@ jQuery(document).ready(function() {
 	jQuery(".pmpro_mmpu_checkout-button").click(function() {
 		var addlevs = joinObjectKeys("+", addedlevels);
 		var dellevs = joinObjectKeys("+", removedlevels);
-		var url = '<?php echo pmpro_url("checkout", ""); ?>';
+		var url;
 
-		if(addedlevels.length<1 && removedlevels.length>0) {
+		if(jQuery.isEmptyObject(addedlevels) && !jQuery.isEmptyObject(removedlevels)) {
+			//only removing, go to cancel
 			url = '<?php echo pmpro_url("cancel", ""); ?>';
+			
+			if(url.indexOf('?') > -1)
+				url = url + '&level=' + dellevs;
+			else
+				url = url + '?level=' + dellevs;			
+		} else {
+			//go to checkout
+			url = '<?php echo pmpro_url("checkout", ""); ?>';
+			
+			if(url.indexOf('?') > -1)
+				url = url + '&level=' + addlevs + '&dellevels=' + dellevs;
+			else
+				url = url + '?level=' + addlevs + '&dellevels=' + dellevs;
 		}
-		if(url.indexOf('?') > -1)
-			url = url + '&level=' + addlevs + '&dellevels=' + dellevs;
-		else
-			url = url + '?level=' + addlevs + '&dellevels=' + dellevs;
+		
 		window.location.href = url;
 	});
 });

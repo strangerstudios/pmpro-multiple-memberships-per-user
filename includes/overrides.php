@@ -12,18 +12,7 @@ function pmprommpu_init_checkout_levels() {
 		$_REQUEST['level'] = str_replace(array(' ', '%20'), '+', $_REQUEST['level']);
 		
 		//get the ids
-		$pmpro_checkout_level_ids = array_map('intval', explode("+", preg_replace("[^0-9\+]", "", $_REQUEST['level'])));
-
-		// trying to add a level that is already had? Sorry, Charlie.
-		$oktoproceed = true;
-		$currentlevels = pmpro_getMembershipLevelsForUser();
-		foreach($currentlevels as $curcurlevel) {
-			if(in_array($curcurlevel->ID, $pmpro_checkout_level_ids)) { $oktoproceed = false; }
-		}
-		if(! $oktoproceed) {
-			wp_redirect(pmpro_url("levels"));
-			exit;
-		}
+		$pmpro_checkout_level_ids = array_map('intval', explode("+", preg_replace("[^0-9\+]", "", $_REQUEST['level'])));		
 
 		//setup pmpro_checkout_levels global
 		$pmpro_checkout_levels = array();
@@ -50,6 +39,24 @@ function pmprommpu_init_checkout_levels() {
 	}	
 }
 add_action('init', 'pmprommpu_init_checkout_levels', 100);
+
+// trying to add a level that is already had? Sorry, Charlie.
+function pmprommpu_template_redirect_dupe_level_check() {
+	global $pmpro_checkout_level_ids;
+	
+	//on the checkout page?
+	if(!empty($pmpro_checkout_level_ids) && !is_admin() && !empty($_REQUEST['level']) && !is_page($pmpro_pages['cancel'])) {
+		$oktoproceed = true;
+		$currentlevels = pmpro_getMembershipLevelsForUser();
+		foreach($currentlevels as $curcurlevel) {
+			if(in_array($curcurlevel->ID, $pmpro_checkout_level_ids)) { $oktoproceed = false; }
+		}
+		if(! $oktoproceed) {
+			wp_redirect(pmpro_url("levels"));
+			exit;
+		}
+	}
+}
 
 // the user pages - the actual function is in functions.php
 add_filter( 'pmpro_pages_custom_template_path', 'pmprommpu_override_user_pages', 10, 5 );
