@@ -14,6 +14,17 @@ function pmprommpu_init_checkout_levels() {
 		//get the ids
 		$pmpro_checkout_level_ids = array_map('intval', explode("+", preg_replace("[^0-9\+]", "", $_REQUEST['level'])));
 
+		// trying to add a level that is already had? Sorry, Charlie.
+		$oktoproceed = true;
+		$currentlevels = pmpro_getMembershipLevelsForUser();
+		foreach($currentlevels as $curcurlevel) {
+			if(in_array($curcurlevel->ID, $pmpro_checkout_level_ids)) { $oktoproceed = false; }
+		}
+		if(! $oktoproceed) {
+			wp_redirect(pmpro_url("levels"));
+			exit;
+		}
+
 		//setup pmpro_checkout_levels global
 		$pmpro_checkout_levels = array();
 		foreach($pmpro_checkout_level_ids as $level_id) {
@@ -38,7 +49,7 @@ function pmprommpu_init_checkout_levels() {
 		$pmpro_checkout_del_level_ids = array_map('intval', explode("+", preg_replace("[^0-9\+]", "", $_REQUEST['dellevels'])));	
 	}	
 }
-add_action('init', 'pmprommpu_init_checkout_levels', 1);
+add_action('init', 'pmprommpu_init_checkout_levels', 100);
 
 // the user pages - the actual function is in functions.php
 add_filter( 'pmpro_pages_custom_template_path', 'pmprommpu_override_user_pages', 10, 5 );
@@ -105,8 +116,8 @@ add_filter( 'pmpro_cancel_previous_subscriptions', 'pmprommpu_pmpro_cancel_previ
 // Then, any unsubscriptions that the user opted for (whose level ids are in $_REQUEST['dellevels']) will be dropped.
 // Then, any remaining conflicts will be dropped.
 function pmprommpu_pmpro_after_checkout($user_id, $checkout_statuses) {
-	global $wpdb, $gateway, $discount_code, $discount_code_id, $pmpro_msg, $pmpro_msgt, $pmpro_level, $pmpro_checkout_levels, $pmpro_checkout_del_level_ids;
-
+	global $wpdb, $current_user, $gateway, $discount_code, $discount_code_id, $pmpro_msg, $pmpro_msgt, $pmpro_level, $pmpro_checkout_levels, $pmpro_checkout_del_level_ids, $pmpro_checkout_id;
+	
 	//make sure we only call this once
 	remove_action( 'pmpro_after_checkout', 'pmprommpu_pmpro_after_checkout', 99, 2);
 		
@@ -296,6 +307,8 @@ function pmprommpu_pmpro_after_checkout($user_id, $checkout_statuses) {
 		}
 	}
 	
+	pmprommpu_send_checkout_emails($user_id, $pmpro_checkout_id);
+
 	//remove levels to be removed
 	if(!empty($pmpro_checkout_del_level_ids)) {		
 		foreach($pmpro_checkout_del_level_ids as $idtodel) {

@@ -2,17 +2,9 @@
 
 //	Functions to modify core PMPro e-mail behaviors.
 
-function pmprommpu_send_checkout_emails($user_id, $checkout_statuses) {
+function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 	global $wpdb, $pmpro_levels;
 
-	// first, let's get the checkout ID for the group.
-	$checkout_id = -1;
-	foreach($checkout_statuses as $mystatus) { // loop through all, just in case the first one doesn't have an ID
-		if($mystatus['order']->checkout_id>0) {
-			$checkout_id = $mystatus['order']->checkout_id;
-		}
-	}
-	
 	if($checkout_id>0) {
 		// then we'll get a combo invoice
 		$invoice = new MemberInvoice();
