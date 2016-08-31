@@ -56,13 +56,13 @@ class MemberInvoice extends MemberOrder {
 				if($ordercount == 1) { $this->membership_id = $temporder->membership_id; } else { $this->membership_id .= ",".$temporder->membership_id; }
 				if($ordercount == 1) { $this->paypal_token = $temporder->paypal_token; } else { $this->paypal_token = "Multiple"; }
 				$this->billing = new stdClass();
-				$this->billing->name = $temporder->billing_name;
-				$this->billing->street = $temporder->billing_street;
-				$this->billing->city = $temporder->billing_city;
-				$this->billing->state = $temporder->billing_state;
-				$this->billing->zip = $temporder->billing_zip;
-				$this->billing->country = $temporder->billing_country;
-				$this->billing->phone = $temporder->billing_phone;
+				$this->billing->name = $temporder->billing->name;
+				$this->billing->street = $temporder->billing->street;
+				$this->billing->city = $temporder->billing->city;
+				$this->billing->state = $temporder->billing->state;
+				$this->billing->zip = $temporder->billing->zip;
+				$this->billing->country = $temporder->billing->country;
+				$this->billing->phone = $temporder->billing->phone;
 
 				//split up some values
 				$nameparts = pnp_split_full_name($this->billing->name);
