@@ -23,7 +23,7 @@ function pmprommpu_init_checkout_levels() {
 		//update default request vars to only point to one (main) level
 		$_REQUEST['level'] = $pmpro_checkout_level_ids[0];
 		$_GET['level'] = $_REQUEST['level'];
-		$_POST['level'] = $_POST['level'];
+		$_POST['level'] = $_REQUEST['level'];
 	}
 	
 	//update and save pmpro checkout deleted levels
@@ -130,7 +130,7 @@ function pmprommpu_pmpro_after_checkout($user_id, $checkout_statuses) {
 		
 	//process extra checkouts
 	if(!empty($pmpro_checkout_levels)) {		
-		global $username, $password, $password2, $bfirstname, $blastname, $baddress1, $baddress2, $bcity, $bstate, $bzipcode, $bcountry, $bphone, $bemail, $bconfirmemail, $CardType, $AccountNumber, $ExpirationMonth, $ExpirationYear;
+		global $username, $password, $password2, $bfirstname, $blastname, $baddress1, $baddress2, $bcity, $bstate, $bzipcode, $bcountry, $bphone, $bemail, $bconfirmemail, $CardType, $AccountNumber, $ExpirationMonth, $ExpirationYear, $CVV;
 				
 		foreach($pmpro_checkout_levels as $level) {			
 			//skip the "main" level we already processed
@@ -212,18 +212,23 @@ function pmprommpu_pmpro_after_checkout($user_id, $checkout_statuses) {
 				} else {
 					//Payment failed. We need to backout this order and all previous orders.
 					
-					//give the user back the levels they had when they started.
-					
-
 					//find all orders for this checkout, refund and cancel them
 					$checkout_orders = pmpro_getMemberOrdersByCheckoutID($morder->checkout_id);					
 					foreach($checkout_orders as $checkout_order) {
-						if($checkout_order->status != 'error')
+						if($checkout_order->status != 'error') {
+							//try to refund
+							if($checkout_order->gateway == "stripe") {
+								//TODO: abstract this and implement refund for other gateways
+								$refunded = $checkout_order->Gateway->refund($checkout_order);
+							}
+
+							//cancel
 							$checkout_order->cancel();
+						}
 					}
 					
 					//set the error message
-					$pmpro_msg = __( "ERROR: This checkout included several payments. Some of them were processed successfully and some failed. We have refunded the payments made. You should contact the site owner to resolve this issue.", "pmprommpu" );
+					$pmpro_msg = __( "ERROR: This checkout included several payments. Some of them were processed successfully and some failed. We have attempted to refund any payments made. You should contact the site owner to resolve this issue.", "pmprommpu" );
 
 					if(!empty($morder->error))
 						$pmpro_msg .= " " . __("More information:", "pmprommpu") . " " . $morder->error;					
