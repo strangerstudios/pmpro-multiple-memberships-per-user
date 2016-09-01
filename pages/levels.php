@@ -212,9 +212,9 @@ jQuery(document).ready(function() {
 			url = '<?php echo pmpro_url("cancel", ""); ?>';
 			
 			if(url.indexOf('?') > -1)
-				url = url + '&level=' + dellevs;
+				url = url + '&levelstocancel=' + dellevs;
 			else
-				url = url + '?level=' + dellevs;			
+				url = url + '?levelstocancel=' + dellevs;			
 		} else {
 			//go to checkout
 			url = '<?php echo pmpro_url("checkout", ""); ?>';
