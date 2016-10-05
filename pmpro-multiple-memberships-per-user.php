@@ -9,6 +9,25 @@ Author URI: http://www.square-lines.com
 */
 
 /*
+ * License:
+
+ Copyright 2016 - Stranger Studios, LLC
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License, version 2, as
+ published by the Free Software Foundation.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+/*
 	The Story
 	* Add a new section to the edit membership level page, labeled "Level Group".
 	* Can choose an existing group from a dropdown or add a new group with a text label.
@@ -27,6 +46,7 @@ Author URI: http://www.square-lines.com
 */
 
 define("PMPROMMPU_DIR", dirname(__FILE__)); // signals our presence to the mother ship, and other add-ons
+define("PMPROMMPU_VER", ".1."); // Version string to signal cache refresh during JS/CSS updates
 
 require_once(PMPROMMPU_DIR . "/includes/upgrades.php");		// to handle upgrades and to do initial setup
 require_once(PMPROMMPU_DIR . "/includes/functions.php");	// misc helper functions
@@ -71,17 +91,17 @@ register_deactivation_hook(__FILE__, 'pmprommpu_deactivation');
 function pmprommpu_init() {
 	if(is_admin()) {
 		$csspath = plugins_url("css/jquery-ui.min.css", __FILE__);
-		wp_enqueue_style( 'pmprommpu_jquery_ui', $csspath, array(), 1.0, "screen");
+		wp_enqueue_style( 'pmprommpu_jquery_ui', $csspath, array(), PMPROMMPU_VER, "screen");
 		$csspath = plugins_url("css/jquery-ui.structure.min.css", __FILE__);
-		wp_enqueue_style( 'pmprommpu_jquery_ui_structure', $csspath, array(), 1.0, "screen");
+		wp_enqueue_style( 'pmprommpu_jquery_ui_structure', $csspath, array(), PMPROMMPU_VER, "screen");
 		$csspath = plugins_url("css/jquery-ui.theme.min.css", __FILE__);
-		wp_enqueue_style( 'pmprommpu_jquery_ui_theme', $csspath, array(), 1.0, "screen");
+		wp_enqueue_style( 'pmprommpu_jquery_ui_theme', $csspath, array(), PMPROMMPU_VER, "screen");
 
 		$csspath = plugins_url("css/admin.css", __FILE__);
-		wp_enqueue_style( 'pmprommpu_admin', $csspath, array(), 1.0, "screen");
+		wp_enqueue_style( 'pmprommpu_admin', $csspath, array(), PMPROMMPU_VER, "screen");
 	} else {
 		$csspath = plugins_url("css/frontend.css", __FILE__);
-		wp_enqueue_style( 'pmprommpu_frontend', $csspath, array(), 1.0, "screen");
+		wp_enqueue_style( 'pmprommpu_frontend', $csspath, array(), PMPROMMPU_VER, "screen");
 	}
 }
 add_action( 'init', "pmprommpu_init");

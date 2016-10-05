@@ -1,4 +1,22 @@
 <?php
+/*
+ * License:
+
+ Copyright 2016 - Stranger Studios, LLC
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License, version 2, as
+ published by the Free Software Foundation.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 // This file has miscellaneous functions to help things run smoothly.
 
@@ -70,20 +88,38 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 	$grouplist = $wpdb->get_col("SELECT id FROM $wpdb->pmpro_groups ORDER BY displayorder,id ASC");
 	if($grouplist) {
 		foreach($grouplist as $curgroup) {
+
 			$curgroup = intval($curgroup);
-			$levelsingroup = $wpdb->get_col("SELECT level FROM $wpdb->pmpro_membership_levels_groups mlg WHERE mlg.group=$curgroup ORDER BY level ASC");
+
+			$levelsingroup = $wpdb->get_col(
+				$wpdb->prepare( "
+					SELECT level 
+					FROM {$wpdb->pmpro_membership_levels_groups} AS mlg 
+					INNER JOIN {$wpdb->pmpro_membership_levels} AS ml ON ml.id = mlg.level AND ml.allow_signups LIKE %s
+					WHERE mlg.group = %d 
+					ORDER BY level ASC",
+				($includehidden ? '%' : 1),
+				$curgroup
+				)
+			);
+
 			if(count($order)>0) {
+
 				$mylevels = array();
+
 				foreach($order as $level_id) {
 					if(in_array($level_id, $levelsingroup)) { $mylevels[] = $level_id; }
 				}
+
 				$retarray[$curgroup] = $mylevels;
+
 			} else {
+
 				$retarray[$curgroup] = $levelsingroup;
 			}
-
 		}
 	}
+
 	return $retarray;
 }
 
