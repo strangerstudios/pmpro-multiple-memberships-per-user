@@ -45,6 +45,8 @@ if ( $pmpro_msg ) {
 		<?php
 		//$count = 0;				
 		foreach ( $displayorder as $group => $grouplevels ) {
+
+			if ( !empty( $grouplevels )) {
 			?>
 			<div id="pmpro_mmpu_group-<?php echo $pmpro_groups[ $group ]->id; ?>"
 			     class="pmpro_mmpu_group <?php if ( intval( $pmpro_groups[ $group ]->allow_multiple_selections ) == 0 ) { ?>selectone<?php } ?>">
@@ -122,6 +124,7 @@ if ( $pmpro_msg ) {
 				?>
 			</div> <!-- end pmpro_mmpu_group-ID -->
 			<?php
+			}
 		}
 		?>
 		<div class="pmpro_mmpu_checkout">
