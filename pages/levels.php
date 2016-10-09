@@ -20,7 +20,12 @@
 
 global $wpdb, $pmpro_msg, $pmpro_msgt, $current_user;
 
-$pmpro_levels = pmpro_getAllLevels( false, true );
+global $pmpro_levels;
+
+if ( !empty( $pmpro_levels ) ) {
+	$pmpro_levels = pmpro_getAllLevels( false, true );
+}
+
 $pmpro_groups = pmprommpu_get_groups();
 
 $incoming_levels = pmpro_getMembershipLevelsForUser();
