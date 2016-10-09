@@ -81,6 +81,15 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 	
 	$pmpro_levels = pmpro_getAllLevels($includehidden, true);
 	$pmpro_level_order = pmpro_getOption('level_order');
+	$pmpro_levels = apply_filters('pmpro_levels_array', $pmpro_levels );
+
+	$include = array();
+
+	foreach( $pmpro_levels as $level ) {
+		$include[] = $level->id;
+	}
+
+	$included = esc_sql( implode(',', $include) );
 
 	$order = array();
 	if(! empty($pmpro_level_order)) { $order = explode(',', $pmpro_level_order); }
@@ -97,6 +106,7 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 					FROM {$wpdb->pmpro_membership_levels_groups} AS mlg 
 					INNER JOIN {$wpdb->pmpro_membership_levels} AS ml ON ml.id = mlg.level AND ml.allow_signups LIKE %s
 					WHERE mlg.group = %d 
+					AND ml.id IN (" . $included ." )
 					ORDER BY level ASC",
 				($includehidden ? '%' : 1),
 				$curgroup
