@@ -68,9 +68,10 @@ function pmprommpu_set_level_for_group($levelid, $groupid) {
 	
 	$levelid = intval($levelid);
 	$groupid = intval($groupid); // just to be safe
-	
-	$wpdb->query("DELETE FROM $wpdb->pmpro_membership_levels_groups WHERE level=$levelid");
-	$wpdb->insert($wpdb->pmpro_membership_levels_groups, array('level' => $levelid, 'group' => $groupid), array('%d', '%d'));
+
+	// TODO: Error checking would be smart.
+	$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array( 'level' => $levelid ) );
+	$wpdb->insert($wpdb->pmpro_membership_levels_groups, array('level' => $levelid, 'group' => $groupid), array('%d', '%d' ) );
 }
 
 // Return an array of the groups and levels in display order - keys are group ID, and values are their levels, in display order
@@ -94,7 +95,7 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 	$order = array();
 	if(! empty($pmpro_level_order)) { $order = explode(',', $pmpro_level_order); }
 
-	$grouplist = $wpdb->get_col("SELECT id FROM $wpdb->pmpro_groups ORDER BY displayorder,id ASC");
+	$grouplist = $wpdb->get_col("SELECT `id` FROM {$wpdb->pmpro_groups} ORDER BY `displayorder`, `id` ASC");
 	if($grouplist) {
 		foreach($grouplist as $curgroup) {
 
@@ -104,9 +105,9 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 				$wpdb->prepare( "
 					SELECT level 
 					FROM {$wpdb->pmpro_membership_levels_groups} AS mlg 
-					INNER JOIN {$wpdb->pmpro_membership_levels} AS ml ON ml.id = mlg.level AND ml.allow_signups LIKE %s
-					WHERE mlg.group = %d 
-					AND ml.id IN (" . $included ." )
+					INNER JOIN {$wpdb->pmpro_membership_levels} AS ml ON `ml.id` = `mlg.level` AND `ml.allow_signups` LIKE %s
+					WHERE `mlg.group` = %d 
+					AND `ml.id` IN (" . $included ." )
 					ORDER BY level ASC",
 				($includehidden ? '%' : 1),
 				$curgroup
@@ -150,7 +151,7 @@ function pmprommpu_get_group_for_level($levelid) {
 	
 	$levelid = intval($levelid); // just to be safe
 	
-	$groupid = $wpdb->get_var("SELECT mlg.group FROM $wpdb->pmpro_membership_levels_groups mlg WHERE level=$levelid");
+	$groupid = $wpdb->get_var( $wpdb->prepare( "SELECT `mlg.group` FROM {$wpdb->pmpro_membership_levels_groups} mlg WHERE `level` = %d", $levelid ) );
 	if($groupid) {
 		$groupid = intval($groupid);
 	} else {
@@ -166,8 +167,11 @@ function pmprommpu_set_group_for_level($levelid, $groupid) {
 	$levelid = intval($levelid); // just to be safe
 	$groupid = intval($groupid); // just to be safe
 
-	$wpdb->query("DELETE FROM $wpdb->pmpro_membership_levels_groups WHERE level=$levelid");
-	$success = $wpdb->query("INSERT INTO $wpdb->pmpro_membership_levels_groups (`group`,`level`) VALUES($groupid,$levelid)");
+	// TODO: Error checking would be smart.
+	$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array( 'level' => $levelid ) );
+
+	$success = $wpdb->insert( $wpdb->pmpro_membership_levels_groups, array('group' => $groupid, 'level' => $levelid ) );
+
 	if($success>0) {
 		return true;
 	} else {
@@ -179,7 +183,7 @@ function pmprommpu_set_group_for_level($levelid, $groupid) {
 function pmprommpu_add_group() {
 	global $wpdb;
 	
-	$displaynum = $wpdb->get_var("SELECT MAX(displayorder) FROM $wpdb->pmpro_groups");
+	$displaynum = $wpdb->get_var("SELECT MAX(displayorder) FROM {$wpdb->pmpro_groups}");
 	if(! $displaynum || intval($displaynum)<1) { $displaynum = 1; } else { $displaynum = intval($displaynum); $displaynum++; }
 	
 	if(array_key_exists("name", $_REQUEST)) {
@@ -206,15 +210,19 @@ function pmprommpu_edit_group() {
 		$allowmult = 0;
 		if(array_key_exists("mult", $_REQUEST) && intval($_REQUEST["mult"])>0) { $allowmult = 1; }
 		$grouptoedit = intval($_REQUEST["group"]);
+
+		// TODO: Error checking would be smart.
 		$wpdb->update($wpdb->pmpro_groups,
 			array(	'name' => $_REQUEST["name"],
-					'allow_multiple_selections' => $allowmult),
-			array(	'id' => $grouptoedit),
+					'allow_multiple_selections' => $allowmult
+			), // SET
+			array(	'id' => $grouptoedit), // WHERE
 			array(	'%s',
 					'%d',
-					'%d'),
-			array(	'%d')
-			);
+					'%d'
+			), // SET FORMAT
+			array(	'%d' ) // WHERE format
+		);
 	}
 	
 	wp_die();
@@ -226,8 +234,10 @@ function pmprommpu_del_group() {
 	
 	if(array_key_exists("group", $_REQUEST) && intval($_REQUEST["group"])>0) {
 		$groupid = intval($_REQUEST["group"]);
-		$wpdb->query("DELETE FROM $wpdb->pmpro_membership_levels_groups WHERE group=$groupid");
-		$wpdb->query("DELETE FROM $wpdb->pmpro_groups WHERE id=$groupid");		
+
+		// TODO: Error checking would be smart.
+		$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array('group' => $groupid ) );
+		$wpdb->delete( $wpdb->pmpro_groups, array( 'id' => $groupid) );
 	}
 	
 	wp_die();
@@ -248,8 +258,12 @@ function pmprommpu_update_level_and_group_order() {
 			}
 		}
 		$ctr = 1;
+
+		// Inefficient for large groups/large numbers of groups
 		foreach($grouparr as $orderedgroup) {
-			$wpdb->query("UPDATE $wpdb->pmpro_groups SET displayorder=$ctr WHERE id=$orderedgroup");
+			
+			// TODO: Error checking would be smart.
+			$wpdb->update( $wpdb->pmpro_groups, array ( 'displayorder' => $ctr ), array( 'id' => $orderedgroup ) );
 			$ctr++;
 		}
 		pmpro_setOption('level_order', $levelarr);
@@ -286,7 +300,7 @@ function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to
 		if(empty($checkoutid) || intval($checkoutid)<1) { return $retval; }
 	}
 	
-	$querySql = "SELECT membership_id FROM $wpdb->pmpro_membership_orders WHERE checkout_id=$checkoutid AND (gateway='free' OR ";
+	$querySql = "SELECT membership_id FROM $wpdb->pmpro_membership_orders WHERE checkout_id = " . esc_sql( $checkoutid ) . " AND ( gateway = 'free' OR ";
 	if(!empty($statuses_to_check) && is_array($statuses_to_check)) {
 		$querySql .= "status IN('" . implode("','", $statuses_to_check) . "') ";
 	} elseif(!empty($statuses_to_check)) {
@@ -294,7 +308,7 @@ function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to
 	} else {
 		$querySql .= "status = 'success'";
 	}
-	$querySql .= ")";
+	$querySql .= " )";
 		
 	$levelids = $wpdb->get_col($querySql);
 	foreach($levelids as $thelevel) {
@@ -398,7 +412,7 @@ function pmprommpu_addMembershipLevel($inlevel = NULL, $user_id = NULL, $force_a
 		$groupid = pmprommpu_get_group_for_level($levelid);
 		if(array_key_exists($groupid, $allgroups) && $allgroups[$groupid]->allow_multiple_selections<1) { // There can be only one.
 			// Do they already have one in this group?
-			$otherlevels = $wpdb->get_col( $wpdb->prepare( "SELECT level FROM {$wpdb->pmpro_membership_levels_groups} WHERE group = %d AND level <>  %d", $groupid, $levelid ) );
+			$otherlevels = $wpdb->get_col( $wpdb->prepare( "SELECT level FROM {$wpdb->pmpro_membership_levels_groups} WHERE `group` = %d AND `level` <>  %d", $groupid, $levelid ) );
 			foreach($otherlevels as $thelevel) {
 				if(pmpro_hasMembershipLevel($thelevel, $user_id)) { return $return; }
 			}
