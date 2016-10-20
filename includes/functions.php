@@ -398,7 +398,7 @@ function pmprommpu_addMembershipLevel($inlevel = NULL, $user_id = NULL, $force_a
 		$groupid = pmprommpu_get_group_for_level($levelid);
 		if(array_key_exists($groupid, $allgroups) && $allgroups[$groupid]->allow_multiple_selections<1) { // There can be only one.
 			// Do they already have one in this group?
-			$otherlevels = $wpdb->get_col("SELECT level FROM $wpdb->pmpro_membership_levels_groups WHERE group=$groupid AND level != $levelid");
+			$otherlevels = $wpdb->get_col( $wpdb->prepare( "SELECT level FROM {$wpdb->pmpro_membership_levels_groups} WHERE group = %d AND level <>  %d", $groupid, $levelid ) );
 			foreach($otherlevels as $thelevel) {
 				if(pmpro_hasMembershipLevel($thelevel, $user_id)) { return $return; }
 			}
