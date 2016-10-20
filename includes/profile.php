@@ -193,7 +193,7 @@ global $current_user;
 	</tr>
 	</tbody>
 	</table>
-	<script>
+	<script type="text/javascript">
 		//vars with levels and groups
 		var alllevels = <?php echo json_encode($alllevels);?>;
 		var allgroups = <?php echo json_encode($allgroups);?>;
@@ -213,12 +213,12 @@ global $current_user;
 			if(group_id.length > 0) {
 				//add level select				
 				var levelselect = jQuery('<select class="new_levels_level" name="new_levels_level[]"></select>').appendTo(leveltd);				
-				levelselect.append('<option value="">-- '+<?php echo json_encode(__('Choose a Level', 'pmprommpu'));?>+' --</option>');
+				levelselect.append('<option value="">-- ' + <?php echo json_encode(__('Choose a Level', 'pmprommpu'));?> + ' --</option>');
 				for(item in levelsandgroups[group_id]) {					
 					levelselect.append('<option value="'+alllevels[levelsandgroups[group_id][item]].id+'">'+alllevels[levelsandgroups[group_id][item]].name+'</option>');
 				}
 			} else {
-				leveltd.html('<em>'+<?php echo json_encode(__('Choose a group first.', 'pmprommpu'));?>+'</em>');
+				leveltd.html('<em>' + <?php echo json_encode(__('Choose a group first.', 'pmprommpu'));?> + '</em>');
 			}
 		}
 		
