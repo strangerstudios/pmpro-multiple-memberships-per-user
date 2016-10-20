@@ -346,9 +346,33 @@ function pmprommpu_membership_level_profile_fields_update() {
 				if(!empty($doesitexpire)) { // we're going to expire.
 					//update the expiration date
 					$expiration_date = intval($_REQUEST['expires_year'][$expkey]) . "-" . str_pad(intval($_REQUEST['expires_month'][$expkey]), 2, "0", STR_PAD_LEFT) . "-" . str_pad(intval($_REQUEST['expires_day'][$expkey]), 2, "0", STR_PAD_LEFT);
-					$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = '" . $expiration_date . "' WHERE status = 'active' AND membership_id = '" . intval($thislevel) . "' AND user_id = '" . $user_id . "' LIMIT 1");
+
+					$wpdb->update(
+						$wpdb->pmpro_memberships_users,
+						array( 'enddate' => $expiration_date ),
+						array(
+							'status' => 'active',
+							'membership_id' => $thislevel,
+							'user_id' => $user_id ), // Where clause
+						array( '%s' ),  // format for data
+						array( '%s', '%d', '%d' ) // format for where clause
+					);
+
+					// $wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = '" . $expiration_date . "' WHERE status = 'active' AND membership_id = '" . intval($thislevel) . "' AND user_id = '" . $user_id . "' LIMIT 1");
 				} else { // No expiration for me!
-					$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = NULL WHERE status = 'active' AND membership_id = '" . intval($thislevel) . "' AND user_id = '" . $user_id . "' LIMIT 1");
+					$wpdb->update(
+						$wpdb->pmpro_memberships_users,
+						array( 'enddate' => NULL ),
+						array(
+							'status' => 'active',
+							'membership_id' => $thislevel,
+							'user_id' => $user_id
+						),
+						array( NULL ),
+						array( '%s', '%d', '%d' )
+					);
+
+					// $wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = NULL WHERE status = 'active' AND membership_id = '" . intval($thislevel) . "' AND user_id = '" . $user_id . "' LIMIT 1");
 				}
 			}
 		}
@@ -370,9 +394,33 @@ function pmprommpu_membership_level_profile_fields_update() {
 				if(!empty($doweexpire)) { // we're going to expire.
 					//update the expiration date
 					$expiration_date = intval($_REQUEST['new_levels_expires_year'][$newkey]) . "-" . str_pad(intval($_REQUEST['new_levels_expires_month'][$newkey]), 2, "0", STR_PAD_LEFT) . "-" . str_pad(intval($_REQUEST['new_levels_expires_day'][$newkey]), 2, "0", STR_PAD_LEFT);
-					$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = '" . $expiration_date . "' WHERE status = 'active' AND membership_id = '" . intval($leveltoadd) . "' AND user_id = '" . $user_id . "' LIMIT 1");
+
+					$wpdb->update(
+						$wpdb->pmpro_memberships_users,
+						array( 'enddate' => $expiration_date ),
+						array(
+							'status' => 'active',
+							'membership_id' => $leveltoadd,
+							'user_id' => $user_id ), // Where clause
+						array( '%s' ),  // format for data
+						array( '%s', '%d', '%d' ) // format for where clause
+					);
+
+					// $wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = '" . $expiration_date . "' WHERE status = 'active' AND membership_id = '" . intval($leveltoadd) . "' AND user_id = '" . $user_id . "' LIMIT 1");
 				} else { // No expiration for me!
-					$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = NULL WHERE status = 'active' AND membership_id = '" . intval($leveltoadd) . "' AND user_id = '" . $user_id . "' LIMIT 1");
+					$wpdb->update(
+						$wpdb->pmpro_memberships_users,
+						array( 'enddate' => NULL ),
+						array(
+							'status' => 'active',
+							'membership_id' => $leveltoadd,
+							'user_id' => $user_id
+						),
+						array( NULL ),
+						array( '%s', '%d', '%d' )
+					);
+
+					// $wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET enddate = NULL WHERE status = 'active' AND membership_id = '" . intval($leveltoadd) . "' AND user_id = '" . $user_id . "' LIMIT 1");
 				}
 			}
 		}
