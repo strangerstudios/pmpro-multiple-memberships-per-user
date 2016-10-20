@@ -859,7 +859,8 @@ function pmprommpu_on_del_level( $levelid ) {
 	global $wpdb;
 	$levelid = intval( $levelid );
 
-	$wpdb->query( "DELETE FROM $wpdb->pmpro_membership_levels_groups WHERE `level`=$levelid" );
+	// TODO: Error checking would be smart.
+	$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array( 'level' => $levelid ) );
 }
 
 add_action( 'pmpro_delete_membership_level', 'pmprommpu_on_del_level' );
