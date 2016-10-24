@@ -89,34 +89,37 @@ add_filter( 'pmpro_pages_custom_template_path', 'pmprommpu_override_user_pages',
 // let's make sure jQuery UI Dialog is present on the admin side.
 function pmprommpu_addin_jquery_dialog( $pagehook ) {
 
-	global $pmpro_pages;
-
-	if ( strpos( $pagehook, "pmpro-membershiplevels" ) !== false ) { // only add the overhead on the membership levels page.
-		wp_enqueue_script( 'jquery-ui-dialog' );
-
-		// Load JS module for overrides.php (make it debuggable).
-		wp_register_script( 'pmprommpu-overrides',
-			plugins_url( '../js/pmprommpu-overrides.js', __FILE__ ),
-			array(
-				'jquery',
-				'jquery-ui',
-				'jquery-ui-widget',
-				'jquery-ui-dialog',
-			),
-			PMPROMMPU_VER
-		);
-
-		wp_localize_script( 'pmprommpu-overrides', 'pmprommpu', array(
-				'lang'     => array(
-					'confirm_delete' => __( 'Are you sure you want to delete this group? It cannot be undone.', 'pmprommpu' ),
-				),
-				'settings' => array(
-					'level_page_url' => add_query_arg( 'page', 'pmpro-membershiplevels', admin_url( 'admin.php' ) ),
-				)
-			)
-		);
-		wp_enqueue_script( 'pmprommpu-overrides' );
+	if ( false === stripos( $pagehook, "pmpro-membership" ) ) { // only add the overhead on the membership levels page.
+		return;
 	}
+
+	if (WP_DEBUG) {
+		error_log("Loading page: {$pagehook}");
+	}
+
+	wp_enqueue_script( 'jquery-ui-dialog' );
+
+	// Load JS module for overrides.php (make it debuggable).
+	wp_register_script( 'pmprommpu-overrides',
+		plugins_url( '../js/pmprommpu-overrides.js', __FILE__ ),
+		array(
+			'jquery',
+			'jquery-ui-dialog',
+		),
+		PMPROMMPU_VER
+	);
+
+	wp_localize_script( 'pmprommpu-overrides', 'pmprommpu', array(
+			'lang'     => array(
+				'confirm_delete' => __( 'Are you sure you want to delete this group? It cannot be undone.', 'pmprommpu' ),
+			),
+			'settings' => array(
+				'level_page_url' => add_query_arg( 'page', 'pmpro-membershiplevels', admin_url( 'admin.php' ) ),
+			)
+		)
+	);
+
+	wp_enqueue_script( 'pmprommpu-overrides' );
 }
 
 add_action( 'admin_enqueue_scripts', 'pmprommpu_addin_jquery_dialog' );
@@ -584,6 +587,7 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 			<tr class="grouprow <?= $onerowclass ?>">
 				<th rowspan="<?php echo max( count( $itslevels ) + 1, 2 ); ?>" scope="rowgroup" valign="top">
 					<h2><?php echo $groupname; ?></h2>
+					<input type="hidden" class="pmprommpu-allow-multi" name="allow_multi[]" value="<?php esc_attr_e( $groupallowsmult ); ?>">
 					<?php if ( ! $groupallowsmult ) { ?>
 						<p><em><?php _e( 'Users can only choose one level from this group.', 'pmprommpu' ); ?></em></p>
 					<?php } ?>
@@ -679,6 +683,7 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 		<p>Can users choose more than one level in this group? <input type="checkbox" id="groupallowmult" value="1"></p>
 	</div>
 	<script type="text/javascript">
+		/**
 		jQuery(document).ready(function () {
 			jQuery("#add-new-group").click(function () {
 				dialog = jQuery("#addeditgroupdialog").dialog({
@@ -804,6 +809,7 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 				});
 			}
 		});
+		*/
 	</script>
 	<?php
 	$rethtml = ob_get_clean();
