@@ -61,7 +61,7 @@ if(is_admin()) {
 
 // On activation, set a wp_option and set up initial group of all current levels if there are no groups.
 function pmprommpu_activation() {
-	if (! in_array( 'paid-memberships-pro/paid-memberships-pro.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+	if ( !is_plugin_active( 'paid-memberships-pro/paid-memberships-pro.php' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 		wp_die( "Paid Memberships Pro must be active in order to activate the MMPU add-on.", 'Plugin dependency check', array( 'back_link' => true ) );
 	}
