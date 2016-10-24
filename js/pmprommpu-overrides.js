@@ -60,14 +60,20 @@ jQuery(document).ready(function ($) {
         var groupid = parseInt($(this).attr("data-groupid"), 10);
         var allow_multi = $("#groupallowmult");
 
-        if (groupid > 0) {
-            gn_element.val($("#group" + groupid + "name").text());
+        var $current_text  = $(this).closest('th').find('h2').text();
+        var $current_multi = $(this).closest('th').find('.pmprommpu-allow-multi').val();
 
-            if (parseInt($("#group" + groupid + "allowmult").text(), 10) > 0) {
+        window.console.log("Text for row: " + $current_text );
+
+        if (groupid > 0) {
+            gn_element.val($current_text);
+
+            if (parseInt($current_multi) > 0) {
                 allow_multi.attr('checked', true);
             } else {
                 allow_multi.attr('checked', false);
             }
+
             var dialog = $("#addeditgroupdialog").dialog({
                 autoOpen: false,
                 title: "Edit Group",
@@ -162,4 +168,4 @@ jQuery(document).ready(function ($) {
         $.post(ajaxurl, data, function (response) {
         });
     }
-})(jQuery);
+});
