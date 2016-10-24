@@ -93,10 +93,6 @@ function pmprommpu_addin_jquery_dialog( $pagehook ) {
 		return;
 	}
 
-	if (WP_DEBUG) {
-		error_log("Loading page: {$pagehook}");
-	}
-
 	wp_enqueue_script( 'jquery-ui-dialog' );
 
 	// Load JS module for overrides.php (make it debuggable).
@@ -546,13 +542,10 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 	?>
 
 	<script>
-		jQuery(document).ready(function () {
+		/* jQuery(document).ready(function () {
 			jQuery('#add-new-group').insertAfter("h2 .add-new-h2");
-		});
+		}); */
 	</script>
-	<!--
-	<a id="add-new-group" class="add-new-h2" href="admin.php?page=pmpro-level-groups&edit=-1"><?php _e( 'Add New Group', 'pmprommpu' ); ?></a>
- -->
 	<a id="add-new-group" class="add-new-h2" href="#"><?php _e( 'Add New Group', 'pmprommpu' ); ?></a>
 
 	<table class="widefat mmpu-membership-levels">
