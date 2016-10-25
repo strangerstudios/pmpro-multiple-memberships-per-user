@@ -68,7 +68,7 @@
 		</table>				
 		<p class="submit topborder">
 			<input name="save" type="submit" class="button-primary" value="<?php _e('Save Level Group', 'pmprommpu'); ?>" /> 					
-			<input name="cancel" type="button" value="<?php _e('Cancel', 'pmprommpu'); ?>" onclick="location.href='<?php echo get_admin_url(NULL, '/admin.php?page=pmpro-membershiplevels')?>';" /> 					
+			<input name="cancel" type="button" value="<?php _e('Cancel', 'pmprommpu'); ?>" onclick="location.href='<?php echo add_query_arg( 'page', 'pmpro-membershiplevels', get_admin_url(NULL, 'admin.php') ); ?>';" />
 		</p>
 	</form>
 	</div>
