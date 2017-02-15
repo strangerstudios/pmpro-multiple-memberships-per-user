@@ -313,7 +313,7 @@ function pmprommpu_membership_level_profile_fields_update() {
 // 					break;
 // 				}
 // 			}
-// 			$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET `status`='admin_cancelled', `enddate`='".current_time('mysql')."' WHERE `id`=$subscription_id");
+// 			$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET status ='admin_cancelled', enddate ='".current_time('mysql')."' WHERE id=$subscription_id");
 // 			if(is_array($_REQUEST['cancel_subscription']) && array_key_exists($arraykey, $_REQUEST['cancel_subscription']) && !empty($_REQUEST['cancel_subscription'][$arraykey])) {
 // 				$other_order_ids = $wpdb->get_col("SELECT id FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . $user_id . "' AND status = 'success' AND membership_id = $leveltodel ORDER BY id DESC");
 // 
