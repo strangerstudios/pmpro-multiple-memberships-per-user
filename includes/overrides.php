@@ -576,8 +576,8 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 				$groupallowsmult = $allgroups[ $curgroup ]->allow_multiple_selections;
 			}
 			?>
-			<tbody data-groupid="<?= $curgroup ?>" class="membership-level-groups">
-			<tr class="grouprow <?= $onerowclass ?>">
+			<tbody data-groupid="<?php echo $curgroup; ?>" class="membership-level-groups">
+			<tr class="grouprow <?php echo $onerowclass; ?>">
 				<th rowspan="<?php echo max( count( $itslevels ) + 1, 2 ); ?>" scope="rowgroup" valign="top">
 					<h2><?php echo $groupname; ?></h2>
 					<input type="hidden" class="pmprommpu-allow-multi" name="allow_multi[]" value="<?php esc_attr_e( $groupallowsmult ); ?>">
@@ -585,22 +585,22 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 						<p><em><?php _e( 'Users can only choose one level from this group.', 'pmprommpu' ); ?></em></p>
 					<?php } ?>
 					<p>
-						<a data-groupid="<?= $curgroup ?>" title="<?php _e( 'edit', 'pmpro' ); ?>" href="#"
+						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'pmpro' ); ?>" href="#"
 						   class="editgrpbutt button-primary"><?php _e( 'edit', 'pmpro' ); ?></a>
 						<!--
-						<a data-groupid="<?= $curgroup ?>" title="<?php _e( 'edit', 'pmpro' ); ?>" href="admin.php?page=pmpro-membershiplevels&edit=<?php /* echo $level->id; */ ?>" class="editgrpbutt button-primary"><?php _e( 'edit', 'pmpro' ); ?></a>
+						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'pmpro' ); ?>" href="admin.php?page=pmpro-membershiplevels&edit=<?php /* echo $level->id; */ ?>" class="editgrpbutt button-primary"><?php _e( 'edit', 'pmpro' ); ?></a>
  -->
 						<?php if ( count( $itslevels ) == 0 ) { ?>
-							<a title="<?php _e( 'delete', 'pmpro' ); ?>" data-groupid="<?= $curgroup ?>"
+							<a title="<?php _e( 'delete', 'pmpro' ); ?>" data-groupid="<?php echo $curgroup; ?>"
 							   href="javascript: void(0);"
 							   class="delgroupbutt button-secondary"><?php _e( 'delete', 'pmpro' ); ?></a>
 						<?php } ?>
 					</p>
 				</th>
 				<?php /*
-				<td colspan=4><span class="groupname"><?=$groupname ?></span> <button type="button" data-groupid="<?=$curgroup ?>" class="editgrpbutt">Edit Group</button>
-					<span style="display: none;" id="group<?=$curgroup ?>name"><?=$groupname ?></span><span style="display: none;" id="group<?=$curgroup ?>allowmult"><?=$groupallowsmult ?></span>
-					<?php if(count($itslevels)==0) { ?> <button type="button" data-groupid="<?=$curgroup ?>" class="delgroupbutt">Delete Group</button> <?php } ?>
+				<td colspan=4><span class="groupname"><?php echo $groupname; ?></span> <button type="button" data-groupid="<?php echo $curgroup; ?>" class="editgrpbutt">Edit Group</button>
+					<span style="display: none;" id="group<?php echo $curgroup; ?>name"><?php echo $groupname; ?></span><span style="display: none;" id="group<?php echo$curgroup; ?>allowmult"><?php echo $groupallowsmult; ?></span>
+					<?php if(count($itslevels)==0) { ?> <button type="button" data-groupid="<?php echo $curgroup; ?>" class="delgroupbutt">Delete Group</button> <?php } ?>
 					</td>
 				<td colspan=3 style="text-align: right;">
 					<?php if(! $groupallowsmult) { ?>
@@ -828,9 +828,9 @@ function pmprommpu_add_group_to_level_options() {
 			<th scope="row" valign="top"><label><?php _e( 'Group', 'mmpu' ); ?></label></th>
 			<td><select name="groupid">
 					<?php foreach ( $allgroups as $curgroup ) { ?>
-						<option value="<?= $curgroup->id ?>" <?php if ( $curgroup->id == $prevgroup ) {
+						<option value="<?php echo $curgroup->id; ?>" <?php if ( $curgroup->id == $prevgroup ) {
 							echo "selected";
-						} ?>><?= $curgroup->name ?></option>
+						} ?>><?php echo $curgroup->name; ?></option>
 					<?php } ?>
 				</select></td>
 		</tr>
