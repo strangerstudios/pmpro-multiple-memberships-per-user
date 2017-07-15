@@ -1,4 +1,22 @@
 <?php
+/*
+ * License:
+
+ Copyright 2016 - Stranger Studios, LLC
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License, version 2, as
+ published by the Free Software Foundation.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 	global $gateway, $pmpro_review, $skip_account_fields, $pmpro_paypal_token, $wpdb, $current_user, $pmpro_msg, $pmpro_msgt, $pmpro_requirebilling, $pmpro_level, $pmpro_levels, $tospage, $pmpro_show_discount_code, $pmpro_error_fields;
 	global $discount_code, $username, $password, $password2, $bfirstname, $blastname, $baddress1, $baddress2, $bcity, $bstate, $bzipcode, $bcountry, $bphone, $bemail, $bconfirmemail, $CardType, $AccountNumber, $ExpirationMonth,$ExpirationYear;
 	global $pmpro_checkout_levels, $pmpro_checkout_level_ids, $pmpro_checkout_del_level_ids;
@@ -15,7 +33,7 @@
 <div id="pmpro_level-mmpu">
 <form id="pmpro_form" class="pmpro_form" action="<?php if(!empty($_REQUEST['review'])) echo pmpro_url("checkout", "?level=" . $pmpro_checkout_level_ids); ?>" method="post">
 	<input type="hidden" id="level" name="level" value="<?php echo implode('+', $pmpro_checkout_level_ids); ?>" />
-	<input type="hidden" id="levelstodel" name="levelstodel" value="<?php echo esc_attr($_REQUEST['dellevels']) ?>" />
+	<input type="hidden" id="levelstodel" name="levelstodel" value="<?php echo ( isset($_REQUEST['dellevels']) ? esc_attr( $_REQUEST['dellevels'] ) : null); ?>" />
 	<input type="hidden" id="checkjavascript" name="checkjavascript" value="1" />
 
 	<?php if($pmpro_msg)
@@ -96,78 +114,16 @@
 	</tbody>
 	</table>
 
-	<?php if($pmpro_show_discount_code) { ?>
-	<script>
-		<!--
-		//update discount code link to show field at top of form
-		jQuery('#other_discount_code_a').attr('href', 'javascript:void(0);');
-		jQuery('#other_discount_code_a').click(function() {
-			jQuery('#other_discount_code_tr').show();
-			jQuery('#other_discount_code_p').hide();
-			jQuery('#other_discount_code').focus();
-		});
-
-		//update real discount code field as the other discount code field is updated
-		jQuery('#other_discount_code').keyup(function() {
-			jQuery('#discount_code').val(jQuery('#other_discount_code').val());
-		});
-		jQuery('#other_discount_code').blur(function() {
-			jQuery('#discount_code').val(jQuery('#other_discount_code').val());
-		});
-
-		//update other discount code field as the real discount code field is updated
-		jQuery('#discount_code').keyup(function() {
-			jQuery('#other_discount_code').val(jQuery('#discount_code').val());
-		});
-		jQuery('#discount_code').blur(function() {
-			jQuery('#other_discount_code').val(jQuery('#discount_code').val());
-		});
-
-		//applying a discount code
-		jQuery('#other_discount_code_button').click(function() {
-			var code = jQuery('#other_discount_code').val();
-			var level_id = jQuery('#level').val();
-
-			if(code)
-			{
-				//hide any previous message
-				jQuery('.pmpro_discount_code_msg').hide();
-
-				//disable the apply button
-				jQuery('#other_discount_code_button').attr('disabled', 'disabled');
-
-				jQuery.ajax({
-					url: '<?php echo admin_url('admin-ajax.php')?>',type:'GET',timeout:<?php echo apply_filters("pmpro_ajax_timeout", 5000, "applydiscountcode");?>,
-					dataType: 'html',
-					data: "action=applydiscountcode&code=" + code + "&level=" + level_id + "&msgfield=pmpro_message",
-					error: function(xml){
-						alert('Error applying discount code [1]');
-
-						//enable apply button
-						jQuery('#other_discount_code_button').removeAttr('disabled');
-					},
-					success: function(responseHTML){
-						if (responseHTML == 'error')
-						{
-							alert('Error applying discount code [2]');
-						}
-						else
-						{
-							jQuery('#pmpro_message').html(responseHTML);
-						}
-
-						//enable invite button
-						jQuery('#other_discount_code_button').removeAttr('disabled');
-					}
-				});
-			}
-		});
-		-->
-	</script>
-	<?php } ?>
+	<!-- Moved embedded JS to own pmprommu-checkout.js file -->
 
 	<?php
 		do_action('pmpro_checkout_after_pricing_fields');
+
+	if ( is_array( $pmpro_checkout_level_ids) ) {
+		$checkout_levels = implode( ',', $pmpro_checkout_level_ids);
+	} else {
+		$checkout_levels = $pmpro_checkout_level_ids;
+	}
 	?>
 
 	<?php if(!$skip_account_fields && !$pmpro_review) { ?>
@@ -176,7 +132,7 @@
 		<tr>
 			<th>
 				<span class="pmpro_thead-name"><?php _e('Account Information', 'pmpro');?></span>
-				<span class="pmpro_thead-msg"><?php _e('Already have an account?', 'pmpro');?> <a href="<?php echo wp_login_url(pmpro_url("checkout", "?level=" . $pmpro_checkout_level_ids))?>"><?php _e('Log in here', 'pmpro');?></a></span>
+				<span class="pmpro_thead-msg"><?php _e('Already have an account?', 'pmpro');?> <a href="<?php echo wp_login_url(pmpro_url("checkout", "?level=" . $checkout_levels))?>"><?php _e('Log in here', 'pmpro');?></a></span>
 			</th>
 		</tr>
 	</thead>
@@ -540,31 +496,7 @@
 						{
 						?>
 						<input type="hidden" id="CardType" name="CardType" value="<?php echo esc_attr($CardType);?>" />
-						<script>
-							<!--
-							jQuery(document).ready(function() {
-									jQuery('#AccountNumber').validateCreditCard(function(result) {
-										var cardtypenames = {
-											"amex"                      : "American Express",
-											"diners_club_carte_blanche" : "Diners Club Carte Blanche",
-											"diners_club_international" : "Diners Club International",
-											"discover"                  : "Discover",
-											"jcb"                       : "JCB",
-											"laser"                     : "Laser",
-											"maestro"                   : "Maestro",
-											"mastercard"                : "Mastercard",
-											"visa"                      : "Visa",
-											"visa_electron"             : "Visa Electron"
-										};
-
-										if(result.card_type)
-											jQuery('#CardType').val(cardtypenames[result.card_type.name]);
-										else
-											jQuery('#CardType').val('Unknown Card Type');
-									});
-							});
-							-->
-						</script>
+						<!-- Moved embedded JS to own pmprommu-checkout.js file -->
 						<?php
 						}
 					?>
@@ -624,49 +556,8 @@
 		</tbody>
 		</table>
 	<?php } ?>
-	<script>
-		<!--
-		//checking a discount code
-		jQuery('#discount_code_button').click(function() {
-			var code = jQuery('#discount_code').val();
-			var level_id = jQuery('#level').val();
 
-			if(code)
-			{
-				//hide any previous message
-				jQuery('.pmpro_discount_code_msg').hide();
-
-				//disable the apply button
-				jQuery('#discount_code_button').attr('disabled', 'disabled');
-
-				jQuery.ajax({
-					url: '<?php echo admin_url('admin-ajax.php')?>',type:'GET',timeout:<?php echo apply_filters("pmpro_ajax_timeout", 5000, "applydiscountcode");?>,
-					dataType: 'html',
-					data: "action=applydiscountcode&code=" + code + "&level=" + level_id + "&msgfield=discount_code_message",
-					error: function(xml){
-						alert('Error applying discount code [1]');
-
-						//enable apply button
-						jQuery('#discount_code_button').removeAttr('disabled');
-					},
-					success: function(responseHTML){
-						if (responseHTML == 'error')
-						{
-							alert('Error applying discount code [2]');
-						}
-						else
-						{
-							jQuery('#discount_code_message').html(responseHTML);
-						}
-
-						//enable invite button
-						jQuery('#discount_code_button').removeAttr('disabled');
-					}
-				});
-			}
-		});
-		-->
-	</script>
+	<!-- Moved embedded JS to own pmprommu-checkout.js file -->
 
 	<?php do_action('pmpro_checkout_after_payment_information_fields'); ?>
 
@@ -740,66 +631,3 @@
 
 </div> <!-- end pmpro_level-ID -->
 
-<script>
-<!--
-	// Find ALL <form> tags on your page
-	jQuery('form').submit(function(){
-		// On submit disable its submit button
-		jQuery('input[type=submit]', this).attr('disabled', 'disabled');
-		jQuery('input[type=image]', this).attr('disabled', 'disabled');
-		jQuery('#pmpro_processing_message').css('visibility', 'visible');
-	});
-
-	//iOS Safari fix (see: http://stackoverflow.com/questions/20210093/stop-safari-on-ios7-prompting-to-save-card-data)
-	var userAgent = window.navigator.userAgent;
-	if(userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
-		jQuery('input[type=submit]').click(function() {
-			try{
-				jQuery("input[type=password]").attr("type", "hidden");
-			} catch(ex){
-				try {
-					jQuery("input[type=password]").prop("type", "hidden");
-				} catch(ex) {}
-			}
-		});
-	}
-
-	//add required to required fields
-	jQuery('.pmpro_required').after('<span class="pmpro_asterisk"> <abbr title="Required Field">*</abbr></span>');
-
-	//unhighlight error fields when the user edits them
-	jQuery('.pmpro_error').bind("change keyup input", function() {
-		jQuery(this).removeClass('pmpro_error');
-	});
-
-	//click apply button on enter in discount code box
-	jQuery('#discount_code').keydown(function (e){
-	    if(e.keyCode == 13){
-		   e.preventDefault();
-		   jQuery('#discount_code_button').click();
-	    }
-	});
-
-	//hide apply button if a discount code was passed in
-	<?php if(!empty($_REQUEST['discount_code'])) {?>
-		jQuery('#discount_code_button').hide();
-		jQuery('#discount_code').bind('change keyup', function() {
-			jQuery('#discount_code_button').show();
-		});
-	<?php } ?>
-
-	//click apply button on enter in *other* discount code box
-	jQuery('#other_discount_code').keydown(function (e){
-	    if(e.keyCode == 13){
-		   e.preventDefault();
-		   jQuery('#other_discount_code_button').click();
-	    }
-	});
--->
-</script>
-<script>
-<!--
-//add javascriptok hidden field to checkout
-jQuery("input[name=submit-checkout]").after('<input type="hidden" name="javascriptok" value="1" />');
--->
-</script>
