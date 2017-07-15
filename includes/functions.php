@@ -391,8 +391,13 @@ function pmprommpu_addMembershipLevel($inlevel = NULL, $user_id = NULL, $force_a
 	$return = false;
 
 	$levelid = -1;
-	if(is_object($inlevel) && !empty($inlevel->id)) {
-		$levelid = intval($inlevel->id);
+
+	// Make sure we have a level object.
+	if(is_array($inlevel))
+		$inlevel = (object) $inlevel;
+
+	if(is_object($inlevel) && ( !empty($inlevel->id) || !empty($inlevel->membership_id)) ) {
+		$levelid = !empty($inlevel->id) ? $inlevel->id : $inlevel->membership_id;
 	} elseif(is_numeric($inlevel) && intval($inlevel)>0) {
 		$levelid = intval($inlevel);
 	}
@@ -406,10 +411,11 @@ function pmprommpu_addMembershipLevel($inlevel = NULL, $user_id = NULL, $force_a
 	}
 	
 	$allgroups = pmprommpu_get_groups();
-	
+
 	// OK, we have the user and the level. Let's check to see if adding it is legal. Is it in a group where they can have only one?
 	if(!$force_add) {
 		$groupid = pmprommpu_get_group_for_level($levelid);
+
 		if(array_key_exists($groupid, $allgroups) && $allgroups[$groupid]->allow_multiple_selections<1) { // There can be only one.
 			// Do they already have one in this group?
 			$otherlevels = $wpdb->get_col( $wpdb->prepare( "SELECT level FROM {$wpdb->pmpro_membership_levels_groups} WHERE group = %d AND level <>  %d", $groupid, $levelid ) );
