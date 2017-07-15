@@ -24,7 +24,7 @@ class MemberInvoice extends MemberOrder {
 			$this->sqlQuery .= "AND (1=1 ";
 
 		// need to add back in free orders, because they don't get a success status.
-		$this->sqlQuery .= " OR `gateway`='free')";
+		$this->sqlQuery .= " OR gateway = 'free')";
 
 		//get id
 		$checkoutid = $wpdb->get_var($this->sqlQuery);
@@ -39,7 +39,7 @@ class MemberInvoice extends MemberOrder {
 			$this->sqlQuery .= "AND (1=1 ";
 
 		// need to add back in free orders, because they don't get a success status.
-		$this->sqlQuery .= " OR `gateway`='free')";
+		$this->sqlQuery .= " OR gateway = 'free')";
 
 		$idarray = $wpdb->get_col($this->sqlQuery);
 		$orderarray = array();
@@ -129,7 +129,7 @@ class MemberInvoice extends MemberOrder {
 // 
 // 		if($checkout_id<1) { return false; }
 // 
-// 		$this->membership_levels = $wpdb->get_results("SELECT l.id as level_id, l.id as `id`, l.name, l.description, l.allow_signups, l.expiration_number, l.expiration_period, mu.*, UNIX_TIMESTAMP(mu.startdate) as startdate, UNIX_TIMESTAMP(mu.enddate) as enddate, l.name, l.description, l.allow_signups FROM $wpdb->pmpro_membership_levels l LEFT JOIN $wpdb->pmpro_memberships_users mu ON l.id = mu.membership_id WHERE mu.status = 'active' AND l.id IN (" . $this->membership_id . ") AND mu.user_id = '" . $this->user_id . "'");
+// 		$this->membership_levels = $wpdb->get_results("SELECT l.id as level_id, l.id as id, l.name, l.description, l.allow_signups, l.expiration_number, l.expiration_period, mu.*, UNIX_TIMESTAMP(mu.startdate) as startdate, UNIX_TIMESTAMP(mu.enddate) as enddate, l.name, l.description, l.allow_signups FROM $wpdb->pmpro_membership_levels l LEFT JOIN $wpdb->pmpro_memberships_users mu ON l.id = mu.membership_id WHERE mu.status = 'active' AND l.id IN (" . $this->membership_id . ") AND mu.user_id = '" . $this->user_id . "'");
 // 
 // Leaving this discount code piece commented out because not sure if there's a need to adapt to this circumstance.
 // TODO: Confirm with testing.

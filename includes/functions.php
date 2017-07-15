@@ -95,7 +95,7 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 	$order = array();
 	if(! empty($pmpro_level_order)) { $order = explode(',', $pmpro_level_order); }
 
-	$grouplist = $wpdb->get_col("SELECT `id` FROM {$wpdb->pmpro_groups} ORDER BY `displayorder`, `id` ASC");
+	$grouplist = $wpdb->get_col("SELECT id FROM {$wpdb->pmpro_groups} ORDER BY displayorder, id ASC");
 	if($grouplist) {
 		foreach($grouplist as $curgroup) {
 
@@ -105,9 +105,9 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 				$wpdb->prepare( "
 					SELECT level 
 					FROM {$wpdb->pmpro_membership_levels_groups} AS mlg 
-					INNER JOIN {$wpdb->pmpro_membership_levels} AS ml ON `ml.id` = `mlg.level` AND `ml.allow_signups` LIKE %s
-					WHERE `mlg.group` = %d 
-					AND `ml.id` IN (" . $included ." )
+					INNER JOIN {$wpdb->pmpro_membership_levels} AS ml ON ml.id = mlg.level AND ml.allow_signups LIKE %s
+					WHERE mlg.group = %d 
+					AND ml.id IN (" . $included ." )
 					ORDER BY level ASC",
 				($includehidden ? '%' : 1),
 				$curgroup
@@ -151,7 +151,7 @@ function pmprommpu_get_group_for_level($levelid) {
 	
 	$levelid = intval($levelid); // just to be safe
 	
-	$groupid = $wpdb->get_var( $wpdb->prepare( "SELECT `mlg.group` FROM {$wpdb->pmpro_membership_levels_groups} mlg WHERE `level` = %d", $levelid ) );
+	$groupid = $wpdb->get_var( $wpdb->prepare( "SELECT mlg.group FROM {$wpdb->pmpro_membership_levels_groups} mlg WHERE level = %d", $levelid ) );
 	if($groupid) {
 		$groupid = intval($groupid);
 	} else {
@@ -412,7 +412,7 @@ function pmprommpu_addMembershipLevel($inlevel = NULL, $user_id = NULL, $force_a
 		$groupid = pmprommpu_get_group_for_level($levelid);
 		if(array_key_exists($groupid, $allgroups) && $allgroups[$groupid]->allow_multiple_selections<1) { // There can be only one.
 			// Do they already have one in this group?
-			$otherlevels = $wpdb->get_col( $wpdb->prepare( "SELECT level FROM {$wpdb->pmpro_membership_levels_groups} WHERE `group` = %d AND `level` <>  %d", $groupid, $levelid ) );
+			$otherlevels = $wpdb->get_col( $wpdb->prepare( "SELECT level FROM {$wpdb->pmpro_membership_levels_groups} WHERE group = %d AND level <>  %d", $groupid, $levelid ) );
 			foreach($otherlevels as $thelevel) {
 				if(pmpro_hasMembershipLevel($thelevel, $user_id)) { return $return; }
 			}
