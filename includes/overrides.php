@@ -655,7 +655,7 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 										'page'     => 'pmpro-membershiplevels',
 										'action'   => 'delete_membership_level',
 										'deleteid' => $level->id
-									), admin_url( 'admin.php' ) ); ?>'; void(0);"
+									), admin_url( 'admin.php' ) ); ?>'); void(0);"
 									class="button-secondary"><?php _e( 'delete', 'pmpro' ); ?></a></td>
 						</tr>
 						<?php
