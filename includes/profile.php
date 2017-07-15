@@ -166,6 +166,13 @@ global $current_user;
 			<em><?php _e('Choose a group first.', 'pmprommpu');?></em>
 		</td>
 		<td>
+			<?php
+				//default enddate values
+				$end_date = false;
+				$selected_expires_day = $current_day;
+				$selected_expires_month = date("m");
+				$selected_expires_year = (int)$current_year + 1;
+			?>
 			<select class="expires new_levels_expires" name="new_levels_expires[]">
 				<option value="0" <?php if(!$end_date) { ?>selected="selected"<?php } ?>><?php _e("No", "pmpro");?></option>
 				<option value="1" <?php if($end_date) { ?>selected="selected"<?php } ?>><?php _e("Yes", "pmpro");?></option>
