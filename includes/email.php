@@ -8,7 +8,7 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 	if($checkout_id>0) {
 		// then we'll get a combo invoice
 		$invoice = new MemberInvoice();
-		if(! $invoice->getLastMemberInvoice($user_id)) {
+		if(! $invoice->getLastMemberInvoice($user_id, array('success', 'pending'))) {
 			$invoice = null;
 		}
 		$levelids = explode(',', $invoice->membership_id);

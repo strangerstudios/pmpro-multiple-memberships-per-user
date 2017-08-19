@@ -22,7 +22,10 @@ our add ons over time to support MMPU and will add notices here and on our websi
 1. Upload the `pmpro-multiple-memberships-per-user` folder to the `/wp-content/plugins/` directory.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
-== Changelog == 
+== Changelog ==
+= .4.1 =
+* BUG FIX: Updated pmprommpu_get_levels_from_latest_checkout() in a couple places to also consider orders with "pending" status. This fixes issues with MMPU and the Pay by Check addon.
+
 = .4 =
 * NOTE: Skipped up to version .4 to match version increments from before we added the readme.
 * BUG FIX: Fixed some warnings.

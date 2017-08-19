@@ -2,7 +2,8 @@
 	global $wpdb, $current_user, $pmpro_invoice, $pmpro_msg, $pmpro_msgt;
 	
 	//if membership is a paying one, get invoice from DB - replicating some functionality from the preheader, but with an MMPU spice.
-	$theselevels = pmprommpu_get_levels_from_latest_checkout();
+	$theselevels = pmprommpu_get_levels_from_latest_checkout(NULL, array('success', 'pending'));
+
 	if (count($theselevels)>0 && !pmpro_areLevelsFree($theselevels)) {
 		$pmpro_invoice = new MemberInvoice();
 		$pmpro_invoice->getLastMemberInvoice($current_user->ID, apply_filters("pmpro_confirmation_order_status", array("success", "pending")));
@@ -16,7 +17,6 @@
 	}
 	
 	$curlevels = pmpro_getMembershipLevelsForUser();
-	$theselevels = pmprommpu_get_levels_from_latest_checkout();
 	$levelnames = array();
 	$levelnums = array();
 	foreach($theselevels as $thelevel) {
@@ -45,12 +45,12 @@
 	
 	<?php
 		$pmpro_invoice->getUser();
-		$pmpro_invoice->getMembershipLevel();			
-		
+		$pmpro_invoice->getMembershipLevel();
+
 		$confirmation_message .= "<p>" . sprintf(__('Below are details about your membership account and a receipt for your initial membership invoice. A welcome email with a copy of your initial membership invoice has been sent to %s.', 'pmpro'), $pmpro_invoice->user->user_email) . "</p>";
 		
-		//check instructions		
-		if($pmpro_invoice->gateway == "check" && !pmpro_areLevelsFree($pmpro_invoice->membership_levels))
+		//check instructions
+		if($pmpro_invoice->gateway == "check" && !pmpro_areLevelsFree($theselevels))
 			$confirmation_message .= wpautop(pmpro_getOption("instructions"));
 		
 		$confirmation_message = apply_filters("pmpro_confirmation_message", $confirmation_message, $pmpro_invoice);				
