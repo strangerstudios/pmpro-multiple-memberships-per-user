@@ -651,11 +651,11 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 								), admin_url( 'admin.php' ) ); ?>"
 									class="button-secondary"><?php _e( 'copy', 'pmpro' ); ?></a>&nbsp;<a
 									title="<?php _e( 'delete', 'pmpro' ); ?>"
-									href="javascript: askfirst('<?php echo str_replace( "'", "\'", sprintf( __( "Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", "pmpro" ), $level->name ) ); ?>', '<?php echo add_query_arg( array(
+									href="javascript:askfirst('<?php echo str_replace( "'", "\'", sprintf( __( "Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", "pmpro" ), $level->name ) ); ?>', '<?php echo wp_nonce_url( add_query_arg( array(
 										'page'     => 'pmpro-membershiplevels',
 										'action'   => 'delete_membership_level',
 										'deleteid' => $level->id
-									), admin_url( 'admin.php' ) ); ?>'; void(0);"
+									), admin_url( 'admin.php' ) ), 'delete_membership_level', 'pmpro_membershiplevels_nonce' ); ?>'); void(0);"
 									class="button-secondary"><?php _e( 'delete', 'pmpro' ); ?></a></td>
 						</tr>
 						<?php
@@ -859,7 +859,14 @@ function pmprommpu_on_del_level( $levelid ) {
 	$levelid = intval( $levelid );
 
 	// TODO: Error checking would be smart.
-	$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array( 'level' => $levelid ) );
+	if ( false === $wpdb->delete( $wpdb->pmpro_membership_levels_groups, array( 'level' => $levelid ) ) ) {
+	    global $pmpro_msg;
+	    global $pmpro_msgt;
+	    
+	    $pmpro_msg = __( "Unable to delete the level from its group", "pmpro-multiple-memberships-per-user" );
+	    $pmpro_msgt = "pmpro_error";
+	    
+    }
 }
 
 add_action( 'pmpro_delete_membership_level', 'pmprommpu_on_del_level' );
