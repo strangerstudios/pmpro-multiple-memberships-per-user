@@ -12,8 +12,6 @@
 	else
 		$edit = false;
 
-	//require_once(plugins_url('paid-memberships-pro/adminpages/admin_header.php'));
-
 	$levelgroup = array(
 		'id' => '1',
 		'name' => 'Default',
@@ -55,9 +53,7 @@
 						<select name="type" id="type">
 							<option value="legacy">Users can only choose one level from this group.</option>
 							<option value="multiple">Users can choose multiple levels from this group.</option>
-<!--
-							<option value="super">Super Levels: Users who select these levels will have all other memberships cancelled.</option>
- -->
+							<!-- <option value="super">Super Levels: Users who select these levels will have all other memberships cancelled.</option> -->
 						</select>
 					</td>
 				</tr>
