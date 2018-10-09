@@ -42,30 +42,30 @@ function pmprommpu_plugin_dir() {
 // Groups have an id, name, displayorder, and flag for allow_multiple_selections
 function pmprommpu_get_groups() {
 	global $wpdb;
-	
+
 	$allgroups = $wpdb->get_results("SELECT * FROM $wpdb->pmpro_groups ORDER BY id");
 	$grouparr = array();
 	foreach($allgroups as $curgroup) {
 		$grouparr[$curgroup->id] = $curgroup;
 	}
-	
+
 	return $grouparr;
 }
 
 // Given a name and a true/false flag about whether it allows multiple selections, create a level group.
 function pmprommpu_create_group($inname, $inallowmult = true) {
 	global $wpdb;
-	
+
 	$allowmult = intval($inallowmult);
 	$result = $wpdb->insert($wpdb->pmpro_groups, array('name' => $inname, 'allow_multiple_selections' => $allowmult), array('%s', '%d'));
-	
+
 	if($result) { return $wpdb->insert_id; } else { return false; }
 }
 
 // Set (or move) a membership level into a level group
 function pmprommpu_set_level_for_group($levelid, $groupid) {
 	global $wpdb;
-	
+
 	$levelid = intval($levelid);
 	$groupid = intval($groupid); // just to be safe
 
@@ -77,9 +77,9 @@ function pmprommpu_set_level_for_group($levelid, $groupid) {
 // Return an array of the groups and levels in display order - keys are group ID, and values are their levels, in display order
 function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 	global $wpdb;
-	
+
 	$retarray = array();
-	
+
 	$pmpro_levels = pmpro_getAllLevels($includehidden, true);
 	$pmpro_level_order = pmpro_getOption('level_order');
 	$pmpro_levels = apply_filters('pmpro_levels_array', $pmpro_levels );
@@ -136,7 +136,6 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 
 // Called as a filter by pmpro_pages_custom_template_path to add our path to the search path for user pages.
 function pmprommpu_override_user_pages($templates, $page_name, $type, $where, $ext) {
-
 	if(file_exists(PMPROMMPU_DIR . "/pages/{$page_name}.{$ext}")) {
 		// We add our path as the second in the array - after core, but before user locations.
 		// The array is reversed later, so this means user templates come first, then us, then core.
@@ -148,9 +147,9 @@ function pmprommpu_override_user_pages($templates, $page_name, $type, $where, $e
 // Given a level ID, this function returns the group ID it belongs to.
 function pmprommpu_get_group_for_level($levelid) {
 	global $wpdb;
-	
+
 	$levelid = intval($levelid); // just to be safe
-	
+
 	$groupid = $wpdb->get_var( $wpdb->prepare( "SELECT mlg.group FROM {$wpdb->pmpro_membership_levels_groups} mlg WHERE level = %d", $levelid ) );
 	if($groupid) {
 		$groupid = intval($groupid);
@@ -163,7 +162,7 @@ function pmprommpu_get_group_for_level($levelid) {
 // Given a level ID and new group ID, this function sets the group ID for a level. Returns a success flag (true/false).
 function pmprommpu_set_group_for_level($levelid, $groupid) {
 	global $wpdb;
-	
+
 	$levelid = intval($levelid); // just to be safe
 	$groupid = intval($groupid); // just to be safe
 
@@ -182,10 +181,10 @@ function pmprommpu_set_group_for_level($levelid, $groupid) {
 // Called by AJAX to add a group from the admin-side Membership Levels and Groups page. Incoming parms are name and mult (can users sign up for multiple levels in this group - 0/1).
 function pmprommpu_add_group() {
 	global $wpdb;
-	
+
 	$displaynum = $wpdb->get_var("SELECT MAX(displayorder) FROM {$wpdb->pmpro_groups}");
 	if(! $displaynum || intval($displaynum)<1) { $displaynum = 1; } else { $displaynum = intval($displaynum); $displaynum++; }
-	
+
 	if(array_key_exists("name", $_REQUEST)) {
 		$allowmult = 0;
 		if(array_key_exists("mult", $_REQUEST) && intval($_REQUEST["mult"])>0) { $allowmult = 1; }
@@ -198,14 +197,14 @@ function pmprommpu_add_group() {
 					'%d')
 			);
 	}
-	
+
 	wp_die();
 }
 
 // Called by AJAX to edit a group from the admin-side Membership Levels and Groups page. Incoming parms are group (the ID #), name and mult (can users sign up for multiple levels in this group - 0/1).
 function pmprommpu_edit_group() {
 	global $wpdb;
-	
+
 	if(array_key_exists("name", $_REQUEST) && array_key_exists("group", $_REQUEST) && intval($_REQUEST["group"])>0) {
 		$allowmult = 0;
 		if(array_key_exists("mult", $_REQUEST) && intval($_REQUEST["mult"])>0) { $allowmult = 1; }
@@ -224,14 +223,14 @@ function pmprommpu_edit_group() {
 			array(	'%d' ) // WHERE format
 		);
 	}
-	
+
 	wp_die();
 }
 
 // Called by AJAX to delete an empty group from the admin-side Membership Levels and Groups page. Incoming parm is group (group ID #).
 function pmprommpu_del_group() {
 	global $wpdb;
-	
+
 	if(array_key_exists("group", $_REQUEST) && intval($_REQUEST["group"])>0) {
 		$groupid = intval($_REQUEST["group"]);
 
@@ -239,17 +238,17 @@ function pmprommpu_del_group() {
 		$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array('group' => $groupid ) );
 		$wpdb->delete( $wpdb->pmpro_groups, array( 'id' => $groupid) );
 	}
-	
+
 	wp_die();
 }
 
 // Called by AJAX from the admin-facing levels page when the rows are reordered. Incoming parm (neworder) is an ordered array of objects (with two parms, group (scalar ID) and levels (ordered array of scalar level IDs))
 function pmprommpu_update_level_and_group_order() {
 	global $wpdb;
-	
+
 	$grouparr = array();
 	$levelarr = array();
-	
+
 	if(array_key_exists("neworder", $_REQUEST) && is_array($_REQUEST["neworder"])) {
 		foreach($_REQUEST["neworder"] as $curgroup) {
 			$grouparr[] = $curgroup["group"];
@@ -261,14 +260,14 @@ function pmprommpu_update_level_and_group_order() {
 
 		// Inefficient for large groups/large numbers of groups
 		foreach($grouparr as $orderedgroup) {
-			
+
 			// TODO: Error checking would be smart.
 			$wpdb->update( $wpdb->pmpro_groups, array ( 'displayorder' => $ctr ), array( 'id' => $orderedgroup ) );
 			$ctr++;
 		}
 		pmpro_setOption('level_order', $levelarr);
 	}
-	
+
 	wp_die();
 }
 
@@ -277,7 +276,7 @@ function pmprommpu_update_level_and_group_order() {
 // If there are no successful levels, or no checkout, will return an empty array.
 function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to_check = 'success', $checkout_id = -1) {
 	global $wpdb, $current_user;
-	
+
 	if(empty($user_id))
 	{
 		$user_id = $current_user->ID;
@@ -285,7 +284,7 @@ function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to
 
 	if(empty($user_id))
 	{
-		return false;
+		return [];
 	}
 
 	//make sure user id is int for security
@@ -299,7 +298,7 @@ function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to
 		$checkoutid = $wpdb->get_var("SELECT MAX(checkout_id) FROM $wpdb->pmpro_membership_orders WHERE user_id=$user_id");
 		if(empty($checkoutid) || intval($checkoutid)<1) { return $retval; }
 	}
-	
+
 	$querySql = "SELECT membership_id FROM $wpdb->pmpro_membership_orders WHERE checkout_id = " . esc_sql( $checkoutid ) . " AND ( gateway = 'free' OR ";
 	if(!empty($statuses_to_check) && is_array($statuses_to_check)) {
 		$querySql .= "status IN('" . implode("','", $statuses_to_check) . "') ";
@@ -309,7 +308,7 @@ function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to
 		$querySql .= "status = 'success'";
 	}
 	$querySql .= " )";
-		
+
 	$levelids = $wpdb->get_col($querySql);
 	foreach($levelids as $thelevel) {
 		if(array_key_exists($thelevel, $all_levels)) {
@@ -323,7 +322,7 @@ function pmprommpu_join_with_and($inarray) {
 	$outstring = "";
 
 	if(!is_array($inarray) || count($inarray)<1) { return $outstring; }
-	
+
 	$lastone = array_pop($inarray);
 	if(count($inarray)>0) {
 		$outstring .= implode(', ', $inarray);
@@ -347,20 +346,20 @@ function pmprommpu_hasMembershipGroup($groups = NULL, $user_id = NULL) {
 	if(empty($user_id)) {
 		$user_id = $current_user->ID;
 	}
-	
+
 	//get membership levels (or not) for given user
-	if(!empty($user_id) && is_numeric($user_id)) 
+	if(!empty($user_id) && is_numeric($user_id))
 		$membership_levels = pmpro_getMembershipLevelsForUser($user_id);
 	else
 		$membership_levels = NULL;
-		
+
 	//make an array out of a single element so we can use the same code
 	if(!is_array($groups)) {
 		$groups = array($groups);
 	}
-	
+
 	//no levels, so no groups
-	if(empty($membership_levels)) {		
+	if(empty($membership_levels)) {
 		$return = false;
 	} else {
 		//we have levels, so test against groups given
@@ -374,7 +373,7 @@ function pmprommpu_hasMembershipGroup($groups = NULL, $user_id = NULL) {
 			}
 		}
 	}
-	
+
 	//filter just in case
 	$return = apply_filters("pmprommpu_has_membership_group", $return, $user_id, $groups);
 	return $return;
@@ -409,7 +408,7 @@ function pmprommpu_addMembershipLevel($inlevel = NULL, $user_id = NULL, $force_a
 	} else {
 		$user_id = intval($user_id);
 	}
-	
+
 	$allgroups = pmprommpu_get_groups();
 
 	// OK, we have the user and the level. Let's check to see if adding it is legal. Is it in a group where they can have only one?
@@ -422,8 +421,7 @@ function pmprommpu_addMembershipLevel($inlevel = NULL, $user_id = NULL, $force_a
 			if ( false !== pmpro_hasMembershipLevel( $otherlevels, $user_id ) ) { return $return; }
 		}
 	}
-	
+
 	// OK, we're legal (or don't care). Let's add it. Set elsewhere by filter, changeMembershipLevel should not disable old levels.
-	$result = pmpro_changeMembershipLevel($levelid, $user_id);
-	return $result;
+	return pmpro_changeMembershipLevel($levelid, $user_id);
 }
