@@ -96,7 +96,7 @@ function pmprommpu_addin_jquery_dialog( $pagehook ) {
 
 	wp_register_script(
 		'pmprommpu-inactive',
-		plugins_url( '../js/pmprommpu-inactive.js', __FILE__ ),
+		plugins_url( 'js/pmprommpu-inactive.js', __DIR__ ),
 		array(
 			'jquery',
 			'jquery-ui-dialog',
