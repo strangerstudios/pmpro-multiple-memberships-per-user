@@ -25,11 +25,11 @@
 	}
 
 	if(empty($theselevels)) {
-		$confirmation_message = "<p>" . __('Your payment has been submitted. Your membership will be activated shortly.', 'pmpro') . "</p>";
+		$confirmation_message = "<p>" . __('Your payment has been submitted. Your membership will be activated shortly.', 'paid-memberships-pro') . "</p>";
 	} elseif(count($theselevels) == 1) {
-		$confirmation_message = "<p>" . sprintf(__('Thank you for your membership to %s. Your %s membership is now active.', 'pmpro'), get_bloginfo("name"), pmprommpu_join_with_and($levelnames)) . "</p>";		
+		$confirmation_message = "<p>" . sprintf(__('Thank you for your membership to %s. Your %s membership is now active.', 'paid-memberships-pro'), get_bloginfo("name"), pmprommpu_join_with_and($levelnames)) . "</p>";		
 	} else {
-		$confirmation_message = "<p>" . sprintf(__('Thank you for your membership to %s. Your %s memberships are now active.', 'pmpro'), get_bloginfo("name"), pmprommpu_join_with_and($levelnames)) . "</p>";		
+		$confirmation_message = "<p>" . sprintf(__('Thank you for your membership to %s. Your %s memberships are now active.', 'paid-memberships-pro'), get_bloginfo("name"), pmprommpu_join_with_and($levelnames)) . "</p>";		
 	}
 
 	//confirmation message for this level
@@ -47,7 +47,7 @@
 		$pmpro_invoice->getUser();
 		$pmpro_invoice->getMembershipLevel();
 
-		$confirmation_message .= "<p>" . sprintf(__('Below are details about your membership account and a receipt for your initial membership invoice. A welcome email with a copy of your initial membership invoice has been sent to %s.', 'pmpro'), $pmpro_invoice->user->user_email) . "</p>";
+		$confirmation_message .= "<p>" . sprintf(__('Below are details about your membership account and a receipt for your initial membership invoice. A welcome email with a copy of your initial membership invoice has been sent to %s.', 'paid-memberships-pro'), $pmpro_invoice->user->user_email) . "</p>";
 		
 		//check instructions
 		if($pmpro_invoice->gateway == "check" && !pmpro_areLevelsFree($theselevels))
@@ -65,17 +65,17 @@
 	<a class="pmpro_a-print" href="javascript:window.print()"><?php _e('Print', 'pmpro');?></a>
 	<ul>
 		<?php do_action("pmpro_invoice_bullets_top", $pmpro_invoice); ?>
-		<li><strong><?php _e('Account', 'pmpro');?>:</strong> <?php echo $current_user->display_name?> (<?php echo $current_user->user_email?>)</li>
+		<li><strong><?php _e('Account', 'paid-memberships-pro');?>:</strong> <?php echo $current_user->display_name?> (<?php echo $current_user->user_email?>)</li>
 		<?php if(count($levelnames)==1) { ?>
-			<li><strong><?php _e('Membership Level', 'pmpro');?>:</strong> <?php echo $current_user->membership_level->name?></li>
+			<li><strong><?php _e('Membership Level', 'paid-memberships-pro');?>:</strong> <?php echo $current_user->membership_level->name?></li>
 		<?php } else { ?>
 			<li><strong><?php _e('Membership Levels', 'mmpu');?>:</strong> <?php echo implode(', ', $levelnames); ?></li>
 		<?php } ?>
 		<?php if($current_user->membership_level->enddate) { ?>
-			<li><strong><?php _e('Membership Expires', 'pmpro');?>:</strong> <?php echo pmpro_getLevelsExpiration($pmpro_invoice->membership_levels); ?></li>
+			<li><strong><?php _e('Membership Expires', 'paid-memberships-pro');?>:</strong> <?php echo pmpro_getLevelsExpiration($pmpro_invoice->membership_levels); ?></li>
 		<?php } ?>
 		<?php if($pmpro_invoice->getDiscountCode()) { ?>
-			<li><strong><?php _e('Discount Code', 'pmpro');?>:</strong> <?php echo $pmpro_invoice->discount_code->code?></li>
+			<li><strong><?php _e('Discount Code', 'paid-memberships-pro');?>:</strong> <?php echo $pmpro_invoice->discount_code->code?></li>
 		<?php } ?>
 		<?php do_action("pmpro_invoice_bullets_bottom", $pmpro_invoice); ?>
 	</ul>
@@ -84,11 +84,11 @@
 		<thead>
 			<tr>
 				<?php if(!empty($pmpro_invoice->billing->name)) { ?>
-				<th><?php _e('Billing Address', 'pmpro');?></th>
+				<th><?php _e('Billing Address', 'paid-memberships-pro');?></th>
 				<?php } ?>
-				<th><?php _e('Payment Method', 'pmpro');?></th>
-				<th><?php _e('Membership Level', 'pmpro');?></th>
-				<th><?php _e('Total Billed', 'pmpro');?></th>
+				<th><?php _e('Payment Method', 'paid-memberships-pro');?></th>
+				<th><?php _e('Membership Level', 'paid-memberships-pro');?></th>
+				<th><?php _e('Total Billed', 'paid-memberships-pro');?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -105,8 +105,8 @@
 				<?php } ?>
 				<td>
 					<?php if($pmpro_invoice->accountnumber) { ?>
-						<?php echo $pmpro_invoice->cardtype?> <?php _e('ending in', 'pmpro');?> <?php echo last4($pmpro_invoice->accountnumber)?><br />
-						<small><?php _e('Expiration', 'pmpro');?>: <?php echo $pmpro_invoice->expirationmonth?>/<?php echo $pmpro_invoice->expirationyear?></small>
+						<?php echo $pmpro_invoice->cardtype?> <?php _e('ending in', 'paid-memberships-pro');?> <?php echo last4($pmpro_invoice->accountnumber)?><br />
+						<small><?php _e('Expiration', 'paid-memberships-pro');?>: <?php echo $pmpro_invoice->expirationmonth?>/<?php echo $pmpro_invoice->expirationyear?></small>
 					<?php } elseif($pmpro_invoice->payment_type) { ?>
 						<?php echo $pmpro_invoice->payment_type?>
 					<?php } ?>
@@ -120,16 +120,16 @@
 	} 
 	else 
 	{
-		$confirmation_message .= "<p>" . sprintf(__('Below are details about your membership account. A welcome email has been sent to %s.', 'pmpro'), $current_user->user_email) . "</p>";
+		$confirmation_message .= "<p>" . sprintf(__('Below are details about your membership account. A welcome email has been sent to %s.', 'paid-memberships-pro'), $current_user->user_email) . "</p>";
 		
 		$confirmation_message = apply_filters("pmpro_confirmation_message", $confirmation_message, false);
 		
 		echo $confirmation_message;
 	?>	
 	<ul>
-		<li><strong><?php _e('Account', 'pmpro');?>:</strong> <?php echo $current_user->display_name?> (<?php echo $current_user->user_email?>)</li>
+		<li><strong><?php _e('Account', 'paid-memberships-pro');?>:</strong> <?php echo $current_user->display_name?> (<?php echo $current_user->user_email?>)</li>
 		<?php if(count($levelnames)<2) { ?>
-			<li><strong><?php _e('Membership Level', 'pmpro');?>:</strong> <?php if(count($levelnames)==1) echo $levelnames[0]; else _e("Pending", "pmpro");?></li>
+			<li><strong><?php _e('Membership Level', 'paid-memberships-pro');?>:</strong> <?php if(count($levelnames)==1) echo $levelnames[0]; else _e("Pending", "paid-memberships-pro");?></li>
 		<?php } else { ?> 
 				<li><strong><?php _e('Membership Levels', 'mmpu'); ?>:</strong><br><span class="pmprommpu_conf_levelrow">
 				<?php echo implode('</span><br><span class="pmprommpu_conf_levelrow">', $levelnames); ?>
@@ -143,9 +143,9 @@
 <nav id="nav-below" class="navigation" role="navigation">
 	<div class="nav-next alignright">
 		<?php if(!empty($curlevels)) { ?>
-			<a href="<?php echo pmpro_url("account")?>"><?php _e('View Your Membership Account &rarr;', 'pmpro');?></a>
+			<a href="<?php echo pmpro_url("account")?>"><?php _e('View Your Membership Account &rarr;', 'paid-memberships-pro');?></a>
 		<?php } else { ?>
-			<?php _e('If your account is not activated within a few minutes, please contact the site owner.', 'pmpro');?>
+			<?php _e('If your account is not activated within a few minutes, please contact the site owner.', 'paid-memberships-pro');?>
 		<?php } ?>
 	</div>
 </nav>
