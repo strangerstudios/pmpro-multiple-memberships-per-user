@@ -31,7 +31,14 @@ function pmprommpu_init_checkout_levels() {
 		// get the ids
 		$pmpro_checkout_level_ids = array_map( 'intval', explode( '+', preg_replace( '[^0-9\+]', '', $_REQUEST['level'] ) ) );
 
-		// setup pmpro_checkout_levels global
+		if ( empty( $pmpro_checkout_level_ids ) ) {
+			$pmpro_levels = pmpro_getAllLevels( true, true );
+			foreach ( $pmpro_levels as $key => $value ) {
+				$pmpro_checkout_level_ids[ $value->id ] = $value->id;
+			}
+		}
+
+		//setup pmpro_checkout_levels global
 		$pmpro_checkout_levels = array();
 		foreach ( $pmpro_checkout_level_ids as $level_id ) {
 			$pmpro_checkout_levels[] = pmpro_getLevelAtCheckout( $level_id );
@@ -229,7 +236,7 @@ function pmprommpu_checkout_level_text( $intext, $levelids_adding, $levelids_del
 		}
 		$outstring .= '</p>';
 	}
-	if ( count( $levelids_deleting ) > 0 ) {
+	if ( ! empty( $levelids_deleting ) && count( $levelids_deleting ) > 0 ) {
 		$outstring .= '<p>' . _n( 'You are removing the following level', 'You are removing the following levels', count( $levelids_deleting ), 'pmprommpu' ) . ':</p>';
 		foreach ( $levelids_deleting as $curlevelid ) {
 			$outstring .= "<p class='levellist'><strong><span class='levelnametext'>" . $levelarr[ $curlevelid ]->name . '</span></strong>';
@@ -711,15 +718,15 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 							<td><a title="<?php _e( 'edit', 'pmpro' ); ?>" href="<?php echo $page_link; ?>"
 								   class="button-primary"><?php _e( 'edit', 'pmpro' ); ?></a>&nbsp;<a
 									title="<?php _e( 'copy', 'pmpro' ); ?>" href="
-													 <?php
-														echo add_query_arg(
-															array(
-																'page' => 'pmpro-membershiplevels',
-																'copy' => $level->id,
-																'edit' => '-1',
-															), admin_url( 'admin.php' )
-														);
-														?>
+				 <?php
+					echo add_query_arg(
+						array(
+							'page' => 'pmpro-membershiplevels',
+							'copy' => $level->id,
+							'edit' => '-1',
+						), admin_url( 'admin.php' )
+					);
+					?>
 								"
 									class="button-secondary"><?php _e( 'copy', 'pmpro' ); ?></a>&nbsp;<a
 									title="<?php _e( 'delete', 'pmpro' ); ?>"

@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Multiple Memberships per User
 Plugin URI: http://www.paidmembershipspro.com/pmpro-multiple-memberships-per-user/
 Description: Update PMPro to allow users to checkout for and hold multiple memberships at the same time.
-Version: .4
+Version: .5
 Author: Square Lines LLC and Stranger Studios
 Author URI: http://www.square-lines.com
 */
@@ -46,7 +46,7 @@ Author URI: http://www.square-lines.com
 */
 
 define("PMPROMMPU_DIR", dirname(__FILE__)); // signals our presence to the mother ship, and other add-ons
-define("PMPROMMPU_VER", ".4"); // Version string to signal cache refresh during JS/CSS updates
+define("PMPROMMPU_VER", ".5"); // Version string to signal cache refresh during JS/CSS updates
 
 require_once(PMPROMMPU_DIR . "/includes/upgrades.php");		// to handle upgrades and to do initial setup
 require_once(PMPROMMPU_DIR . "/includes/functions.php");	// misc helper functions
@@ -70,13 +70,13 @@ function pmprommpu_activation() {
 	$curgroups = pmprommpu_get_groups();
 	if(count($curgroups)==0) {
 		$newgroupid = pmprommpu_create_group("Main Group", false);
-		
+
 		$alllevels = pmpro_getAllLevels(true, true);
 		foreach($alllevels as $levelid => $leveldetail) {
 			pmprommpu_set_level_for_group($levelid, $newgroupid);
 		}
 	}
-	
+
 	update_option( 'pmprommpu_installed', 1, true);
 }
 
@@ -87,7 +87,7 @@ function pmprommpu_deactivation() {
 register_activation_hook(__FILE__, 'pmprommpu_activation');
 register_deactivation_hook(__FILE__, 'pmprommpu_deactivation');
 
-//include CSS and styles
+// Include stylesheets.
 function pmprommpu_init() {
 	if(is_admin()) {
 		$csspath = plugins_url("css/jquery-ui.min.css", __FILE__);
