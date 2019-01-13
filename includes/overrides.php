@@ -32,6 +32,13 @@ function pmprommpu_init_checkout_levels() {
 		//get the ids
 		$pmpro_checkout_level_ids = array_map( 'intval', explode( "+", preg_replace( "[^0-9\+]", "", $_REQUEST['level'] ) ) );
 
+		if ( empty( $pmpro_checkout_level_ids ) ) {
+			$pmpro_levels = pmpro_getAllLevels( true, true );
+			foreach ( $pmpro_levels as $key => $value ) {
+				$pmpro_checkout_level_ids[ $value->id ] = $value->id;
+			}
+		}
+
 		//setup pmpro_checkout_levels global
 		$pmpro_checkout_levels = array();
 		foreach ( $pmpro_checkout_level_ids as $level_id ) {
@@ -208,7 +215,7 @@ function pmprommpu_checkout_level_text( $intext, $levelids_adding, $levelids_del
 		}
 		$outstring .= "</p>";
 	}
-	if ( count( $levelids_deleting ) > 0 ) {
+	if ( ! empty( $levelids_deleting ) && count( $levelids_deleting ) > 0 ) {
 		$outstring .= '<p>' . _n( 'You are removing the following level', 'You are removing the following levels', count( $levelids_deleting ), 'pmprommpu' ) . ':</p>';
 		foreach ( $levelids_deleting as $curlevelid ) {
 			$outstring .= "<p class='levellist'><strong><span class='levelnametext'>" . $levelarr[ $curlevelid ]->name . "</span></strong>";
