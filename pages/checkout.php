@@ -58,12 +58,12 @@
 	<thead>
 		<tr>
 			<th>
-				<?php if ( ! empty( $pmpro_checkout_level_idscount ) && $pmpro_checkout_level_ids > 1 ) { ?>
+				<?php if ( ! empty( $pmpro_checkout_level_ids ) && count( $pmpro_checkout_level_ids > 1 ) { ?>
 					<span class="pmpro_thead-name"><?php _e('Membership Levels', 'pmpro-multiple-memberships-per-user');?></span>
 				<?php } else { ?>
 					<span class="pmpro_thead-name"><?php _e('Membership Level', 'paid-memberships-pro');?></span>
 				<?php } ?>
-				<?php if ( ! empty( $pmpro_checkout_level_idscount ) && count($pmpro_levels) > 1 ) { ?><span class="pmpro_thead-msg"><a href="<?php echo pmpro_url("levels"); ?>"><?php _e('change', 'paid-memberships-pro');?></a></span><?php } ?>
+				<?php if ( ! empty( $pmpro_levels ) && count($pmpro_levels) > 1 ) { ?><span class="pmpro_thead-msg"><a href="<?php echo pmpro_url("levels"); ?>"><?php _e('change', 'paid-memberships-pro');?></a></span><?php } ?>
 			</th>
 		</tr>
 	</thead>
@@ -72,7 +72,7 @@
 			<td>
 				<?php 
 					$defaultstring = "<p>".sprintf(__('You have selected the <strong>%s</strong> membership level.', 'paid-memberships-pro'), $pmpro_level->name)."</p>";
-					if(count($pmpro_checkout_level_ids)<2 && !empty($pmpro_level->description)) {
+					if( ! empty( $pmpro_checkout_level_ids ) && count( $pmpro_checkout_level_ids ) < 2 && !empty($pmpro_level->description)) {
 						$defaultstring .= apply_filters("the_content", stripslashes($pmpro_level->description));
 					}
 					echo apply_filters("pmprommpu_checkout_level_text", $defaultstring, $pmpro_checkout_level_ids, $pmpro_checkout_del_level_ids);
@@ -561,7 +561,7 @@
 	<?php do_action('pmpro_checkout_after_payment_information_fields'); ?>
 
 	<?php
-		if ( ! empty ( $tospage && !$pmpro_review ) )
+		if ( ! empty( $tospage ) &&  empty( $pmpro_review ) )
 		{
 		?>
 		<table id="pmpro_tos_fields" class="pmpro_checkout top1em" width="100%" cellpadding="0" cellspacing="0" border="0">
