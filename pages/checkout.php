@@ -36,7 +36,7 @@
 	<input type="hidden" id="levelstodel" name="levelstodel" value="<?php echo ( isset($_REQUEST['dellevels']) ? esc_attr( $_REQUEST['dellevels'] ) : null); ?>" />
 	<input type="hidden" id="checkjavascript" name="checkjavascript" value="1" />
 
-	<?php if($pmpro_msg)
+	<?php if ( ! empty( $pmpro_msg ) )
 		{
 	?>
 		<div id="pmpro_message" class="pmpro_message <?php echo $pmpro_msgt?>"><?php echo $pmpro_msg?></div>
@@ -50,20 +50,20 @@
 		}
 	?>
 
-	<?php if($pmpro_review) { ?>
-		<p><?php _e('Almost done. Review the membership information and pricing below then <strong>click the "Complete Payment" button</strong> to finish your order.', 'paid-memberships-pro');?></p>
+	<?php if ( ! empty( $pmpro_review ) ) {  ?>
+ 	 	<p><?php _e('Almost done. Review the membership information and pricing below then <strong>click the "Complete Payment" button</strong> to finish your order.', 'paid-memberships-pro');?></p>
 	<?php } ?>
 
 	<table id="pmpro_pricing_fields" class="pmpro_checkout" width="100%" cellpadding="0" cellspacing="0" border="0">
 	<thead>
 		<tr>
 			<th>
-				<?php if(count($pmpro_checkout_level_ids)>1) { ?>
+				<?php if ( ! empty( $pmpro_checkout_level_idscount ) && $pmpro_checkout_level_ids > 1 ) { ?>
 					<span class="pmpro_thead-name"><?php _e('Membership Levels', 'pmpro-multiple-memberships-per-user');?></span>
 				<?php } else { ?>
 					<span class="pmpro_thead-name"><?php _e('Membership Level', 'paid-memberships-pro');?></span>
 				<?php } ?>
-				<?php if(count($pmpro_levels) > 1) { ?><span class="pmpro_thead-msg"><a href="<?php echo pmpro_url("levels"); ?>"><?php _e('change', 'paid-memberships-pro');?></a></span><?php } ?>
+				<?php if ( ! empty( $pmpro_checkout_level_idscount ) && count($pmpro_levels) > 1 ) { ?><span class="pmpro_thead-msg"><a href="<?php echo pmpro_url("levels"); ?>"><?php _e('change', 'paid-memberships-pro');?></a></span><?php } ?>
 			</th>
 		</tr>
 	</thead>
@@ -78,7 +78,7 @@
 					echo apply_filters("pmprommpu_checkout_level_text", $defaultstring, $pmpro_checkout_level_ids, $pmpro_checkout_del_level_ids);
 				?>
 				<div id="pmpro_level_cost">
-					<?php if($discount_code && pmpro_checkDiscountCode($discount_code)) { ?>
+					<?php if ( ! empty( $discount_code ) && pmpro_checkDiscountCode( $discount_code ) ) { ?>
 						<?php printf(__('<p class="pmpro_level_discount_applied">The <strong>%s</strong> code has been applied to your order.</p>', 'paid-memberships-pro'), $discount_code);?>
 					<?php } ?>
 					<?php echo wpautop(pmpro_getLevelsCost($pmpro_checkout_levels)); ?>
@@ -87,7 +87,7 @@
 
 				<?php do_action("pmpro_checkout_after_level_cost"); ?>
 
-				<?php if($pmpro_show_discount_code) { ?>
+				<?php if ( ! empty( $pmpro_show_discount_code ) ) { ?>
 
 					<?php if($discount_code && !$pmpro_review) { ?>
 						<p id="other_discount_code_p" class="pmpro_small"><a id="other_discount_code_a" href="#discount_code"><?php _e('Click here to change your discount code', 'paid-memberships-pro');?></a>.</p>
@@ -100,7 +100,7 @@
 				<?php } ?>
 			</td>
 		</tr>
-		<?php if($pmpro_show_discount_code) { ?>
+		<?php if ( ! empty( $pmpro_show_discount_code ) ) { ?>
 		<tr id="other_discount_code_tr" style="display: none;">
 			<td>
 				<div>
@@ -126,7 +126,7 @@
 	}
 	?>
 
-	<?php if(!$skip_account_fields && !$pmpro_review) { ?>
+	<?php if( ! $skip_account_fields && ! $pmpro_review ) { ?>
 	<table id="pmpro_user_fields" class="pmpro_checkout" width="100%" cellpadding="0" cellspacing="0" border="0">
 	<thead>
 		<tr>
@@ -154,7 +154,7 @@
 				</div>
 				<?php
 					$pmpro_checkout_confirm_password = apply_filters("pmpro_checkout_confirm_password", true);
-					if($pmpro_checkout_confirm_password)
+					if ( ! empty( $pmpro_checkout_confirm_password ) )
 					{
 					?>
 					<div>
@@ -452,7 +452,7 @@
 
 	<?php
 		$pmpro_include_payment_information_fields = apply_filters("pmpro_include_payment_information_fields", true);
-		if($pmpro_include_payment_information_fields)
+		if ( ! empty( $pmpro_include_payment_information_fields ) )
 		{
 		?>
 		<table id="pmpro_payment_information_fields" class="pmpro_checkout top1em" width="100%" cellpadding="0" cellspacing="0" border="0" <?php if(!$pmpro_requirebilling || apply_filters("pmpro_hide_payment_information_fields", false) ) { ?>style="display: none;"<?php } ?>>
@@ -469,7 +469,7 @@
 				<td>
 					<?php
 						$sslseal = pmpro_getOption("sslseal");
-						if($sslseal)
+						if ( ! empty( $sslseal ) )
 						{
 						?>
 							<div class="pmpro_sslseal"><?php echo stripslashes($sslseal)?></div>
@@ -479,8 +479,7 @@
 
 					<?php
 						$pmpro_include_cardtype_field = apply_filters('pmpro_include_cardtype_field', false);
-						if($pmpro_include_cardtype_field)
-						{
+						if ( ! empty( $pmpro_include_cardtype_field ) ) {
 						?>
 						<div class="pmpro_payment-card-type">
 							<label for="CardType"><?php _e('Card Type', 'paid-memberships-pro');?></label>
@@ -535,14 +534,14 @@
 
 					<?php
 						$pmpro_show_cvv = apply_filters("pmpro_show_cvv", true);
-						if($pmpro_show_cvv) { ?>
+						if ( ! empty( $pmpro_show_cvv ) ) { ?>
 					<div class="pmpro_payment-cvv">
 						<label for="CVV"><?php _e('CVV', 'paid-memberships-pro');?></label>
 						<input class="input" id="CVV" name="CVV" type="text" size="4" value="<?php if(!empty($_REQUEST['CVV'])) { echo esc_attr($_REQUEST['CVV']); }?>" class=" <?php echo pmpro_getClassForField("CVV");?>" />  <small>(<a href="javascript:void(0);" onclick="javascript:window.open('<?php echo pmpro_https_filter(PMPRO_URL)?>/pages/popup-cvv.html','cvv','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=600, height=475');"><?php _e("what's this?", 'paid-memberships-pro');?></a>)</small>
 					</div>
 					<?php } ?>
 
-					<?php if($pmpro_show_discount_code) { ?>
+					<?php if ( ! empty( $pmpro_show_discount_code ) ) { ?>
 					<div class="pmpro_payment-discount-code">
 						<label for="discount_code"><?php _e('Discount Code', 'paid-memberships-pro');?></label>
 						<input class="input <?php echo pmpro_getClassForField("discount_code");?>" id="discount_code" name="discount_code" type="text" size="20" value="<?php echo esc_attr($discount_code)?>" />
@@ -562,7 +561,7 @@
 	<?php do_action('pmpro_checkout_after_payment_information_fields'); ?>
 
 	<?php
-		if($tospage && !$pmpro_review)
+		if ( ! empty ( $tospage && !$pmpro_review ) )
 		{
 		?>
 		<table id="pmpro_tos_fields" class="pmpro_checkout top1em" width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -591,7 +590,7 @@
 	<?php do_action("pmpro_checkout_before_submit_button"); ?>
 
 	<div class="pmpro_submit">
-		<?php if($pmpro_review) { ?>
+		<?php if( ! empty( $pmpro_review ) ) { ?>
 
 			<span id="pmpro_submit_span">
 				<input type="hidden" name="confirm" value="1" />
@@ -604,7 +603,7 @@
 
 			<?php
 				$pmpro_checkout_default_submit_button = apply_filters('pmpro_checkout_default_submit_button', true);
-				if($pmpro_checkout_default_submit_button)
+				if ( ! empty( $pmpro_checkout_default_submit_button ) )
 				{
 				?>
 				<span id="pmpro_submit_span">
