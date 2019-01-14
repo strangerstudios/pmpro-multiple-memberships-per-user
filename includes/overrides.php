@@ -208,7 +208,7 @@ function pmprommpu_checkout_level_text( $intext, $levelids_adding, $levelids_del
 		}
 		$outstring .= "</p>";
 	}
-	if ( count( $levelids_deleting ) > 0 ) {
+	if ( ! empty( $levelids_deleting ) && count( $levelids_deleting ) > 0 ) {
 		$outstring .= '<p>' . _n( 'You are removing the following level', 'You are removing the following levels', count( $levelids_deleting ), 'pmprommpu' ) . ':</p>';
 		foreach ( $levelids_deleting as $curlevelid ) {
 			$outstring .= "<p class='levellist'><strong><span class='levelnametext'>" . $levelarr[ $curlevelid ]->name . "</span></strong>";
