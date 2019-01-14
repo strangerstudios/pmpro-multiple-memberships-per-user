@@ -58,12 +58,12 @@
 	<thead>
 		<tr>
 			<th>
-				<?php if ( ! empty( $pmpro_checkout_level_ids ) && count( $pmpro_checkout_level_ids > 1 ) ) { ?>
+				<?php if ( ! empty( $pmpro_checkout_level_ids ) && count( $pmpro_checkout_level_ids ) > 1 ) { ?>
 					<span class="pmpro_thead-name"><?php _e('Membership Levels', 'pmpro-multiple-memberships-per-user');?></span>
 				<?php } else { ?>
 					<span class="pmpro_thead-name"><?php _e('Membership Level', 'paid-memberships-pro');?></span>
 				<?php } ?>
-				<?php if ( ! empty( $pmpro_levels ) && count($pmpro_levels) > 1 ) { ?><span class="pmpro_thead-msg"><a href="<?php echo pmpro_url("levels"); ?>"><?php _e('change', 'paid-memberships-pro');?></a></span><?php } ?>
+				<?php if ( ! empty( $pmpro_levels ) && count( $pmpro_levels ) > 1 ) { ?><span class="pmpro_thead-msg"><a href="<?php echo pmpro_url("levels"); ?>"><?php _e('change', 'paid-memberships-pro');?></a></span><?php } ?>
 			</th>
 		</tr>
 	</thead>
