@@ -1,7 +1,10 @@
 <?php
 
-//	This extends the MemberOrder class in PMPro to add functions for multi-order invoices.
+if ( ! class_exists( 'MemberOrder' ) ) {
+	return;
+}
 
+//	This extends the MemberOrder class in PMPro to add functions for multi-order invoices.
 class MemberInvoice extends MemberOrder {
 	// Returns an order object that represents one or more orders on an invoice (consolidating amounts, etc)
 	// If there isn't a recent invoice, or the last one didn't have any matching statuses, then return false.

@@ -125,6 +125,11 @@ function pmprommpu_frontend_scripts() {
 	global $pmpro_pages;
 	global $post;
 
+	// Make sure PMPro is active
+	if ( ! defined( 'PMPRO_VERSION' ) ) {
+		return;
+	}
+
 	// Only load this on the checkout page
 	if ( is_page( $pmpro_pages['checkout'] ) ) {
 
