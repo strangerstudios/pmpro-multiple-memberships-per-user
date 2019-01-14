@@ -530,9 +530,37 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 	$allgroups     = pmprommpu_get_groups();
 	$alllevels     = pmpro_getAllLevels( true, true );
 	$gateway       = pmpro_getOption( "gateway" );
-
+	
 	ob_start();
+	
+	// Check for orphaned levels
+	$orphaned_level_ids = array_combine( array_keys( $alllevels ), array_keys( $alllevels ) );
+	foreach( $groupsnlevels as $group_id => $group ) {
+		if ( ! isset( $first_group_id ) ) {
+			$first_group_id = $group_id;
+		}
+		foreach( $group as $level_id ) {
+			unset( $orphaned_level_ids[$level_id] );
+		}
+	}
+	unset( $group_id );
+	unset( $group );
+	unset( $level_id );
+	
+	// We found some
+	if ( ! empty( $orphaned_level_ids ) && ! empty( $first_group_id ) ) {
+		foreach( $orphaned_level_ids as $orphaned_level_id ) {
+			pmprommpu_set_group_for_level( $orphaned_level_id, $first_group_id );
+			$groupsnlevels[$first_group_id][] = $orphaned_level_id;
+		}
+		?>
+		<div id="message" class="inline error">
+			<p><?php printf( __('The following levels were not yet in a group: %s. These levels have been added to the first group found.', 'pmpro-multiple-memberships-per-user' ), implode(', ', $orphaned_level_ids ) ); ?></p>
+		</div>
+		<?php
+	}
 
+	// Check if gateway is supported
 	if ( $gateway == "paypalexpress" || $gateway == "paypalstandard" ) { // doing this manually for now; should do it via a setting in the gateway class.
 		?>
 		<div id="message" class="error">
