@@ -15,10 +15,15 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 		$pmpro_levels = pmpro_getAllLevels();
 		$levelnames = array();
 		$levels = array();
+		$confirmation_message = '';
 		foreach($levelids as $curid) {
 			if(array_key_exists($curid, $pmpro_levels)) {
 				$levelnames[] = $pmpro_levels[$curid]->name;
 				$levels[] = $pmpro_levels[$curid];
+				$confirmation_in_email = get_pmpro_membership_level_meta( $pmpro_levels[$curid]->id, 'confirmation_in_email', true );
+				if ( ! empty( $confirmation_in_email) ) { 
+					$confirmation_message .= $pmpro_levels[$curid]->confirmation . '<br />';
+				}
 			}
 		}
 		$auser = get_user_by( 'id', $user_id);
@@ -44,6 +49,7 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 		$pmproemail->data['membership_id'] = $invoice->membership_id;
 		$pmproemail->data['membership_level_name'] = pmprommpu_join_with_and($levelnames);
 		$pmproemail->data['membership_cost'] = pmpro_getLevelsCost($levels);
+		$pmproemail->data['membership_level_confirmation_message'] = $confirmation_message;
 	
 		if(!empty($invoice) && !pmpro_areLevelsFree($levels))
 		{									
