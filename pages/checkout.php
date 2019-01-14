@@ -58,7 +58,7 @@
 	<thead>
 		<tr>
 			<th>
-				<?php if ( ! empty( $pmpro_checkout_level_ids ) && count( $pmpro_checkout_level_ids > 1 ) { ?>
+				<?php if ( ! empty( $pmpro_checkout_level_ids ) && count( $pmpro_checkout_level_ids > 1 ) ) { ?>
 					<span class="pmpro_thead-name"><?php _e('Membership Levels', 'pmpro-multiple-memberships-per-user');?></span>
 				<?php } else { ?>
 					<span class="pmpro_thead-name"><?php _e('Membership Level', 'paid-memberships-pro');?></span>
