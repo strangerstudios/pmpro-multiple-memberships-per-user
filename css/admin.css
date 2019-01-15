@@ -23,3 +23,15 @@ table.pmprommpu_levels tr.remove_level td {background: #F2DEDE; }
     opacity: 1;
 }
 
+/**
+ * Moving around levels table
+ */
+.memberships_page_pmpro-membershiplevels .pmpro_admin tr td.level_name a {
+     font-size: 100%;
+     font-weight: normal;
+}
+.memberships_page_pmpro-membershiplevels .pmpro_admin tr td.level_name strong {
+    font-size: 115%;
+    font-weight: bold;
+}
+

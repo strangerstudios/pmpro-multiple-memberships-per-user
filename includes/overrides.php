@@ -581,7 +581,7 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 	</script>
 	<a id="add-new-group" class="add-new-h2" href="#"><?php _e( 'Add New Group', 'pmprommpu' ); ?></a>
 
-	<table class="widefat mmpu-membership-levels">
+	<table class="widefat mmpu-membership-levels membership-levels">
 		<thead>
 		<tr>
 			<th width="20%"><?php _e( 'Group', 'pmpro' ); ?></th>
@@ -590,7 +590,6 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 			<th><?php _e( 'Billing Details', 'pmpro' ); ?></th>
 			<th><?php _e( 'Expiration', 'pmpro' ); ?></th>
 			<th><?php _e( 'Allow Signups', 'pmpro' ); ?></th>
-			<th width="15%"></th>
 		</tr>
 		</thead>
 		<?php
@@ -655,8 +654,23 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 						<tr class="<?php if ( $count ++ % 2 == 1 ) { ?>alternate<?php } ?> levelrow <?php if ( ! $level->allow_signups ) { ?>pmpro_gray<?php } ?> <?php if ( ! pmpro_checkLevelForStripeCompatibility( $level ) || ! pmpro_checkLevelForBraintreeCompatibility( $level ) || ! pmpro_checkLevelForPayflowCompatibility( $level ) || ! pmpro_checkLevelForTwoCheckoutCompatibility( $level ) ) { ?>pmpro_error<?php } ?>">
 
 							<td class="levelid"><?php echo $level->id ?></td>
-							<td class="level_name"><a
-									href="<?php echo $page_link; ?>"><?php echo esc_attr( $level->name ); ?></a></td>
+							<td class="level_name">
+								<a href="<?php echo $page_link; ?>"><strong><?php echo esc_attr( $level->name ); ?></strong></a>
+								<div class="row-actions">
+									<span><a title="<?php _e( 'Edit', 'pmpro' ); ?>" href="<?php echo $page_link; ?>"><?php _e( 'Edit', 'pmpro' ); ?></a> |</span>
+									<span><a title="<?php _e( 'Copy', 'pmpro' ); ?>" href="<?php echo add_query_arg( array(
+										'page' => 'pmpro-membershiplevels',
+										'copy' => $level->id,
+										'edit' => '-1'
+									), admin_url( 'admin.php' ) ); ?>"><?php _e( 'Copy', 'pmpro' ); ?></a> |</span>
+									<span><a title="<?php _e( 'Delete', 'pmpro' ); ?>"
+									href="javascript:askfirst('<?php echo str_replace( "'", "\'", sprintf( __( "Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", "pmpro" ), $level->name ) ); ?>', '<?php echo wp_nonce_url( add_query_arg( array(
+										'page'     => 'pmpro-membershiplevels',
+										'action'   => 'delete_membership_level',
+										'deleteid' => $level->id
+									), admin_url( 'admin.php' ) ), 'delete_membership_level', 'pmpro_membershiplevels_nonce' ); ?>'); void(0);"><?php _e( 'Delete', 'pmpro' ); ?></a></span>
+								</div>
+							</td>
 							<td>
 								<?php if ( pmpro_isLevelFree( $level ) ) { ?>
 									<?php _e( 'FREE', 'pmpro' ); ?>
@@ -674,22 +688,6 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 							<td><?php if ( $level->allow_signups ) { ?><a
 									href="<?php echo pmpro_url( "checkout", "?level=" . $level->id ); ?>"><?php _e( 'Yes', 'pmpro' ); ?></a><?php } else { ?><?php _e( 'No', 'pmpro' ); ?><?php } ?>
 							</td>
-
-							<td><a title="<?php _e( 'edit', 'pmpro' ); ?>" href="<?php echo $page_link; ?>"
-							       class="button-primary"><?php _e( 'edit', 'pmpro' ); ?></a>&nbsp;<a
-									title="<?php _e( 'copy', 'pmpro' ); ?>" href="<?php echo add_query_arg( array(
-									'page' => 'pmpro-membershiplevels',
-									'copy' => $level->id,
-									'edit' => '-1'
-								), admin_url( 'admin.php' ) ); ?>"
-									class="button-secondary"><?php _e( 'copy', 'pmpro' ); ?></a>&nbsp;<a
-									title="<?php _e( 'delete', 'pmpro' ); ?>"
-									href="javascript:askfirst('<?php echo str_replace( "'", "\'", sprintf( __( "Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", "pmpro" ), $level->name ) ); ?>', '<?php echo wp_nonce_url( add_query_arg( array(
-										'page'     => 'pmpro-membershiplevels',
-										'action'   => 'delete_membership_level',
-										'deleteid' => $level->id
-									), admin_url( 'admin.php' ) ), 'delete_membership_level', 'pmpro_membershiplevels_nonce' ); ?>'); void(0);"
-									class="button-secondary"><?php _e( 'delete', 'pmpro' ); ?></a></td>
 						</tr>
 						<?php
 					}
