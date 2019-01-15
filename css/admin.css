@@ -22,6 +22,9 @@ table.pmprommpu_levels tr.remove_level td {background: #F2DEDE; }
 .memberships_page_pmpro-membershiplevels .pmpro_admin .mmpu-membership-levels tr:hover td.levelid:before {
     opacity: 1;
 }
+.memberships_page_pmpro-membershiplevels .pmpro_admin .mmpu-membership-levels tr.grouprow {
+    cursor: move;
+}
 
 /**
  * Moving around levels table
