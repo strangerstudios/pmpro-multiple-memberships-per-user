@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, members, memberships, mmpu
 Requires at least: 4.8
 Tested up to: 5.0.3
-Stable tag: .5
+Stable tag: .5.1
 
 Updates the core Paid Memberships Pro plugin to allow users to have multiple memberships at the same time.
 
@@ -13,7 +13,7 @@ IMPORTANT: This plugin is considered to be in "beta" status. Use at your own ris
 other PMPro add ons that adjust the checkout process, membership pricing, user subscriptions, or perform actions when
 users change membership levels will NOT currently work as you might expect with this plugin active.
 
-Specifically, most PMPro add ons assume that users will only have one membership level at a time and 
+Specifically, most PMPro add ons assume that users will only have one membership level at a time and
 don't "know what to do" when users have multiple levels or cancel multiple levels at once. We will be updating
 our add ons over time to support MMPU and will add notices here and on our website when we do.
 
@@ -23,6 +23,9 @@ our add ons over time to support MMPU and will add notices here and on our websi
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+
+= .5.1 =
+* BUG FIX: Fixed bug when setting expiration dates for new levels added on the profile page.
 
 = .5 =
 * BUG FIX: Fixed fatal errors when running PMPro 2.0+.
