@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Multiple Memberships per User
 Plugin URI: http://www.paidmembershipspro.com/pmpro-multiple-memberships-per-user/
 Description: Update PMPro to allow users to checkout for and hold multiple memberships at the same time.
-Version: .5
+Version: .5.1
 Author: Square Lines LLC and Stranger Studios
 Author URI: http://www.square-lines.com
 */
