@@ -64,7 +64,7 @@ global $current_user;
 	<?php
 		//get levels and groups
 		$currentlevels = pmpro_getMembershipLevelsForUser($user->ID);
-		$levelsandgroups = pmprommpu_get_levels_and_groups_in_order();
+		$levelsandgroups = pmprommpu_get_levels_and_groups_in_order(true);
 		$allgroups = pmprommpu_get_groups();
 		
 		//some other vars
