@@ -116,8 +116,8 @@
 	?>
 
 	<?php if( ! $skip_account_fields && ! $pmpro_review ) { ?>
-	<hr />
 	<div id="pmpro_user_fields" class="pmpro_checkout">
+		<hr />
 		<h3>
 			<span class="pmpro_checkout-h3-name"><?php _e('Account Information', 'paid-memberships-pro');?></span>
 			<span class="pmpro_checkout-h3-msg"><?php _e('Already have an account?', 'paid-memberships-pro');?> <a href="<?php echo wp_login_url(pmpro_url("checkout", "?level=" . $checkout_levels))?>"><?php _e('Log in here', 'paid-memberships-pro');?></a></span>
@@ -223,8 +223,8 @@
 	?>
 
 	<?php if(pmpro_getGateway() == "paypal" && empty($pmpro_review)) { ?>
-		<hr />
 		<div id="pmpro_payment_method" class="pmpro_checkout" <?php if(!$pmpro_requirebilling) { ?>style="display: none;"<?php } ?>>
+			<hr />
 			<h3>
 				<span class="pmpro_checkout-h3-name"><?php _e('Choose your Payment Method', 'paid-memberships-pro');?></span>
 			</h3>
@@ -246,8 +246,8 @@
 		if($pmpro_include_billing_address_fields)
 		{
 	?>
-	<hr />
 	<div id="pmpro_billing_address_fields" class="pmpro_checkout" <?php if(!$pmpro_requirebilling || apply_filters("pmpro_hide_billing_address_fields", false) ){ ?>style="display: none;"<?php } ?>>
+		<hr />
 		<h3>
 			<span class="pmpro_checkout-h3-name"><?php _e('Billing Address', 'paid-memberships-pro');?></span>
 		</h3>
