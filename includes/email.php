@@ -138,6 +138,10 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 			else
 				$pmproemail->template = "checkout_paid_admin";
 		}
+		elseif(pmpro_areLevelsFree($levels))
+		{
+			$pmproemail->template = "checkout_free_admin";		
+		}						
 
 		// ...and send it...
 		return $pmproemail->sendEmail();
