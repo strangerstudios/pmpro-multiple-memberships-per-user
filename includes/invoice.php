@@ -86,10 +86,10 @@ class MemberInvoice extends MemberOrder {
 				
 				if($ordercount == 1) { $this->subtotal = $temporder->subtotal; } else { $this->subtotal += $temporder->subtotal; }
 				if($ordercount == 1) { $this->tax = $temporder->tax; } else { $this->tax += $temporder->tax; }
-				if($ordercount == 1) { $this->couponamount = $temporder->couponamount; } else { $this->couponamount += $temporder->couponamount; }
+				if($ordercount == 1) { $this->couponamount = $temporder->couponamount; } else { $this->couponamount = (double)$this->couponamount + (double)$temporder->couponamount; }
 				if($ordercount == 1) { if(strlen($temporder->certificate_id)>0) { $this->certificate_id = $temporder->certificate_id; } else { $this->certificate_id = ""; }
 					} elseif(strlen($temporder->certificate_id)>0 && strlen($this->certificate_id)>0) { $this->certificate_id = "Multiple"; }
-				if($ordercount == 1) { $this->certificateamount = $temporder->certificateamount; } else { $this->certificateamount += $temporder->certificateamount; }
+				if($ordercount == 1) { $this->certificateamount = $temporder->certificateamount; } else { $this->certificateamount = (double)$this->certificateamount + (double)$temporder->certificateamount; }
 				if($ordercount == 1) { $this->total = $temporder->total; } else { $this->total += $temporder->total; }
 
 				$this->payment_type = $temporder->payment_type;
