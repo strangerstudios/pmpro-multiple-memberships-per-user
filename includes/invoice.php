@@ -84,13 +84,13 @@ class MemberInvoice extends MemberOrder {
 				//get email from user_id
 				$this->Email = $wpdb->get_var("SELECT user_email FROM $wpdb->users WHERE ID = '" . $this->user_id . "' LIMIT 1");
 				
-				if($ordercount == 1) { $this->subtotal = $temporder->subtotal; } else { $this->subtotal += $temporder->subtotal; }
-				if($ordercount == 1) { $this->tax = $temporder->tax; } else { $this->tax += $temporder->tax; }
+				if($ordercount == 1) { $this->subtotal = $temporder->subtotal; } else { $this->subtotal = (double)$this->subtotal + (double)$temporder->subtotal; }
+				if($ordercount == 1) { $this->tax = $temporder->tax; } else { $this->tax = (double)$this->tax + (double)$temporder->tax; }
 				if($ordercount == 1) { $this->couponamount = $temporder->couponamount; } else { $this->couponamount = (double)$this->couponamount + (double)$temporder->couponamount; }
 				if($ordercount == 1) { if(strlen($temporder->certificate_id)>0) { $this->certificate_id = $temporder->certificate_id; } else { $this->certificate_id = ""; }
 					} elseif(strlen($temporder->certificate_id)>0 && strlen($this->certificate_id)>0) { $this->certificate_id = "Multiple"; }
 				if($ordercount == 1) { $this->certificateamount = $temporder->certificateamount; } else { $this->certificateamount = (double)$this->certificateamount + (double)$temporder->certificateamount; }
-				if($ordercount == 1) { $this->total = $temporder->total; } else { $this->total += $temporder->total; }
+				if($ordercount == 1) { $this->total = $temporder->total; } else { $this->total = (double)$this->total + (double)$temporder->total; }
 
 				$this->payment_type = $temporder->payment_type;
 				$this->cardtype = $temporder->cardtype;
