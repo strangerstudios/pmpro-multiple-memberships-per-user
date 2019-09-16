@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, members, memberships, mmpu
 Requires at least: 4.8
 Tested up to: 5.2.3
-Stable tag: .6
+Stable tag: .6.1
 
 Updates the core Paid Memberships Pro plugin to allow users to have multiple memberships at the same time.
 
@@ -23,6 +23,9 @@ our add ons over time to support MMPU and will add notices here and on our websi
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+
+= .6.1 - 2019-09-16 =
+* BUG FIX: The TOS field will autocheck if it was checked before form submission. Also showing a second message box at the bottom of the form now.
 
 = .6 - 2019-09-13 =
 * BUG FIX/ENHANCEMENT: Checkout page updated to use table-free layout and support PMPro v2.1.
