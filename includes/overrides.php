@@ -940,3 +940,23 @@ function pmprommpu_set_checkout_id( $inorder ) {
 
 add_filter( 'pmpro_checkout_order', 'pmprommpu_set_checkout_id', 10, 1 );
 add_filter( 'pmpro_checkout_order_free', 'pmprommpu_set_checkout_id', 10, 1 );
+
+
+/**
+ * Set pmpro_require_billing to true if any of the checkout levels are paid.
+ */
+function pmprommpu_pmpro_require_billing( $require_billing, $level ) {
+	global $pmpro_checkout_levels;
+	
+	if ( ! empty( $pmpro_checkout_levels ) ) {
+		foreach( $pmpro_checkout_levels as $checkout_level ) {
+			if ( ! pmpro_isLevelFree( $checkout_level ) ) {
+				$require_billing = true;
+				break;
+			}
+		}
+	}
+	
+	return $require_billing;
+}
+add_filter( 'pmpro_require_billing', 'pmprommpu_pmpro_require_billing', 10, 2);

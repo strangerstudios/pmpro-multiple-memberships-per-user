@@ -24,6 +24,9 @@ our add ons over time to support MMPU and will add notices here and on our websi
 
 == Changelog ==
 
+= .6.2 - 2019-10-18 =
+* BUG FIX: No filter pmpro_require_billing so payment fields will show up if the first level passed into the checkout page is free. We still need an update in core PMPro check the pmpro_require_billing filter instead of just the first level when deciding to enqueue gateway JavaScript.
+
 = .6.1 - 2019-09-16 =
 * BUG FIX: The TOS field will autocheck if it was checked before form submission. Also showing a second message box at the bottom of the form now.
 
