@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, members, memberships, mmpu
 Requires at least: 4.8
 Tested up to: 5.3
-Stable tag: .6.2
+Stable tag: .6.3
 
 Updates the core Paid Memberships Pro plugin to allow users to have multiple memberships at the same time.
 
@@ -23,6 +23,9 @@ our add ons over time to support MMPU and will add notices here and on our websi
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+
+= .6.3 - 2019-11-22 =
+* BUG FIX: Fixed issue where dates could save incorrectly with WP 5.3+.
 
 = .6.2 - 2019-10-18 =
 * BUG FIX: No filter pmpro_require_billing so payment fields will show up if the first level passed into the checkout page is free. We still need an update in core PMPro check the pmpro_require_billing filter instead of just the first level when deciding to enqueue gateway JavaScript.
