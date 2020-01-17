@@ -204,6 +204,11 @@ add_action( 'wp_enqueue_scripts', 'pmprommpu_frontend_scripts' );
 
 // Filter the text on the checkout page that tells the user what levels they're getting
 function pmprommpu_checkout_level_text( $intext, $levelids_adding, $levelids_deleting ) {
+	// if not level set in URL param, assume default level and we don't need to filter.
+	if ( empty( $levelids_adding ) ) {
+		return $intext;
+	}
+	
 	$levelarr  = pmpro_getAllLevels( true, true );
 	$outstring = '<p>' . _n( 'You have selected the following level', 'You have selected the following levels', count( $levelids_adding ), 'pmprommpu' ) . ':</p>';
 	foreach ( $levelids_adding as $curlevelid ) {

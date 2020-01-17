@@ -19,7 +19,7 @@
  */
 	global $gateway, $pmpro_review, $skip_account_fields, $pmpro_paypal_token, $wpdb, $current_user, $pmpro_msg, $pmpro_msgt, $pmpro_requirebilling, $pmpro_level, $pmpro_levels, $tospage, $pmpro_show_discount_code, $pmpro_error_fields;
 	global $discount_code, $username, $password, $password2, $bfirstname, $blastname, $baddress1, $baddress2, $bcity, $bstate, $bzipcode, $bcountry, $bphone, $bemail, $bconfirmemail, $CardType, $AccountNumber, $ExpirationMonth,$ExpirationYear;
-	global $pmpro_checkout_levels, $pmpro_checkout_level_ids, $pmpro_checkout_del_level_ids;
+	global $pmpro_checkout_levels, $pmpro_checkout_level_ids, $pmpro_checkout_del_level_ids;	
 
 	/**
 	 * Filter to set if PMPro uses email or text as the type for email field inputs.
@@ -36,6 +36,11 @@
 		$pmpro_checkout_gateway_class = 'pmpro_checkout_gateway-none';
 	} else {
 		$pmpro_checkout_gateway_class = 'pmpro_checkout_gateway-' . $default_gateway;
+	}
+	
+	// Make sure we have a value for this.
+	if ( empty( $pmpro_checkout_levels ) && ! empty( $pmpro_level ) ) {
+		$pmpro_checkout_levels = array( $pmpro_level );
 	}
 ?>
 <div id="pmpro_level-mmpu" class="<?php echo $pmpro_checkout_gateway_class; ?>">
