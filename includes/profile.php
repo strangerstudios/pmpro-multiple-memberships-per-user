@@ -293,6 +293,7 @@ global $current_user;
 		});
 	</script>
 	<?php
+	do_action("pmpro_after_membership_level_profile_fields", $user);
 	}
 }
 
