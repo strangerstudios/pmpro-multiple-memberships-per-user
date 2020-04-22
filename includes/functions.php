@@ -383,24 +383,26 @@ function pmprommpu_hasMembershipGroup($groups = NULL, $user_id = NULL) {
 // the addition even if it's illegal, they can set force_add to true.
 // Checks group constraints to make sure it's legal first, then uses pmpro_changeMembershipLevel from PMPro core
 // to do the heavy lifting. If the addition isn't legal, returns false. Returns true on success.
-function pmprommpu_addMembershipLevel($inlevel = NULL, $user_id = NULL, $force_add = false) {
+function pmprommpu_addMembershipLevel($level = NULL, $user_id = NULL, $force_add = false) {
 	global $current_user, $wpdb;
 
 	//assume false
 	$return = false;
 
-	$levelid = -1;
+	$level_id = -1;
 
 	// Make sure we have a level object.
-	if(is_array($inlevel))
-		$inlevel = (object) $inlevel;
-
-	if(is_object($inlevel) && ( !empty($inlevel->id) || !empty($inlevel->membership_id)) ) {
-		$levelid = !empty($inlevel->id) ? $inlevel->id : $inlevel->membership_id;
-	} elseif(is_numeric($inlevel) && intval($inlevel)>0) {
-		$levelid = intval($inlevel);
+	if( is_array( $level ) && ( ! empty( $level['id'] ) || ! empty( $level['membership_id'] ) ) ) {
+		$level_id = !empty($level['id']) ? $level['id'] : $level['membership_id'];
+	} elseif(is_object($level) && ( !empty($level->id) || !empty($level->membership_id)) ) {
+		$level_id = !empty($level->id) ? $level->id : $level->membership_id;
+	} elseif(is_numeric($level) && intval($level)>0) {
+		$level_id = intval($level);
 	}
-	if($levelid<1) { return $return; }
+	
+	if( $level_id < 1 ) {
+		return $return;
+	}
 
 	//default to current user
 	if(empty($user_id)) {
@@ -413,15 +415,21 @@ function pmprommpu_addMembershipLevel($inlevel = NULL, $user_id = NULL, $force_a
 
 	// OK, we have the user and the level. Let's check to see if adding it is legal. Is it in a group where they can have only one?
 	if(!$force_add) {
-		$groupid = pmprommpu_get_group_for_level($levelid);
+		$groupid = pmprommpu_get_group_for_level($level_id);
 
 		if(array_key_exists($groupid, $allgroups) && $allgroups[$groupid]->allow_multiple_selections<1) { // There can be only one.
 			// Do they already have one in this group?
-			$otherlevels = $wpdb->get_col( $wpdb->prepare( "SELECT mlg.level FROM {$wpdb->pmpro_membership_levels_groups} AS mlg WHERE mlg.group = %d AND mlg.level <>  %d", $groupid, $levelid ) );
+			$otherlevels = $wpdb->get_col( $wpdb->prepare( "SELECT mlg.level FROM {$wpdb->pmpro_membership_levels_groups} AS mlg WHERE mlg.group = %d AND mlg.level <>  %d", $groupid, $level_id ) );
 			if ( false !== pmpro_hasMembershipLevel( $otherlevels, $user_id ) ) { return $return; }
 		}
 	}
 
-	// OK, we're legal (or don't care). Let's add it. Set elsewhere by filter, changeMembershipLevel should not disable old levels.
-	return pmpro_changeMembershipLevel($levelid, $user_id);
+	// OK, we're legal (or don't care). Let's add it. Set elsewhere by filter, changeMembershipLevel should not disable old levels.	
+	if ( is_array( $level ) ) {
+		// A custom level array was passed, so pass that along.		
+		return pmpro_changeMembershipLevel($level, $user_id);
+	} else {
+		return pmpro_changeMembershipLevel($level_id, $user_id);
+	}
+	
 }
