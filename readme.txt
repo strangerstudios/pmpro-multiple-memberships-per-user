@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, members, memberships, mmpu
 Requires at least: 4.8
-Tested up to: 5.3
-Stable tag: .6.3
+Tested up to: 5.4.1
+Stable tag: 0.6.4
 
 Updates the core Paid Memberships Pro plugin to allow users to have multiple memberships at the same time.
 
@@ -23,6 +23,11 @@ our add ons over time to support MMPU and will add notices here and on our websi
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+= 0.6.4 - 2020-05-01 =
+* BUG FIX: Fixed issue where expiration dates weren't set correctly when using PMPro WooCommerce.
+* BUG FIX: Fixed a fatal error when PMPro was not activated.
+* BUG FIX: Avoiding warnings when no level param is set on the checkout page.
+* ENHANCEMENT: Adding a 0 to the front of the version number to avoid issues with version control tags/etc.
 
 = .6.3 - 2019-11-22 =
 * BUG FIX: Fixed issue where dates could save incorrectly with WP 5.3+.
