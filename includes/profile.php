@@ -31,6 +31,10 @@ global $current_user;
 	if(!current_user_can($membership_level_capability))
 		return false;
 
+	if ( ! function_exists( 'pmpro_getMembershipLevelForUser' ) ) {
+		return false;
+	}
+
 	global $wpdb;
 	/*$user->membership_level = $wpdb->get_row("SELECT l.id AS ID, l.name AS name
 														FROM {$wpdb->pmpro_membership_levels} AS l
