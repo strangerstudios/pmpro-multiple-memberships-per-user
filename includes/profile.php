@@ -447,4 +447,5 @@ function pmprommpu_membership_level_profile_fields_update() {
 			// TODO: Should flag some kind of message to alert the admin that we had to force it (and the consequences of that).
 		}
 	}
+	wp_cache_delete( 'user_' . $user_id . '_levels', 'pmpro' );
 }
