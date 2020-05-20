@@ -6,6 +6,8 @@ Description: Update PMPro to allow users to checkout for and hold multiple membe
 Version: 0.6.4
 Author: Square Lines LLC and Stranger Studios
 Author URI: http://www.square-lines.com
+Text Domain: pmpro-multiple-memberships-per-user
+Domain Path: /languages
 */
 
 /*
@@ -58,6 +60,16 @@ require_once(PMPROMMPU_DIR . "/includes/email.php");		// functions to amend/repl
 if(is_admin()) {
 	pmprommpu_setup_and_upgrade();
 }
+
+/**
+ * pmprommpu_load_plugin_text_domain
+ *
+ * @since 0.6.5
+ */
+function pmprommpu_load_plugin_text_domain() {
+	load_plugin_textdomain( 'pmpro-multiple-memberships-per-user', false, basename( PMPROMMPU_DIR ) . '/languages' );
+}
+add_action( 'init', 'pmprommpu_load_plugin_text_domain' );
 
 // On activation, set a wp_option and set up initial group of all current levels if there are no groups.
 function pmprommpu_activation() {

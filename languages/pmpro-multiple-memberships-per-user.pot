@@ -1,0 +1,100 @@
+# Copyright (C) 2020 Square Lines LLC and Stranger Studios
+# This file is distributed under the same license as the Paid Memberships Pro - Multiple Memberships per User plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Paid Memberships Pro - Multiple Memberships per User 0.6.4\n"
+"Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
+"Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
+"Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2020-05-20T04:24:57+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.3.0\n"
+"X-Domain: pmpro-multiple-memberships-per-user\n"
+
+#. Plugin Name of the plugin
+msgid "Paid Memberships Pro - Multiple Memberships per User"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "http://www.paidmembershipspro.com/pmpro-multiple-memberships-per-user/"
+msgstr ""
+
+#. Description of the plugin
+msgid "Update PMPro to allow users to checkout for and hold multiple memberships at the same time."
+msgstr ""
+
+#. Author of the plugin
+msgid "Square Lines LLC and Stranger Studios"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://www.square-lines.com"
+msgstr ""
+
+#: includes/overrides.php:199
+msgid "Selected"
+msgstr ""
+
+#: includes/overrides.php:200
+msgctxt "title for currently selected levels"
+msgid "Current Levels"
+msgstr ""
+
+#: includes/overrides.php:201
+msgctxt "title for added levels"
+msgid "Added Levels"
+msgstr ""
+
+#: includes/overrides.php:202
+msgctxt "title for removed levels"
+msgid "Removed Levels"
+msgstr ""
+
+#: includes/overrides.php:203
+msgctxt "value displayed when no levels selected"
+msgid "None"
+msgstr ""
+
+#: includes/overrides.php:577
+msgid "The following levels were not yet in a group: %s. These levels have been added to the first group found."
+msgstr ""
+
+#: includes/overrides.php:963
+msgid "Unable to delete the level from its group"
+msgstr ""
+
+#: pages/checkout.php:73
+msgid "Membership Levels"
+msgstr ""
+
+#: pages/levels.php:57
+msgid "You can choose multiple levels from this group."
+msgstr ""
+
+#: pages/levels.php:59
+msgid "You can only choose one level from this group."
+msgstr ""
+
+#: pages/levels.php:101
+#: pages/levels.php:112
+msgid "pmpro_level-select-current"
+msgstr ""
+
+#: pages/levels.php:104
+msgid "Add"
+msgstr ""
+
+#: pages/levels.php:115
+msgid "Select"
+msgstr ""
+
+#: pages/levels.php:142
+msgid "Membership Selections"
+msgstr ""
+
+#: pages/levels.php:143
+msgid "Select levels to complete checkout."
+msgstr ""
