@@ -437,8 +437,6 @@ function pmprommpu_pmpro_after_checkout( $user_id, $checkout_statuses ) {
 				$discount_code_id = "";
 			}
 
-			if($morder->membership_level) {$level = $morder->membership_level;}
-
 			$custom_level = array(
 				'user_id'         => $user_id,
 				'membership_id'   => $level->id,
