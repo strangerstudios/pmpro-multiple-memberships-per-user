@@ -165,27 +165,45 @@ jQuery(document).ready( function() {
             message = "No levels selected.";
         } else {
             if (numOfPropsInObject(currentlevels) > 0) {
-                message += "<p class='mmpu_currentlevels'><label for='mmpu_currentlevels'>Current Levels</label>";
+                message += "<p class='mmpu_currentlevels'><label for='mmpu_currentlevels'>";
+                message += pmprolvl.lang.current_levels;
+                message += "</label>";
                 message += joinObjectProps(", ", currentlevels);
                 message += "</p>";
             } else {
-                message += "<p class='mmpu_currentlevels'><label for='mmpu_currentlevels'>Current Levels</label>None.</p>";
+                message += "<p class='mmpu_currentlevels'><label for='mmpu_currentlevels'>";
+                message += pmprolvl.lang.current_levels;
+                message += "</label>";
+                message += pmprolvl.lang.none;
+                message += ".</p>";
             }
             if (numOfPropsInObject(addedlevels) > 0) {
-                message += "<p class='mmpu_addedlevels'><label for='mmpu_addedlevels'>Added Levels</label>";
+                message += "<p class='mmpu_addedlevels'><label for='mmpu_addedlevels'>";
+                message += pmprolvl.lang.added_levels;
+                message += "</label>";
                 message += joinObjectProps(", ", addedlevels);
                 message += "</p>";
                 cancheckout = true;
             } else {
-                message += "<p class='mmpu_addedlevels'><label for='mmpu_addedlevels'>Added Levels</label>None.</p>";
+                message += "<p class='mmpu_addedlevels'><label for='mmpu_addedlevels'>";
+                message += pmprolvl.lang.added_levels;
+                message += "</label>";
+                message += pmprolvl.lang.none;
+                message += ".</p>";
             }
             if (numOfPropsInObject(removedlevels) > 0) {
-                message += "<p class='mmpu_removedlevels'><label for='mmpu_removedlevels'>Removed Levels</label>";
+                message += "<p class='mmpu_removedlevels'><label for='mmpu_removedlevels'>";
+                message += pmprolvl.lang.removed_levels;
+                message += "</label>";
                 message += joinObjectProps(", ", removedlevels);
                 message += "</p>";
                 cancheckout = true;
             } else {
-                message += "<p class='mmpu_removedlevels'><label for='mmpu_removedlevels'>Removed Levels</label>None.</p>";
+                message += "<p class='mmpu_removedlevels'><label for='mmpu_removedlevels'>";
+                message += pmprolvl.lang.removed_levels;
+                message += "</label>";
+                message += pmprolvl.lang.none;
+                message += ".</p>";
             }
 
         }

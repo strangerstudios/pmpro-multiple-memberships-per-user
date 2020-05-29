@@ -187,7 +187,11 @@ function pmprommpu_frontend_scripts() {
 					'checkout_lnk' => esc_url_raw( pmpro_url( 'checkout', '' ) ),
 				),
 				'lang'           => array(
-					'selected_label' => __( 'Selected', 'mmpu' ),
+					'selected_label' => __( 'Selected', 'pmpro-multiple-memberships-per-user' ),
+					'current_levels' => _x( 'Current Levels', 'title for currently selected levels', 'pmpro-multiple-memberships-per-user' ),
+					'added_levels'   => _x( 'Added Levels', 'title for added levels', 'pmpro-multiple-memberships-per-user' ),
+					'removed_levels' => _x( 'Removed Levels', 'title for removed levels', 'pmpro-multiple-memberships-per-user' ),
+					'none' => _x( 'None', 'value displayed when no levels selected', 'pmpro-multiple-memberships-per-user' ),
 				),
 				'alllevels'   => $all_levels,
 				'selectedlevels' => $selected_levels,
