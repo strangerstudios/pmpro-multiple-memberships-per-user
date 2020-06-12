@@ -937,6 +937,52 @@ function pmprommpu_show_multiple_levels_in_memlist( $inuser ) {
 
 add_filter( 'pmpro_members_list_user', 'pmprommpu_show_multiple_levels_in_memlist', 10, 1 );
 
+/*
+ * Replaces the default "Level" and "Level ID" columns in Members List
+ * with MMPU variants.
+ *
+ * @since 0.7
+ */
+function pmprommpu_memberslist_extra_cols( $columns ) {
+	$new_columns = array();
+	foreach ( $columns as $col_key => $col_name ) {
+		if ( $col_key == 'membership' ) {
+			$new_columns['mmpu_memberships'] = 'Levels';
+		} elseif ( $col_key == 'membership_id' ) {
+			$new_columns['mmpu_membership_ids'] = 'Level IDs';
+		} else {
+			$new_columns[$col_key] = $col_name;
+		}
+	}
+	return $new_columns;
+}
+add_filter( 'pmpro_memberslist_extra_cols', 'pmprommpu_memberslist_extra_cols' );
+
+/*
+ * Fills the MMPU-genereated columns in Members List.
+ *
+ * @since 0.7
+ */
+function my_pmpro_fill_memberslist_col_member_number( $colname, $user_id ) {
+	if ( 'mmpu_memberships' === $colname ) {
+		$user_levels = pmpro_getMembershipLevelsForUser( $user_id );
+		$memlevels   = array();
+		foreach ( $user_levels as $curlevel ) {
+			$memlevels[] = $curlevel->name;
+		}
+		echo( implode( ', ', $memlevels ) );
+	}
+	if ( 'mmpu_membership_ids' === $colname ) {
+		$user_levels = pmpro_getMembershipLevelsForUser( $user_id );
+		$memlevels   = array();
+		foreach ( $user_levels as $curlevel ) {
+			$memlevels[] = $curlevel->id;
+		}
+		echo( implode( ', ', $memlevels ) );
+	}
+}
+add_filter( 'pmpro_manage_memberslist_custom_column', 'my_pmpro_fill_memberslist_col_member_number', 10, 2 );
+
 function pmprommpu_set_checkout_id( $inorder ) {
 	global $pmpro_checkout_id;
 
