@@ -964,7 +964,7 @@ add_filter( 'pmpro_memberslist_extra_cols', 'pmprommpu_memberslist_extra_cols' )
  *
  * @since 0.7
  */
-function my_pmpro_fill_memberslist_col_member_number( $colname, $user_id ) {
+function pmprommpu_fill_memberslist_col_member_number( $colname, $user_id ) {
 	if ( 'mmpu_memberships' === $colname ) {
 		$user_levels = pmpro_getMembershipLevelsForUser( $user_id );
 		$memlevels   = array();
@@ -982,7 +982,7 @@ function my_pmpro_fill_memberslist_col_member_number( $colname, $user_id ) {
 		echo( implode( ', ', $memlevels ) );
 	}
 }
-add_filter( 'pmpro_manage_memberslist_custom_column', 'my_pmpro_fill_memberslist_col_member_number', 10, 2 );
+add_filter( 'pmpro_manage_memberslist_custom_column', 'pmprommpu_fill_memberslist_col_member_number', 10, 2 );
 
 function pmprommpu_set_checkout_id( $inorder ) {
 	global $pmpro_checkout_id;
