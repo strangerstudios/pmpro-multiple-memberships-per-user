@@ -101,6 +101,7 @@ function pmprommpu_addin_jquery_dialog( $pagehook ) {
 		array(
 			'jquery',
 			'jquery-ui-dialog',
+			'jquery-migrate',
 		),
 		PMPROMMPU_VER
 	);
