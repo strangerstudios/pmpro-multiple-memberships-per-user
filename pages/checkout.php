@@ -88,8 +88,15 @@
 				<?php if ( ! empty( $discount_code ) && pmpro_checkDiscountCode( $discount_code ) ) { ?>
 					<?php printf(__('<p class="pmpro_level_discount_applied">The <strong>%s</strong> code has been applied to your order.</p>', 'paid-memberships-pro'), $discount_code);?>
 				<?php } ?>
-				<?php echo wpautop(pmpro_getLevelsCost($pmpro_checkout_levels)); ?>
-				<?php echo wpautop(pmpro_getLevelsExpiration($pmpro_checkout_levels)); ?>
+				<?php 
+					if ( count( $pmpro_checkout_levels ) > 1 ) {
+						echo wpautop( pmpro_getLevelsCost( $pmpro_checkout_levels ) );
+						echo wpautop( pmpro_getLevelsExpiration( $pmpro_checkout_levels ) );
+					} else {
+						echo wpautop( pmpro_getLevelCost( $pmpro_level ) );
+						echo wpautop( pmpro_getLevelExpiration( $pmpro_level ) );
+					}
+				?>
 			</div>
 
 			<?php do_action("pmpro_checkout_after_level_cost"); ?>
