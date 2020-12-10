@@ -595,19 +595,6 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 		</div>
 		<?php
 	}
-
-	// Check if gateway is supported
-	if ( $gateway == "paypalexpress" || $gateway == "paypalstandard" ) { // doing this manually for now; should do it via a setting in the gateway class.
-		?>
-		<div id="message" class="error">
-			<p><?php echo __( "Multiple Memberships Per User (MMPU) does not work with PayPal Express or PayPal Standard. Please disable the MMPU plug-in or change gateways to continue.", "mmpu" ); ?></p>
-		</div>
-		<?php
-		$rethtml = ob_get_clean();
-
-		return $rethtml;
-	}
-
 	?>
 
 	<script>
