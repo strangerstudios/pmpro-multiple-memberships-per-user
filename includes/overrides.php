@@ -239,6 +239,32 @@ function pmprommpu_checkout_level_text( $intext, $levelids_adding, $levelids_del
 
 add_filter( 'pmprommpu_checkout_level_text', 'pmprommpu_checkout_level_text', 10, 3 );
 
+function pmprommpu_registration_checks_paypal( $continue_registration ) {
+	global $gateway, $pmpro_checkout_levels;
+	if ( ! $continue_registration ) {
+		return $continue_registration;
+	}
+
+	// Only allow users to register for one subscription level at a time if checking out with PayPal.
+	if( in_array( $gateway, array( 'paypalexpress', 'paypalstandard' ) ) ) {
+		$subscription_level_found = false;
+		foreach ( $pmpro_checkout_levels as $checkout_level ) {
+			if ( pmpro_isLevelRecurring( $checkout_level ) ) {
+				if ( ! $subscription_level_found ) {
+					// We have just found our first subscription level.
+					$subscription_level_found = true;
+				} else {
+					// We have just found our second subscription level which is not allowed.
+					pmpro_setMessage( __( 'You cannot check out for multiple subscription levels simultaniously while using PayPal. Please complete each subscription checkout separately.', 'pmpro-multiple-memberships-per-user' ), 'pmpro_error' );
+					return false;
+				}
+			}
+		}
+	}
+	return $continue_registration;
+}
+add_filter( 'pmpro_registration_checks', 'pmprommpu_registration_checks_paypal' );
+
 // Ensure than when a membership level is changed, it doesn't delete the old one or unsubscribe them at the gateway.
 // We'll handle both later in the process.
 function pmprommpu_pmpro_deactivate_old_levels( $deactivate ) {
