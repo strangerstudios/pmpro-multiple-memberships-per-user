@@ -136,6 +136,13 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 
 // Called as a filter by pmpro_pages_custom_template_path to add our path to the search path for user pages.
 function pmprommpu_override_user_pages($templates, $page_name, $type, $where, $ext) {
+	// Don't load mmpu levels page if using PayPal Express gateway.
+	$gateway = pmpro_getOption( 'gateway' );
+	$disable_mmpu_levels_page = apply_filters( 'pmprommpu_disable_mmpu_levels_page', in_array( $gateway, array( 'paypalexpress', 'paypalstandard' ) ) );
+	if ( $disable_mmpu_levels_page && $page_name === 'levels' ) {
+		return $templates;
+	}
+
 	if(file_exists(PMPROMMPU_DIR . "/pages/{$page_name}.{$ext}")) {
 		// We add our path as the second in the array - after core, but before user locations.
 		// The array is reversed later, so this means user templates come first, then us, then core.
