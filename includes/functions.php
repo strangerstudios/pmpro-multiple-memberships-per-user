@@ -147,7 +147,7 @@ function pmprommpu_gateway_supports_multiple_level_checkout( $gateway = null ) {
 function pmprommpu_override_user_pages($templates, $page_name, $type, $where, $ext) {
 	// Don't load levels multiselect page not supported by gateway.
 	if (  $page_name === 'levels' ) {
-		$disable_levels_multiselect_page = apply_filters( 'pmprommpu_disable_levels_multiselect_page', pmprommpu_gateway_supports_multiple_level_checkout() );
+		$disable_levels_multiselect_page = apply_filters( 'pmprommpu_disable_levels_multiselect_page', ! pmprommpu_gateway_supports_multiple_level_checkout() );
 		$page_name = $disable_levels_multiselect_page ? 'levels_single' : 'levels_multiselect';
 	}
 
