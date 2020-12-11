@@ -152,7 +152,7 @@ function pmprommpu_frontend_scripts() {
 
 	// If we're on a levels page, or the page contains the advanced levels page shortcode.
 	if ( is_page( $pmpro_pages['levels'] ) || ( !empty( $post->post_content ) && false !== stripos( $post->post_content, '[pmpro_advanced_levels' ) ) ) {
-		if ( ! apply_filters( 'pmprommpu_disable_levels_multiselect_page', pmprommpu_gateway_supports_multiple_level_checkout() ) ) {
+		if ( ! apply_filters( 'pmprommpu_disable_levels_multiselect_page', ! pmprommpu_gateway_supports_multiple_level_checkout() ) ) {
 			$incoming_levels  = pmpro_getMembershipLevelsForUser();
 			$available_levels = pmpro_getAllLevels( false, true );
 
