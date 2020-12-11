@@ -134,13 +134,21 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 	return $retarray;
 }
 
+function pmprommpu_gateway_supports_multiple_level_checkout( $gateway = null ) {
+	if ( empty( $gateway ) ) {
+		$gateway = pmpro_getOption( 'gateway' );
+	}
+	// Core gateways.
+	$has_support = ! in_array( $gateway, array( 'paypalexpress', 'paypalstandard' ) );
+	return apply_filters( 'pmprommpu_gateway_supports_multiple_level_checkout', $has_support, $gateway );
+}
+
 // Called as a filter by pmpro_pages_custom_template_path to add our path to the search path for user pages.
 function pmprommpu_override_user_pages($templates, $page_name, $type, $where, $ext) {
-	// Don't load mmpu levels page if using PayPal Express gateway.
-	$gateway = pmpro_getOption( 'gateway' );
-	$disable_mmpu_levels_page = apply_filters( 'pmprommpu_disable_mmpu_levels_page', in_array( $gateway, array( 'paypalexpress', 'paypalstandard' ) ) );
-	if ( $disable_mmpu_levels_page && $page_name === 'levels' ) {
-		return $templates;
+	// Don't load levels multiselect page not supported by gateway.
+	if (  $page_name === 'levels' ) {
+		$disable_levels_multiselect_page = apply_filters( 'pmprommpu_disable_levels_multiselect_page', pmprommpu_gateway_supports_multiple_level_checkout() );
+		$page_name = $disable_levels_multiselect_page ? 'levels_single' : 'levels_multiselect';
 	}
 
 	if(file_exists(PMPROMMPU_DIR . "/pages/{$page_name}.{$ext}")) {

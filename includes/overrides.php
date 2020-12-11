@@ -152,57 +152,57 @@ function pmprommpu_frontend_scripts() {
 
 	// If we're on a levels page, or the page contains the advanced levels page shortcode.
 	if ( is_page( $pmpro_pages['levels'] ) || ( !empty( $post->post_content ) && false !== stripos( $post->post_content, '[pmpro_advanced_levels' ) ) ) {
+		if ( ! apply_filters( 'pmprommpu_disable_levels_multiselect_page', pmprommpu_gateway_supports_multiple_level_checkout() ) ) {
+			$incoming_levels  = pmpro_getMembershipLevelsForUser();
+			$available_levels = pmpro_getAllLevels( false, true );
 
-		$incoming_levels  = pmpro_getMembershipLevelsForUser();
-		$available_levels = pmpro_getAllLevels( false, true );
+			$selected_levels = array();
+			$level_elements  = array();
+			$current_levels  = array();
+			$all_levels      = array();
 
-		$selected_levels = array();
-		$level_elements  = array();
-		$current_levels  = array();
-		$all_levels      = array();
+			if ( false !== $incoming_levels ) { // At this point, we're not disabling others in the group for initial selections, because if they're here, they probably want to change them.
 
-		if ( false !== $incoming_levels ) { // At this point, we're not disabling others in the group for initial selections, because if they're here, they probably want to change them.
+				foreach ( $incoming_levels as $curlev ) {
 
-			foreach ( $incoming_levels as $curlev ) {
-
-				$selected_levels[]             = "level-{$curlev->id}";
-				$level_elements[]              = "input#level{$curlev->id}";
-				$current_levels[ $curlev->id ] = $curlev->name;
+					$selected_levels[]             = "level-{$curlev->id}";
+					$level_elements[]              = "input#level{$curlev->id}";
+					$current_levels[ $curlev->id ] = $curlev->name;
+				}
 			}
-		}
 
-		if ( false !== $available_levels ) {
+			if ( false !== $available_levels ) {
 
-			foreach ( $available_levels as $lvl ) {
-				$all_levels[ $lvl->id ] = $lvl->name;
+				foreach ( $available_levels as $lvl ) {
+					$all_levels[ $lvl->id ] = $lvl->name;
+				}
 			}
-		}
 
-		wp_register_script( 'pmprommpu-levels', plugins_url( '../js/pmprommpu-levels.js', __FILE__ ), array( 'jquery' ), PMPROMMPU_VER, true );
-		wp_localize_script( 'pmprommpu-levels', 'pmprolvl',
-			array(
-				'settings'       => array(
-					'ajaxurl' => admin_url( 'admin-ajax.php' ),
-					'timeout' => apply_filters( "pmpro_ajax_timeout", 5000, "applydiscountcode" ),
-					'cancel_lnk' => esc_url_raw( pmpro_url( 'cancel', '') ),
-					'checkout_lnk' => esc_url_raw( pmpro_url( 'checkout', '' ) ),
-				),
-				'lang'           => array(
-					'selected_label' => __( 'Selected', 'pmpro-multiple-memberships-per-user' ),
-					'current_levels' => _x( 'Current Levels', 'title for currently selected levels', 'pmpro-multiple-memberships-per-user' ),
-					'added_levels'   => _x( 'Added Levels', 'title for added levels', 'pmpro-multiple-memberships-per-user' ),
-					'removed_levels' => _x( 'Removed Levels', 'title for removed levels', 'pmpro-multiple-memberships-per-user' ),
-					'none' => _x( 'None', 'value displayed when no levels selected', 'pmpro-multiple-memberships-per-user' ),
-				),
-				'alllevels'   => $all_levels,
-				'selectedlevels' => $selected_levels,
-				'levelelements'  => $level_elements,
-				'currentlevels'  => $current_levels,
-			)
-		);
-		wp_enqueue_script( 'pmprommpu-levels');
+			wp_register_script( 'pmprommpu-levels', plugins_url( '../js/pmprommpu-levels.js', __FILE__ ), array( 'jquery' ), PMPROMMPU_VER, true );
+			wp_localize_script( 'pmprommpu-levels', 'pmprolvl',
+				array(
+					'settings'       => array(
+						'ajaxurl' => admin_url( 'admin-ajax.php' ),
+						'timeout' => apply_filters( "pmpro_ajax_timeout", 5000, "applydiscountcode" ),
+						'cancel_lnk' => esc_url_raw( pmpro_url( 'cancel', '') ),
+						'checkout_lnk' => esc_url_raw( pmpro_url( 'checkout', '' ) ),
+					),
+					'lang'           => array(
+						'selected_label' => __( 'Selected', 'pmpro-multiple-memberships-per-user' ),
+						'current_levels' => _x( 'Current Levels', 'title for currently selected levels', 'pmpro-multiple-memberships-per-user' ),
+						'added_levels'   => _x( 'Added Levels', 'title for added levels', 'pmpro-multiple-memberships-per-user' ),
+						'removed_levels' => _x( 'Removed Levels', 'title for removed levels', 'pmpro-multiple-memberships-per-user' ),
+						'none' => _x( 'None', 'value displayed when no levels selected', 'pmpro-multiple-memberships-per-user' ),
+					),
+					'alllevels'   => $all_levels,
+					'selectedlevels' => $selected_levels,
+					'levelelements'  => $level_elements,
+					'currentlevels'  => $current_levels,
+				)
+			);
+			wp_enqueue_script( 'pmprommpu-levels');
+		}
 	}
-
 }
 
 add_action( 'wp_enqueue_scripts', 'pmprommpu_frontend_scripts' );
@@ -239,31 +239,20 @@ function pmprommpu_checkout_level_text( $intext, $levelids_adding, $levelids_del
 
 add_filter( 'pmprommpu_checkout_level_text', 'pmprommpu_checkout_level_text', 10, 3 );
 
-function pmprommpu_registration_checks_paypal( $continue_registration ) {
+function pmprommpu_registration_checks_single_level( $continue_registration ) {
 	global $gateway, $pmpro_checkout_levels;
 	if ( ! $continue_registration ) {
 		return $continue_registration;
 	}
 
-	// Only allow users to register for one subscription level at a time if checking out with PayPal.
-	if( in_array( $gateway, array( 'paypalexpress', 'paypalstandard' ) ) ) {
-		$subscription_level_found = false;
-		foreach ( $pmpro_checkout_levels as $checkout_level ) {
-			if ( pmpro_isLevelRecurring( $checkout_level ) ) {
-				if ( ! $subscription_level_found ) {
-					// We have just found our first subscription level.
-					$subscription_level_found = true;
-				} else {
-					// We have just found our second subscription level which is not allowed.
-					pmpro_setMessage( __( 'You cannot check out for multiple subscription levels simultaniously while using PayPal. Please complete each subscription checkout separately.', 'pmpro-multiple-memberships-per-user' ), 'pmpro_error' );
-					return false;
-				}
-			}
-		}
+	// Enforce single-level checkout if needed.
+	if( ! pmprommpu_gateway_supports_multiple_level_checkout( $gateway ) && count( $pmpro_checkout_levels ) > 1 ) {
+		pmpro_setMessage( __( 'You cannot check out for multiple levels simultaniously while using this payment gateway. Please complete each checkout separately.', 'pmpro-multiple-memberships-per-user' ), 'pmpro_error' );
+		return false;
 	}
 	return $continue_registration;
 }
-add_filter( 'pmpro_registration_checks', 'pmprommpu_registration_checks_paypal' );
+add_filter( 'pmpro_registration_checks', 'pmprommpu_registration_checks_single_level' );
 
 // Ensure than when a membership level is changed, it doesn't delete the old one or unsubscribe them at the gateway.
 // We'll handle both later in the process.
