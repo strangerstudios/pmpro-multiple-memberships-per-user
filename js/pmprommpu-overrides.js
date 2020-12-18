@@ -86,7 +86,7 @@ jQuery(document).ready(function ($) {
                         if (element_val.length > 0) {
                             var groupname = element_val;
                             var allowmult = 0;
-                            if (allow_multi.attr("checked")) {
+                            if ( $("#groupallowmult:checked").length > 0 ) {
                                 allowmult = 1;
                             }
                             dialog.dialog("close");
