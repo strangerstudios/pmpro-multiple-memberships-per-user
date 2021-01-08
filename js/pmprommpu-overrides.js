@@ -53,6 +53,8 @@ jQuery(document).ready(function ($) {
             }
         });
         dialog.dialog("open");
+        $('.ui-dialog-buttonset .ui-button:first-child').addClass('button button-primary save alignright');
+        $('.ui-dialog-buttonset .ui-button:nth-child(2)').addClass('button cancel alignleft');
     });
 
     $(".editgrpbutt").click(function () {
@@ -79,7 +81,7 @@ jQuery(document).ready(function ($) {
                 title: "Edit Group",
                 modal: true,
                 buttons: {
-                    "Edit": function () {
+                    "Save": function () {
 
                         var element_val = gn_element.val();
 
@@ -106,6 +108,8 @@ jQuery(document).ready(function ($) {
                 }
             });
             dialog.dialog("open");
+            $('.ui-dialog-buttonset .ui-button:first-child').addClass('button button-primary save alignright');
+            $('.ui-dialog-buttonset .ui-button:nth-child(2)').addClass('button cancel alignleft');
         }
     });
     $(".delgroupbutt").click(function () {
