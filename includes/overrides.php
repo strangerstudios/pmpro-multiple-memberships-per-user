@@ -586,12 +586,12 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 	}
 	?>
 
-	<script>
-		/* jQuery(document).ready(function () {
-			jQuery('#add-new-group').insertAfter("h2 .add-new-h2");
-		}); */
-	</script>
 	<a id="add-new-group" class="add-new-h2" href="#"><?php _e( 'Add New Group', 'pmprommpu' ); ?></a>
+	<script>
+		jQuery(document).ready(function () {
+			jQuery('#add-new-group').insertBefore("hr.wp-header-end");
+		});
+	</script>
 
 	<table class="widefat mmpu-membership-levels membership-levels">
 		<thead>
