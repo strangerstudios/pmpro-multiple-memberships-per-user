@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, members, memberships, mmpu
 Requires at least: 4.8
-Tested up to: 5.5
-Stable tag: 0.7
+Tested up to: 5.6
+Stable tag: 0.8
 
 Updates the core Paid Memberships Pro plugin to allow users to have multiple memberships at the same time.
 
@@ -23,6 +23,14 @@ our add ons over time to support MMPU and will add notices here and on our websi
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+= 0.8 - 2021-02-25 =
+* FEATURE: Now supporting non-Stripe/Braintree gateways. You cannot checkout for multiple levels at once with these gateways, but you can checkout for one level at a time and have MMPU.
+* ENHANCEMENT: Added a pmprommpu_disable_mmpu_levels_page filter. Set the callback to return true to use the default PMPro levels page template instead.
+* BUG FIX/ENHANCEMENT: If only checking out for 1 level, the default level cost text and expiration functions are used. This avoids issues with some PMPro Add ons that affect the cost text.
+* BUG FIX/ENHANCEMENT: Fixed the wording of the Save button in the edit group modal.
+* BUG FIX: Fixed JS code that squeezes the Add Group button into place on the level settings page.
+* BUG FIX: Fixed issues when selecting multiple levels from the MMPU levels page.
+
 = 0.7 - 2020-09-01 =
 * BUG FIX: Setting jQuery Migrate as a dependency to avoid issues with WP 5.5+.
 * BUG FIX/ENHANCEMENT: The Members List table columns now show all levels and level ids.
