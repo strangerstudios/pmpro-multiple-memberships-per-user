@@ -5,12 +5,11 @@
 function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 	global $wpdb, $pmpro_levels;
 
-	if($checkout_id>0) {
+
 		// then we'll get a combo invoice
 		$invoice = new MemberInvoice();
-		if(! $invoice->getLastMemberInvoice($user_id, array('success', 'pending'))) {
-			$invoice = null;
-		}
+		$invoice->getLastMemberInvoice($user_id, apply_filters("pmpro_confirmation_order_status", array("success", "pending")));
+
 		$levelids = explode(',', $invoice->membership_id);
 		$pmpro_levels = pmpro_getAllLevels();
 		$levelnames = array();
@@ -34,7 +33,7 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 		// then we'll put the fields together for the user checkout e-mail
 		$pmproemail = new PMProEmail();
 		$pmproemail->email = $auser->user_email;
-		$pmproemail->subject = sprintf(__("Your membership confirmation for %s", "pmpro"), get_option("blogname"));
+		$pmproemail->subject = sprintf(__("Your membership confirmation for %s", "paid-memberships-pro"), get_option("blogname") . " via " . $invoice->gateway );
 		
 		$pmproemail->data = array(
 								"subject" => $pmproemail->subject, 
@@ -51,19 +50,30 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 		$pmproemail->data['membership_cost'] = pmpro_getLevelsCost($levels);
 		$pmproemail->data['membership_level_confirmation_message'] = $confirmation_message;
 	
-		if(!empty($invoice) && !pmpro_areLevelsFree($levels))
+		if(pmpro_areLevelsFree($levels))
 		{									
+			$pmproemail->template = "checkout_free";		
+			global $discount_code;
+			if(!empty($discount_code))
+				$pmproemail->data["discount_code"] = "<p>" . __("Discount Code", "paid-memberships-pro") . ": " . $discount_code . "</p>\n";		
+			else
+				$pmproemail->data["discount_code"] = "";		
+		}
+		else
+		{
 			if($invoice->gateway == "paypalexpress")
+			{
 				$pmproemail->template = "checkout_express";
+			}
 			elseif($invoice->gateway == "check")
 			{
 				$pmproemail->template = "checkout_check";
 				$pmproemail->data["instructions"] = wpautop(pmpro_getOption("instructions"));
 			}
-// 			elseif(pmpro_isLevelTrial($user->membership_level))
-// 				$pmproemail->template = "checkout_trial";
 			else
+			{
 				$pmproemail->template = "checkout_paid";
+			}
 
 			$pmproemail->data["invoice_id"] = $invoice->code;
 			$pmproemail->data["invoice_total"] = pmpro_formatPrice($invoice->total);
@@ -89,29 +99,11 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 																 $invoice->billing->phone);
 			
 			if($invoice->getDiscountCode())
-				$pmproemail->data["discount_code"] = "<p>" . __("Discount Code", "pmpro") . ": " . $invoice->discount_code->code . "</p>\n";
+				$pmproemail->data["discount_code"] = "<p>" . __("Discount Code", "paid-memberships-pro") . ": " . $invoice->discount_code->code . "</p>\n";
 			else
 				$pmproemail->data["discount_code"] = "";
-		}
-		elseif(pmpro_areLevelsFree($levels))
-		{
-			$pmproemail->template = "checkout_free";		
-			global $discount_code;
-			if(!empty($discount_code))
-				$pmproemail->data["discount_code"] = "<p>" . __("Discount Code", "pmpro") . ": " . $discount_code . "</p>\n";		
-			else
-				$pmproemail->data["discount_code"] = "";		
 		}						
-		else
-		{
-			$pmproemail->template = "checkout_freetrial";
-			global $discount_code;
-			if(!empty($discount_code))
-				$pmproemail->data["discount_code"] = "<p>" . __("Discount Code", "pmpro") . ": " . $discount_code . "</p>\n";		
-			else
-				$pmproemail->data["discount_code"] = "";	
-		}
-		
+				
 		$pmproemail->data['membership_expiration'] = pmpro_getLevelsExpiration($levels);
 
 		// ...and send it...
@@ -119,10 +111,12 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 	
 		// and we'll modify the fields for the admin checkout e-mail
 		$send = pmpro_getOption("email_admin_checkout");
-		if(empty($send)) { return true; }
+		if(empty($send)) { 
+			return true; 
+		}
 
 		$pmproemail->email = get_bloginfo("admin_email");
-		$pmproemail->subject = sprintf(__("Member Checkout at %s", "pmpro"), get_option("blogname"));
+		$pmproemail->subject = sprintf(__("Member Checkout for %s at %s", "paid-memberships-pro"), pmprommpu_join_with_and($levelnames) ,get_option("blogname") . " via " . $invoice->gateway);
 		$pmproemail->data['subject'] = $pmproemail->subject;
 		
 		if(!pmpro_areLevelsFree($levels))
@@ -133,8 +127,6 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 			{
 				$pmproemail->template = "checkout_check_admin";
 			}
-// 			elseif(pmpro_isLevelTrial($user->membership_level))
-// 				$pmproemail->template = "checkout_trial";
 			else
 				$pmproemail->template = "checkout_paid_admin";
 		}
@@ -146,7 +138,6 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 		// ...and send it...
 		return $pmproemail->sendEmail();
 	}
-}
 
 add_action( 'pmpro_after_all_checkouts', 'pmprommpu_send_checkout_emails', 10, 2);
 

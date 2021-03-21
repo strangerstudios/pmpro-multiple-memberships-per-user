@@ -215,7 +215,7 @@ function pmprommpu_checkout_level_text( $intext, $levelids_adding, $levelids_del
 	}
 
 	$levelarr  = pmpro_getAllLevels( true, true );
-	$outstring = '<p>' . _n( 'You have selected the following level', 'You have selected the following levels', count( $levelids_adding ), 'pmpro-multiple-memberships-per-user' ) . ':</p>';
+	$outstring = '<p>' . __( 'You have selected the following level', 'pmpro-multiple-memberships-per-user' ) . ':</p>';
 	foreach ( $levelids_adding as $curlevelid ) {
 		$outstring .= "<p class='levellist'><strong><span class='levelnametext'>" . $levelarr[ $curlevelid ]->name . "</span></strong>";
 		if ( ! empty( $levelarr[ $curlevelid ]->description ) ) {

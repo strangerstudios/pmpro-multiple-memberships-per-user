@@ -100,7 +100,6 @@ msgid "Select levels to complete checkout."
 msgstr ""
 
 #: overrides:218
-msgctxt "You have selected the following levels"
 msgid "You have selected the following level"
 msgstr ""
 
