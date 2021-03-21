@@ -27,9 +27,9 @@
 	if(empty($theselevels)) {
 		$confirmation_message = "<p>" . __('Your payment has been submitted. Your membership will be activated shortly.', 'paid-memberships-pro') . "</p>";
 	} elseif(count($theselevels) == 1) {
-		$confirmation_message = "<p>" . sprintf(__('Thank you for your membership with %s. Your %s membership is now active.', 'paid-memberships-pro'), get_bloginfo("name"), pmprommpu_join_with_and($levelnames)) . "</p>";
+		$confirmation_message = "<p>" . sprintf(__('Thank you for your membership to %s. Your %s membership is now active.', 'pmpro-multiple-memberships-per-user'), get_bloginfo("name"), pmprommpu_join_with_and($levelnames)) . "</p>";
 	} else {
-		$confirmation_message = "<p>" . sprintf(__('Thank you for your membership with %s. Your %s memberships are now active.', 'paid-memberships-pro'), get_bloginfo("name"), pmprommpu_join_with_and($levelnames)) . "</p>";
+		$confirmation_message = "<p>" . sprintf(__('Thank you for your membership to %s. Your %s memberships are now active.', 'pmpro-multiple-memberships-per-user'), get_bloginfo("name"), pmprommpu_join_with_and($levelnames)) . "</p>";
 	}
 
 	//confirmation message for this level

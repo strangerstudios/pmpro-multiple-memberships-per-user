@@ -125,7 +125,7 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 		$pmproemail->subject = sprintf(__("Member Checkout at %s", "pmpro"), get_option("blogname"));
 		$pmproemail->data['subject'] = $pmproemail->subject;
 		
-		if(!empty($invoice) && !pmpro_areLevelsFree($levels))
+		if(!pmpro_areLevelsFree($levels))
 		{									
 			if($invoice->gateway == "paypalexpress")
 				$pmproemail->template = "checkout_express_admin";
@@ -138,7 +138,7 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 			else
 				$pmproemail->template = "checkout_paid_admin";
 		}
-		elseif(pmpro_areLevelsFree($levels))
+		else
 		{
 			$pmproemail->template = "checkout_free_admin";		
 		}						
