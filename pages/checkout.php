@@ -554,14 +554,13 @@
 
 	<?php do_action("pmpro_checkout_after_tos_fields"); ?>
 
-	<div class="pmpro_checkout-field pmpro_captcha">
-		<?php
-			global $recaptcha, $recaptcha_publickey;
-			if($recaptcha == 2 || ($recaptcha == 1 && pmpro_areLevelsFree($pmpro_checkout_levels)))
-			{
-				echo pmpro_recaptcha_get_html($recaptcha_publickey, NULL, true);
-			}
-		?>
+	<div class="<?php echo pmpro_get_element_class( 'pmpro_checkout-field pmpro_captcha', 'pmpro_captcha' ); ?>">
+	<?php
+		global $recaptcha, $recaptcha_publickey;
+		if ( $recaptcha == 2 || ( $recaptcha == 1 && pmpro_isLevelFree( $pmpro_level ) ) ) {
+			echo pmpro_recaptcha_get_html($recaptcha_publickey, NULL, true);
+		}
+	?>
 	</div> <!-- end pmpro_captcha -->
 
 	<?php do_action("pmpro_checkout_before_submit_button"); ?>
@@ -580,7 +579,7 @@
 				<input type="hidden" name="confirm" value="1" />
 				<input type="hidden" name="token" value="<?php echo esc_attr($pmpro_paypal_token)?>" />
 				<input type="hidden" name="gateway" value="<?php echo esc_attr($gateway); ?>" />
-				<input type="submit" class="pmpro_btn pmpro_btn-submit-checkout" value="<?php _e('Complete Payment', 'paid-memberships-pro');?> &raquo;" />
+				<input id="pmpro_btn-submit" type="submit" class="pmpro_btn pmpro_btn-submit-checkout" value="<?php _e('Complete Payment', 'paid-memberships-pro');?> &raquo;" />
 			</span>
 
 		<?php } else { ?>
@@ -592,7 +591,7 @@
 				?>
 				<span id="pmpro_submit_span">
 					<input type="hidden" name="submit-checkout" value="1" />
-					<input type="submit" class="pmpro_btn pmpro_btn-submit-checkout" value="<?php if($pmpro_requirebilling) { _e('Submit and Check Out', 'paid-memberships-pro'); } else { _e('Submit and Confirm', 'paid-memberships-pro');}?> &raquo;" />
+					<input id="pmpro_btn-submit" type="submit" class="pmpro_btn pmpro_btn-submit-checkout" value="<?php if($pmpro_requirebilling) { _e('Submit and Check Out', 'paid-memberships-pro'); } else { _e('Submit and Confirm', 'paid-memberships-pro');}?> &raquo;" />
 				</span>
 				<?php
 				}
