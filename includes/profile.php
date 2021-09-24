@@ -55,41 +55,6 @@ global $current_user;
 	if($show_membership_level)
 	{
 	?>
-
-	<!-- TOS COntent History -->
-	<table class="form-table">
-		<?php
-				$tospage_id = pmpro_getOption( 'tospage' );
-				$consent_log = pmpro_get_consent_log( $user->ID, true );
-
-				if( !empty( $tospage_id ) || !empty( $consent_log ) ) {
-				?>
-				<tr>
-					<th><label for="tos_consent_history"><?php _e("TOS Consent History", 'paid-memberships-pro' ); ?></label></th>
-					<td id="tos_consent_history">
-						<?php
-							if( !empty( $consent_log ) ) {
-								if( count( $consent_log ) > 10 ) {
-									$scrollable = 'pmpro_scrollable';
-								} else {
-									$scrollable = '';
-								}
-								echo '<ul class="pmpro_consent_log ' . $scrollable . '">';
-								foreach( $consent_log as $entry ) {
-									echo '<li>' . pmpro_consent_to_text( $entry ) . '</li>';
-								}
-								echo '</ul>';
-							} else {
-								echo __( 'N/A', 'paid-memberships-pro' );
-							}
-						?>
-					</td>
-				</tr>
-				<?php
-				}
-			?>
-	</table>
-
 	<table class="wp-list-table widefat fixed pmprommpu_levels" width="100%" cellpadding="0" cellspacing="0" border="0">
 	<thead>
 		<tr>
@@ -333,6 +298,37 @@ global $current_user;
 	</script>
 	<?php
 	do_action("pmpro_after_membership_level_profile_fields", $user);
+	}
+	
+	// TOS Consent History
+	$tospage_id = pmpro_getOption( 'tospage' );
+	$consent_log = pmpro_get_consent_log( $user->ID, true );
+	if( !empty( $tospage_id ) || !empty( $consent_log ) ) {
+	?>
+	<table class="form-table">	
+		<tr>
+			<th><label for="tos_consent_history"><?php _e("TOS Consent History", 'paid-memberships-pro' ); ?></label></th>
+			<td id="tos_consent_history">
+				<?php
+					if( !empty( $consent_log ) ) {
+						if( count( $consent_log ) > 10 ) {
+							$scrollable = 'pmpro_scrollable';
+						} else {
+							$scrollable = '';
+						}
+						echo '<ul class="pmpro_consent_log ' . $scrollable . '">';
+						foreach( $consent_log as $entry ) {
+							echo '<li>' . pmpro_consent_to_text( $entry ) . '</li>';
+						}
+						echo '</ul>';
+					} else {
+						echo __( 'N/A', 'paid-memberships-pro' );
+					}
+				?>
+			</td>
+		</tr>
+	</table>
+	<?php 
 	}
 }
 
