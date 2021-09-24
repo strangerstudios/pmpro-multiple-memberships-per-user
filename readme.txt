@@ -1,9 +1,9 @@
 === Paid Memberships Pro: Multiple Memberships per User ===
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, members, memberships, mmpu
-Requires at least: 4.8
-Tested up to: 5.6
-Stable tag: 0.8
+Requires at least: 5.2
+Tested up to: 5.8
+Stable tag: 0.8.1
 
 Updates the core Paid Memberships Pro plugin to allow users to have multiple memberships at the same time.
 
@@ -23,6 +23,10 @@ our add ons over time to support MMPU and will add notices here and on our websi
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+= 0.8.1 - 2021-09-24 =
+* BUG FIX: Now showing the TOS consent history on the edit user page. This was hidden before when MMPU was active. (Thanks @femiyb on GitHub)
+* BUG FIX: Fixed issues with using recaptcha while MMPU is active. (Thanks, Mehran Aziz)
+
 = 0.8 - 2021-02-25 =
 * FEATURE: Now supporting non-Stripe/Braintree gateways. You cannot checkout for multiple levels at once with these gateways, but you can checkout for one level at a time and have MMPU.
 * ENHANCEMENT: Added a pmprommpu_disable_mmpu_levels_page filter. Set the callback to return true to use the default PMPro levels page template instead.
