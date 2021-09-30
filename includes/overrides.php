@@ -921,7 +921,7 @@ add_action( 'wp_ajax_pmprommpu_del_group', 'pmprommpu_del_group' );
 add_action( 'wp_ajax_pmprommpu_update_level_and_group_order', 'pmprommpu_update_level_and_group_order' );
 
 function pmprommpu_stop_default_checkout_emails( $inflag ) {
-	return false;
+	return $inflag;
 }
 
 add_filter( 'pmpro_send_checkout_emails', 'pmprommpu_stop_default_checkout_emails', 10, 1 );
