@@ -553,7 +553,7 @@ add_action( 'pmpro_after_checkout', 'pmprommpu_pmpro_after_checkout', 99, 2 );
 function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 	$groupsnlevels = pmprommpu_get_levels_and_groups_in_order( true );
 	$allgroups     = pmprommpu_get_groups();
-	$alllevels     = pmpro_getAllLevels( true, true );
+	$alllevels     = pmpro_getAllLevels( true, false, true );
 	$gateway       = pmpro_getOption( "gateway" );
 
 	ob_start();
