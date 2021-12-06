@@ -23,6 +23,9 @@ our add ons over time to support MMPU and will add notices here and on our websi
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+= TBD =
+* BUG FIX: Fixed issue where levels were not showing up correctly when adding/editing/copying from the Memberships -> Settings -> Levels page in the dashboard.
+
 = 0.8.1 - 2021-09-24 =
 * BUG FIX: Now showing the TOS consent history on the edit user page. This was hidden before when MMPU was active. (Thanks @femiyb on GitHub)
 * BUG FIX: Fixed issues with using recaptcha while MMPU is active. (Thanks, Mehran Aziz)
