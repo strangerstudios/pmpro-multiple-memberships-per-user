@@ -195,8 +195,8 @@ global $current_user;
 					<tr class="old_levels_delsettings_tr_template remove_level">
 						<td></td>
 						<td colspan="3">
-							<label for="send_admin_change_email"><input value="1" id="send_admin_change_email" name="send_admin_change_email[]" type="checkbox"> Send the user an email about this change.</label><br>
-			                <label for="cancel_subscription"><input value="1" id="cancel_subscription" name="cancel_subscription[]" type="checkbox"> Cancel this user's subscription at the gateway.</label>
+							<label for="send_cancellation_email"><input value="level_id_replace_in_js" name="send_cancellation_email[]" type="checkbox"> Send the user an email about this cancellation.</label><br>
+			                <label for="cancel_subscription"><input value="level_id_replace_in_js" name="cancel_subscription[]" type="checkbox"> Cancel this user's subscription at the gateway.</label>
 						</td>
 					</tr>
 					<?php
@@ -260,7 +260,14 @@ global $current_user;
 				removelink.html(<?php echo json_encode(__('Undo', 'pmprommpu'));?>);
 				var olevelid = removelink.closest('tr').find('input.membership_level_id').val();
 				jQuery('<input type="hidden" name="remove_levels_id[]" value="'+olevelid+'">').insertAfter(removelink);
-				removetr.after(delsettingsrow.clone());
+
+				// Add the cancellation settings for this level.
+				var cancel_settings = delsettingsrow.clone();
+				cancel_settings.find('input').each(function() {
+					var input = jQuery(this);
+					input.attr('value', input.attr('value').replace('level_id_replace_in_js', olevelid));
+				});
+				removetr.after( cancel_settings );
 			}
 		}
 
@@ -356,35 +363,26 @@ function pmprommpu_membership_level_profile_fields_update() {
 	$droppedlevels = array();
 	$old_levels = pmpro_getMembershipLevelsForUser($user_id);
 	if(array_key_exists('remove_levels_id', $_REQUEST)) {
-		foreach($_REQUEST['remove_levels_id'] as $arraykey => $leveltodel) {
-// 			$subscription_id = -1;
-// 			foreach($old_levels as $checklevel) {
-// 				if($checklevel->id == $leveltodel) {
-// 					$subscription_id = $checklevel->subscription_id;
-// 					break;
-// 				}
-// 			}
-// 			$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET status ='admin_cancelled', enddate ='".current_time('mysql')."' WHERE id=$subscription_id");
-// 			if(is_array($_REQUEST['cancel_subscription']) && array_key_exists($arraykey, $_REQUEST['cancel_subscription']) && !empty($_REQUEST['cancel_subscription'][$arraykey])) {
-// 				$other_order_ids = $wpdb->get_col("SELECT id FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . $user_id . "' AND status = 'success' AND membership_id = $leveltodel ORDER BY id DESC");
-//
-// 				foreach($other_order_ids as $order_id)
-// 				{
-// 					$c_order = new MemberOrder($order_id);
-// 					$c_order->cancel();
-// 				}
-// 			}
-// 			//email to admin
-// 			$pmproemail = new PMProEmail();
-// 			$pmproemail->sendAdminChangeAdminEmail(get_userdata($user_id));
-//
-// 			//send email
-// 			if(is_array($_REQUEST['send_admin_change_email']) && array_key_exists($arraykey, $_REQUEST['send_admin_change_email']) && !empty($_REQUEST['send_admin_change_email'][$arraykey])) {
-// 				//email to member
-// 				$pmproemail = new PMProEmail();
-// 				$pmproemail->sendAdminChangeEmail(get_userdata($user_id));
-// 			}
+		foreach($_REQUEST['remove_levels_id'] as $leveltodel) {
+			// Check if we should cancel the subscription at the gateway.
+			if ( ! is_array( $_REQUEST['cancel_subscription'] ) || ! in_array( $leveltodel, $_REQUEST['cancel_subscription'] ) ) {
+				add_filter('pmpro_cancel_previous_subscriptions', 'pmpro_cancel_previous_subscriptions_false');
+			}
 			pmpro_cancelMembershipLevel($leveltodel, $user_id, 'admin_cancelled');
+			if ( ! is_array( $_REQUEST['cancel_subscription'] ) || ! in_array( $leveltodel, $_REQUEST['cancel_subscription'] ) ) {
+				remove_filter('pmpro_cancel_previous_subscriptions', 'pmpro_cancel_previous_subscriptions_false');
+			}
+
+			//Send cancellation emails.
+			if ( is_array( $_REQUEST['send_cancellation_email'] ) && in_array( $leveltodel, $_REQUEST['send_cancellation_email'] ) ) {
+ 				// Email to admin
+ 				$pmproemail = new PMProEmail();
+ 				$pmproemail->sendCancelEmail( get_userdata($user_id), $leveltodel );
+				
+				// Email to member
+ 				$pmproemail = new PMProEmail();
+ 				$pmproemail->sendCancelEmail( get_userdata($user_id), $leveltodel );
+ 			}
 			$droppedlevels[] = $leveltodel;
 		}
 	}
