@@ -601,7 +601,7 @@
 
 		<span id="pmpro_processing_message" style="visibility: hidden;">
 			<?php
-				$processing_message = apply_filters("pmpro_processing_message", __("Processing...", "paid-memberships-pro"));
+				$processing_message = apply_filters("pmpro_processing_message", __("Processing...", 'paid-memberships-pro'));
 				echo $processing_message;
 			?>
 		</span>

@@ -371,7 +371,7 @@ function pmprommpu_pmpro_after_checkout( $user_id, $checkout_statuses ) {
 				$pmpro_processed = $morder->process();
 
 				if ( ! empty( $pmpro_processed ) ) {
-					$pmpro_msg       = __( "Payment accepted.", "pmpro" );
+					$pmpro_msg       = __( "Payment accepted.", 'paid-memberships-pro' );
 					$pmpro_msgt      = "pmpro_success";
 					$pmpro_confirmed = true;
 				} else {
@@ -393,10 +393,10 @@ function pmprommpu_pmpro_after_checkout( $user_id, $checkout_statuses ) {
 					}
 
 					//set the error message
-					$pmpro_msg = __( "ERROR: This checkout included several payments. Some of them were processed successfully and some failed. We have attempted to refund any payments made. You should contact the site owner to resolve this issue.", "pmprommpu" );
+					$pmpro_msg = __( "ERROR: This checkout included several payments. Some of them were processed successfully and some failed. We have attempted to refund any payments made. You should contact the site owner to resolve this issue.", 'pmpro-multiple-memberships-per-user' );
 
 					if ( ! empty( $morder->error ) ) {
-						$pmpro_msg .= " " . __( "More information:", "pmprommpu" ) . " " . $morder->error;
+						$pmpro_msg .= " " . __( "More information:", 'pmpro-multiple-memberships-per-user' ) . " " . $morder->error;
 					}
 					$pmpro_msgt = "pmpro_error";
 
@@ -676,7 +676,7 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 										'edit' => '-1'
 									), admin_url( 'admin.php' ) ); ?>"><?php _e( 'Copy', 'paid-memberships-pro' ); ?></a> |</span>
 									<span><a title="<?php _e( 'Delete', 'paid-memberships-pro' ); ?>"
-									href="javascript:askfirst('<?php echo str_replace( "'", "\'", sprintf( __( "Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", "pmpro" ), $level->name ) ); ?>', '<?php echo wp_nonce_url( add_query_arg( array(
+									href="javascript:askfirst('<?php echo str_replace( "'", "\'", sprintf( __( "Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", 'paid-memberships-pro' ), $level->name ) ); ?>', '<?php echo wp_nonce_url( add_query_arg( array(
 										'page'     => 'pmpro-membershiplevels',
 										'action'   => 'delete_membership_level',
 										'deleteid' => $level->id

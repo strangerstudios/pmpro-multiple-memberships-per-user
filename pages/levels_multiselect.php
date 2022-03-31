@@ -74,7 +74,7 @@ if ( $pmpro_msg ) {
 							<p class="pmpro_level-price">
 								<?php
 								if ( pmpro_isLevelFree( $pmpro_levels[ $level ] ) ) {
-									_e( "Free", "paid-memberships-pro" );
+									_e( "Free", 'paid-memberships-pro' );
 								} else {
 									echo pmpro_getLevelCost( $pmpro_levels[ $level ], true, true );
 								}

@@ -48,7 +48,7 @@ global $current_user;
 	if(!$alllevels)
 		return "";
 ?>
-<h3><?php _e("Membership Levels", "pmprommpu"); ?></h3>
+<h3><?php _e("Membership Levels", 'pmpro-multiple-memberships-per-user'); ?></h3>
 <?php
 	$show_membership_level = true;
 	$show_membership_level = apply_filters("pmpro_profile_show_membership_level", $show_membership_level, $user);
@@ -81,7 +81,7 @@ global $current_user;
 		<tr id="new_levels_tr_template" class="new_levels_tr">
 			<td>
 				<select class="new_levels_group" name="new_levels_group[]">
-					<option value="">-- <?php _e("Choose a Group", "pmpro");?> --</option>
+					<option value="">-- <?php _e("Choose a Group", 'paid-memberships-pro');?> --</option>
 					<?php foreach($allgroups as $group) { ?>
 						<option value="<?php echo $group->id;?>"><?php echo $group->name;?></option>
 					<?php } ?>
@@ -99,8 +99,8 @@ global $current_user;
 					$selected_expires_year = (int)$current_year + 1;
 				?>
 				<select class="expires new_levels_expires" name="new_levels_expires[]">
-					<option value="0" <?php if(!$end_date) { ?>selected="selected"<?php } ?>><?php _e("No", "pmpro");?></option>
-					<option value="1" <?php if($end_date) { ?>selected="selected"<?php } ?>><?php _e("Yes", "pmpro");?></option>
+					<option value="0" <?php if(!$end_date) { ?>selected="selected"<?php } ?>><?php _e("No", 'paid-memberships-pro');?></option>
+					<option value="1" <?php if($end_date) { ?>selected="selected"<?php } ?>><?php _e("Yes", 'paid-memberships-pro');?></option>
 				</select>
 				<span class="expires_date new_levels_expires_date" <?php if(!$end_date) { ?>style="display: none;"<?php } ?>>
 					on
@@ -171,8 +171,8 @@ global $current_user;
 							}
 							?>
 							<select class="expires" name="expires[]">
-								<option value="0" <?php if(!$end_date) { ?>selected="selected"<?php } ?>><?php _e("No", "pmpro");?></option>
-								<option value="1" <?php if($end_date) { ?>selected="selected"<?php } ?>><?php _e("Yes", "pmpro");?></option>
+								<option value="0" <?php if(!$end_date) { ?>selected="selected"<?php } ?>><?php _e("No", 'paid-memberships-pro');?></option>
+								<option value="1" <?php if($end_date) { ?>selected="selected"<?php } ?>><?php _e("Yes", 'paid-memberships-pro');?></option>
 							</select>
 							<span class="expires_date" <?php if(!$end_date) { ?>style="display: none;"<?php } ?>>
 								on

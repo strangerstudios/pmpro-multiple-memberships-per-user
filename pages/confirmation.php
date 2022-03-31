@@ -126,7 +126,7 @@
 	<ul>
 		<li><strong><?php _e('Account', 'paid-memberships-pro');?>:</strong> <?php echo $current_user->display_name?> (<?php echo $current_user->user_email?>)</li>
 		<?php if(count($levelnames)<2) { ?>
-			<li><strong><?php _e('Membership Level', 'paid-memberships-pro');?>:</strong> <?php if(count($levelnames)==1) echo $levelnames[0]; else _e("Pending", "pmpro");?></li>
+			<li><strong><?php _e('Membership Level', 'paid-memberships-pro');?>:</strong> <?php if(count($levelnames)==1) echo $levelnames[0]; else _e("Pending", 'paid-memberships-pro');?></li>
 		<?php } else { ?>
 				<li><strong><?php _e('Membership Levels', 'mmpu'); ?>:</strong><br><span class="pmprommpu_conf_levelrow">
 				<?php echo implode('</span><br><span class="pmprommpu_conf_levelrow">', $levelnames); ?>
