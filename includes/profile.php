@@ -88,7 +88,7 @@ global $current_user;
 				</select>
 			</td>
 			<td>
-				<em><?php _e('Choose a group first.', 'pmprommpu');?></em>
+				<em><?php _e('Choose a group first.', 'pmpro-multiple-memberships-per-user');?></em>
 			</td>
 			<td>
 				<?php
@@ -118,7 +118,7 @@ global $current_user;
 					<input name="new_levels_expires_year[]" type="text" size="4" value="<?php echo $selected_expires_year?>" />
 				</span>
 			</td>
-			<td><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmprommpu');?></a></td>
+			<td><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmpro-multiple-memberships-per-user');?></a></td>
 		</tr>
 		<?php
 		$new_level_template_html = preg_replace('/\n\t+/', '', ob_get_contents());
@@ -190,7 +190,7 @@ global $current_user;
 								<input name="expires_year[]" type="text" size="4" value="<?php echo $selected_expires_year?>" />
 							</span>
 						</td>
-						<td width="25%"><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmprommpu');?></a></td>
+						<td width="25%"><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmpro-multiple-memberships-per-user');?></a></td>
 					</tr>
 					<tr class="old_levels_delsettings_tr_template remove_level">
 						<td></td>
@@ -206,7 +206,7 @@ global $current_user;
 		}
 	?>
 	<tr>
-		<td colspan="4"><a href="javascript:void(0);" class="add_level">+ <?php _e('Add Level', 'pmprommpu');?></a></td>
+		<td colspan="4"><a href="javascript:void(0);" class="add_level">+ <?php _e('Add Level', 'pmpro-multiple-memberships-per-user');?></a></td>
 	</tr>
 	</tbody>
 	</table>
@@ -232,12 +232,12 @@ global $current_user;
 			if(group_id.length > 0) {
 				//add level select
 				var levelselect = jQuery('<select class="new_levels_level" name="new_levels_level[]"></select>').appendTo(leveltd);
-				levelselect.append('<option value="">-- ' + <?php echo json_encode(__('Choose a Level', 'pmprommpu'));?> + ' --</option>');
+				levelselect.append('<option value="">-- ' + <?php echo json_encode(__('Choose a Level', 'pmpro-multiple-memberships-per-user'));?> + ' --</option>');
 				for(item in levelsandgroups[group_id]) {
 					levelselect.append('<option value="'+alllevels[levelsandgroups[group_id][item]].id+'">'+alllevels[levelsandgroups[group_id][item]].name+'</option>');
 				}
 			} else {
-				leveltd.html('<em>' + <?php echo json_encode(__('Choose a group first.', 'pmprommpu'));?> + '</em>');
+				leveltd.html('<em>' + <?php echo json_encode(__('Choose a group first.', 'pmpro-multiple-memberships-per-user'));?> + '</em>');
 			}
 		}
 
@@ -251,13 +251,13 @@ global $current_user;
 				removetr.remove();
 			} else if(removetr.hasClass('remove_level')) {
 				removetr.removeClass('remove_level');
-				removelink.html(<?php echo json_encode(__('Remove', 'pmprommpu'));?>);
+				removelink.html(<?php echo json_encode(__('Remove', 'pmpro-multiple-memberships-per-user'));?>);
 				removelink.next('input').remove();
 				removetr.nextAll('.old_levels_delsettings_tr_template').first().remove();
 			} else {
 				//existing level? red it out and add to be removed
 				removetr.addClass('remove_level');
-				removelink.html(<?php echo json_encode(__('Undo', 'pmprommpu'));?>);
+				removelink.html(<?php echo json_encode(__('Undo', 'pmpro-multiple-memberships-per-user'));?>);
 				var olevelid = removelink.closest('tr').find('input.membership_level_id').val();
 				jQuery('<input type="hidden" name="remove_levels_id[]" value="'+olevelid+'">').insertAfter(removelink);
 				removetr.after(delsettingsrow.clone());

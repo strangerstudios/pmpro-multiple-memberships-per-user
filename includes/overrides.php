@@ -106,9 +106,9 @@ function pmprommpu_addin_jquery_dialog( $pagehook ) {
 		PMPROMMPU_VER
 	);
 
-	wp_localize_script( 'pmprommpu-overrides', 'pmprommpu', array(
+	wp_localize_script( 'pmprommpu-overrides', 'pmpro-multiple-memberships-per-user', array(
 			'lang'     => array(
-				'confirm_delete' => __( 'Are you sure you want to delete this group? It cannot be undone.', 'pmprommpu' ),
+				'confirm_delete' => __( 'Are you sure you want to delete this group? It cannot be undone.', 'pmpro-multiple-memberships-per-user' ),
 			),
 			'settings' => array(
 				'level_page_url' => add_query_arg( 'page', 'pmpro-membershiplevels', admin_url( 'admin.php' ) ),
@@ -215,7 +215,7 @@ function pmprommpu_checkout_level_text( $intext, $levelids_adding, $levelids_del
 	}
 
 	$levelarr  = pmpro_getAllLevels( true, true );
-	$outstring = '<p>' . _n( 'You have selected the following level', 'You have selected the following levels', count( $levelids_adding ), 'pmprommpu' ) . ':</p>';
+	$outstring = '<p>' . _n( 'You have selected the following level', 'You have selected the following levels', count( $levelids_adding ), 'pmpro-multiple-memberships-per-user' ) . ':</p>';
 	foreach ( $levelids_adding as $curlevelid ) {
 		$outstring .= "<p class='levellist'><strong><span class='levelnametext'>" . $levelarr[ $curlevelid ]->name . "</span></strong>";
 		if ( ! empty( $levelarr[ $curlevelid ]->description ) ) {
@@ -224,7 +224,7 @@ function pmprommpu_checkout_level_text( $intext, $levelids_adding, $levelids_del
 		$outstring .= "</p>";
 	}
 	if ( ! empty( $levelids_deleting ) && count( $levelids_deleting ) > 0 ) {
-		$outstring .= '<p>' . _n( 'You are removing the following level', 'You are removing the following levels', count( $levelids_deleting ), 'pmprommpu' ) . ':</p>';
+		$outstring .= '<p>' . _n( 'You are removing the following level', 'You are removing the following levels', count( $levelids_deleting ), 'pmpro-multiple-memberships-per-user' ) . ':</p>';
 		foreach ( $levelids_deleting as $curlevelid ) {
 			$outstring .= "<p class='levellist'><strong><span class='levelnametext'>" . $levelarr[ $curlevelid ]->name . "</span></strong>";
 			if ( ! empty( $levelarr[ $curlevelid ]->description ) ) {
@@ -586,7 +586,7 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 	}
 	?>
 
-	<a id="add-new-group" class="add-new-h2" href="#"><?php _e( 'Add New Group', 'pmprommpu' ); ?></a>
+	<a id="add-new-group" class="add-new-h2" href="#"><?php _e( 'Add New Group', 'pmpro-multiple-memberships-per-user' ); ?></a>
 	<script>
 		jQuery(document).ready(function () {
 			jQuery('#add-new-group').insertBefore("hr.wp-header-end");
@@ -626,7 +626,7 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 					<h2><?php echo $groupname; ?></h2>
 					<input type="hidden" class="pmprommpu-allow-multi" name="allow_multi[]" value="<?php esc_attr_e( $groupallowsmult ); ?>">
 					<?php if ( ! $groupallowsmult ) { ?>
-						<p><em><?php _e( 'Users can only choose one level from this group.', 'pmprommpu' ); ?></em></p>
+						<p><em><?php _e( 'Users can only choose one level from this group.', 'pmpro-multiple-memberships-per-user' ); ?></em></p>
 					<?php } ?>
 					<p>
 						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'pmpro' ); ?>" href="#"
