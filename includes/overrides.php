@@ -864,11 +864,11 @@ function pmprommpu_add_group_to_level_options() {
 	$allgroups = pmprommpu_get_groups();
 	$prevgroup = pmprommpu_get_group_for_level( $level );
 	?>
-	<h3 class="topborder"><?php _e( 'Group', 'mmpu' ); ?></h3>
+	<h3 class="topborder"><?php _e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></h3>
 	<table class="form-table">
 		<tbody>
 		<tr>
-			<th scope="row" valign="top"><label><?php _e( 'Group', 'mmpu' ); ?></label></th>
+			<th scope="row" valign="top"><label><?php _e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></label></th>
 			<td><select name="groupid">
 					<?php foreach ( $allgroups as $curgroup ) { ?>
 						<option value="<?php echo $curgroup->id; ?>" <?php if ( $curgroup->id == $prevgroup ) {

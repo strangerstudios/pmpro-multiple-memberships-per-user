@@ -66,7 +66,7 @@
 		<?php if(count($levelnames)==1) { ?>
 			<li><strong><?php _e('Membership Level', 'pmpro-multiple-memberships-per-user');?>:</strong> <?php echo $current_user->membership_level->name?></li>
 		<?php } else { ?>
-			<li><strong><?php _e('Membership Levels', 'mmpu');?>:</strong> <?php echo implode(', ', $levelnames); ?></li>
+			<li><strong><?php _e('Membership Levels', 'pmpro-multiple-memberships-per-user');?>:</strong> <?php echo implode(', ', $levelnames); ?></li>
 		<?php } ?>
 		<?php if($current_user->membership_level->enddate) { ?>
 			<li><strong><?php _e('Membership Expires', 'pmpro-multiple-memberships-per-user');?>:</strong> <?php echo pmpro_getLevelsExpiration($pmpro_invoice->membership_levels); ?></li>
@@ -128,7 +128,7 @@
 		<?php if(count($levelnames)<2) { ?>
 			<li><strong><?php _e('Membership Level', 'pmpro-multiple-memberships-per-user');?>:</strong> <?php if(count($levelnames)==1) echo $levelnames[0]; else _e("Pending", 'pmpro-multiple-memberships-per-user');?></li>
 		<?php } else { ?>
-				<li><strong><?php _e('Membership Levels', 'mmpu'); ?>:</strong><br><span class="pmprommpu_conf_levelrow">
+				<li><strong><?php _e('Membership Levels', 'pmpro-multiple-memberships-per-user'); ?>:</strong><br><span class="pmprommpu_conf_levelrow">
 				<?php echo implode('</span><br><span class="pmprommpu_conf_levelrow">', $levelnames); ?>
 				</span>
 				</li>
