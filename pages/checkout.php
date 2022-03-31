@@ -42,7 +42,7 @@
     if ( empty( $pmpro_checkout_levels ) && ! empty( $pmpro_level ) ) {
         $pmpro_checkout_levels = array( $pmpro_level );
     }
-    if ( empty( $pmpro_checkout_level_ids ) && ! empty( $pmpro_level->id ) ) {
+    if ( empty( $pmpro_checkout_level_ids ) && ! empty( $pmpro_level ) ) {
         $pmpro_checkout_level_ids = array( $pmpro_level->id );
     }
 ?>
