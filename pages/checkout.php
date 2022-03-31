@@ -106,7 +106,7 @@
 				<?php if($discount_code && !$pmpro_review) { ?>
 					<p id="other_discount_code_p" class="pmpro_small"><a id="other_discount_code_a" href="#discount_code"><?php _e('Click here to change your discount code', 'paid-memberships-pro');?></a>.</p>
 				<?php } elseif(!$pmpro_review) { ?>
-					<p id="other_discount_code_p" class="pmpro_small"><?php _e('Do you have a discount code?', 'pmpro');?> <a id="other_discount_code_a" href="#discount_code"><?php _e('Click here to enter your discount code', 'paid-memberships-pro');?></a>.</p>
+					<p id="other_discount_code_p" class="pmpro_small"><?php _e('Do you have a discount code?', 'paid-memberships-pro');?> <a id="other_discount_code_a" href="#discount_code"><?php _e('Click here to enter your discount code', 'paid-memberships-pro');?></a>.</p>
 				<?php } elseif($pmpro_review && $discount_code) { ?>
 					<p><strong><?php _e('Discount Code', 'paid-memberships-pro');?>:</strong> <?php echo $discount_code?></p>
 				<?php } ?>
@@ -356,7 +356,7 @@
 				{
 			?>
 			<div class="pmpro_checkout-field pmpro_checkout-field-bcountry">
-				<label for="bcountry"><?php _e('Country', 'pmpro');?></label>
+				<label for="bcountry"><?php _e('Country', 'paid-memberships-pro');?></label>
 				<select name="bcountry" class=" <?php echo pmpro_getClassForField("bcountry");?>">
 					<?php
 						global $pmpro_countries, $pmpro_default_country;

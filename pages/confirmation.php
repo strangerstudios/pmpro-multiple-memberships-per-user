@@ -57,9 +57,9 @@
 	?>
 
 	<h3>
-		<?php printf(__('Invoice #%s on %s', 'pmpro'), $pmpro_invoice->code, date_i18n(get_option('date_format'), $pmpro_invoice->timestamp));?>
+		<?php printf(__('Invoice #%s on %s', 'paid-memberships-pro'), $pmpro_invoice->code, date_i18n(get_option('date_format'), $pmpro_invoice->timestamp));?>
 	</h3>
-	<a class="pmpro_a-print" href="javascript:window.print()"><?php _e('Print', 'pmpro');?></a>
+	<a class="pmpro_a-print" href="javascript:window.print()"><?php _e('Print', 'paid-memberships-pro');?></a>
 	<ul>
 		<?php do_action("pmpro_invoice_bullets_top", $pmpro_invoice); ?>
 		<li><strong><?php _e('Account', 'paid-memberships-pro');?>:</strong> <?php echo $current_user->display_name?> (<?php echo $current_user->user_email?>)</li>

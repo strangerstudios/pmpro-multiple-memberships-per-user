@@ -596,12 +596,12 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 	<table class="widefat mmpu-membership-levels membership-levels">
 		<thead>
 		<tr>
-			<th width="20%"><?php _e( 'Group', 'pmpro' ); ?></th>
-			<th><?php _e( 'ID', 'pmpro' ); ?></th>
-			<th><?php _e( 'Name', 'pmpro' ); ?></th>
-			<th><?php _e( 'Billing Details', 'pmpro' ); ?></th>
-			<th><?php _e( 'Expiration', 'pmpro' ); ?></th>
-			<th><?php _e( 'Allow Signups', 'pmpro' ); ?></th>
+			<th width="20%"><?php _e( 'Group', 'paid-memberships-pro' ); ?></th>
+			<th><?php _e( 'ID', 'paid-memberships-pro' ); ?></th>
+			<th><?php _e( 'Name', 'paid-memberships-pro' ); ?></th>
+			<th><?php _e( 'Billing Details', 'paid-memberships-pro' ); ?></th>
+			<th><?php _e( 'Expiration', 'paid-memberships-pro' ); ?></th>
+			<th><?php _e( 'Allow Signups', 'paid-memberships-pro' ); ?></th>
 		</tr>
 		</thead>
 		<?php
@@ -629,15 +629,15 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 						<p><em><?php _e( 'Users can only choose one level from this group.', 'pmpro-multiple-memberships-per-user' ); ?></em></p>
 					<?php } ?>
 					<p>
-						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'pmpro' ); ?>" href="#"
-						   class="editgrpbutt button-primary"><?php _e( 'edit', 'pmpro' ); ?></a>
+						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'paid-memberships-pro' ); ?>" href="#"
+						   class="editgrpbutt button-primary"><?php _e( 'edit', 'paid-memberships-pro' ); ?></a>
 						<!--
-						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'pmpro' ); ?>" href="admin.php?page=pmpro-membershiplevels&edit=<?php /* echo $level->id; */ ?>" class="editgrpbutt button-primary"><?php _e( 'edit', 'pmpro' ); ?></a>
+						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'paid-memberships-pro' ); ?>" href="admin.php?page=pmpro-membershiplevels&edit=<?php /* echo $level->id; */ ?>" class="editgrpbutt button-primary"><?php _e( 'edit', 'paid-memberships-pro' ); ?></a>
  -->
 						<?php if ( count( $itslevels ) == 0 ) { ?>
-							<a title="<?php _e( 'delete', 'pmpro' ); ?>" data-groupid="<?php echo $curgroup; ?>"
+							<a title="<?php _e( 'delete', 'paid-memberships-pro' ); ?>" data-groupid="<?php echo $curgroup; ?>"
 							   href="javascript: void(0);"
-							   class="delgroupbutt button-secondary"><?php _e( 'delete', 'pmpro' ); ?></a>
+							   class="delgroupbutt button-secondary"><?php _e( 'delete', 'paid-memberships-pro' ); ?></a>
 						<?php } ?>
 					</p>
 				</th>
@@ -669,23 +669,23 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 							<td class="level_name">
 								<a href="<?php echo $page_link; ?>"><strong><?php echo esc_attr( $level->name ); ?></strong></a>
 								<div class="row-actions">
-									<span><a title="<?php _e( 'Edit', 'pmpro' ); ?>" href="<?php echo $page_link; ?>"><?php _e( 'Edit', 'pmpro' ); ?></a> |</span>
-									<span><a title="<?php _e( 'Copy', 'pmpro' ); ?>" href="<?php echo add_query_arg( array(
+									<span><a title="<?php _e( 'Edit', 'paid-memberships-pro' ); ?>" href="<?php echo $page_link; ?>"><?php _e( 'Edit', 'paid-memberships-pro' ); ?></a> |</span>
+									<span><a title="<?php _e( 'Copy', 'paid-memberships-pro' ); ?>" href="<?php echo add_query_arg( array(
 										'page' => 'pmpro-membershiplevels',
 										'copy' => $level->id,
 										'edit' => '-1'
-									), admin_url( 'admin.php' ) ); ?>"><?php _e( 'Copy', 'pmpro' ); ?></a> |</span>
-									<span><a title="<?php _e( 'Delete', 'pmpro' ); ?>"
+									), admin_url( 'admin.php' ) ); ?>"><?php _e( 'Copy', 'paid-memberships-pro' ); ?></a> |</span>
+									<span><a title="<?php _e( 'Delete', 'paid-memberships-pro' ); ?>"
 									href="javascript:askfirst('<?php echo str_replace( "'", "\'", sprintf( __( "Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", "pmpro" ), $level->name ) ); ?>', '<?php echo wp_nonce_url( add_query_arg( array(
 										'page'     => 'pmpro-membershiplevels',
 										'action'   => 'delete_membership_level',
 										'deleteid' => $level->id
-									), admin_url( 'admin.php' ) ), 'delete_membership_level', 'pmpro_membershiplevels_nonce' ); ?>'); void(0);"><?php _e( 'Delete', 'pmpro' ); ?></a></span>
+									), admin_url( 'admin.php' ) ), 'delete_membership_level', 'pmpro_membershiplevels_nonce' ); ?>'); void(0);"><?php _e( 'Delete', 'paid-memberships-pro' ); ?></a></span>
 								</div>
 							</td>
 							<td>
 								<?php if ( pmpro_isLevelFree( $level ) ) { ?>
-									<?php _e( 'FREE', 'pmpro' ); ?>
+									<?php _e( 'FREE', 'paid-memberships-pro' ); ?>
 								<?php } else { ?>
 									<?php echo str_replace( 'The price for membership is', '', pmpro_getLevelCost( $level ) ); ?>
 								<?php } ?>
@@ -694,11 +694,11 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 								<?php if ( ! pmpro_isLevelExpiring( $level ) ) { ?>
 									--
 								<?php } else { ?>
-									<?php _e( 'After', 'pmpro' ); ?><?php echo $level->expiration_number ?><?php echo sornot( $level->expiration_period, $level->expiration_number ) ?>
+									<?php _e( 'After', 'paid-memberships-pro' ); ?><?php echo $level->expiration_number ?><?php echo sornot( $level->expiration_period, $level->expiration_number ) ?>
 								<?php } ?>
 							</td>
 							<td><?php if ( $level->allow_signups ) { ?><a
-									href="<?php echo pmpro_url( "checkout", "?level=" . $level->id ); ?>"><?php _e( 'Yes', 'pmpro' ); ?></a><?php } else { ?><?php _e( 'No', 'pmpro' ); ?><?php } ?>
+									href="<?php echo pmpro_url( "checkout", "?level=" . $level->id ); ?>"><?php _e( 'Yes', 'paid-memberships-pro' ); ?></a><?php } else { ?><?php _e( 'No', 'paid-memberships-pro' ); ?><?php } ?>
 							</td>
 						</tr>
 						<?php
