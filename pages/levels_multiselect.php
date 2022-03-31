@@ -74,7 +74,7 @@ if ( $pmpro_msg ) {
 							<p class="pmpro_level-price">
 								<?php
 								if ( pmpro_isLevelFree( $pmpro_levels[ $level ] ) ) {
-									_e( "Free", 'paid-memberships-pro' );
+									_e( "Free", 'pmpro-multiple-memberships-per-user' );
 								} else {
 									echo pmpro_getLevelCost( $pmpro_levels[ $level ], true, true );
 								}
@@ -148,9 +148,9 @@ if ( $pmpro_msg ) {
 <nav id="nav-below" class="navigation" role="navigation">
 	<div class="nav-previous alignleft">
 		<?php if ( ! empty( $current_user->membership_level->id ) ) { ?>
-			<a href="<?php echo pmpro_url( "account" ) ?>"><?php _e( '&larr; Return to Your Account', 'paid-memberships-pro' ); ?></a>
+			<a href="<?php echo pmpro_url( "account" ) ?>"><?php _e( '&larr; Return to Your Account', 'pmpro-multiple-memberships-per-user' ); ?></a>
 		<?php } else { ?>
-			<a href="<?php echo home_url() ?>"><?php _e( '&larr; Return to Home', 'paid-memberships-pro' ); ?></a>
+			<a href="<?php echo home_url() ?>"><?php _e( '&larr; Return to Home', 'pmpro-multiple-memberships-per-user' ); ?></a>
 		<?php } ?>
 	</div>
 </nav>

@@ -74,7 +74,7 @@ if ( $pmpro_msg ) {
 							<p class="pmpro_level-price">
 								<?php
 								if ( pmpro_isLevelFree( $pmpro_levels[ $level ] ) ) {
-									_e( "Free", 'paid-memberships-pro' );
+									_e( "Free", 'pmpro-multiple-memberships-per-user' );
 								} else {
 									echo pmpro_getLevelCost( $pmpro_levels[ $level ], true, true );
 								}
@@ -95,17 +95,17 @@ if ( $pmpro_msg ) {
 							<?php 
 							if( ! pmpro_hasMembershipLevel( $pmpro_levels[ $level ]->id ) ) {
 								?>
-									<a class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-select', 'pmpro_btn-select' ); ?>" href="<?php echo pmpro_url("checkout", "?level=" . $pmpro_levels[ $level ]->id, "https")?>"><?php _e('Select', 'paid-memberships-pro' );?></a>
+									<a class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-select', 'pmpro_btn-select' ); ?>" href="<?php echo pmpro_url("checkout", "?level=" . $pmpro_levels[ $level ]->id, "https")?>"><?php _e('Select', 'pmpro-multiple-memberships-per-user' );?></a>
 								<?php
 							} else {
 								//if it's a one-time-payment level, offer a link to renew				
 								if( pmpro_isLevelExpiringSoon( $pmpro_levels[ $level ] ) ) {
 									?>
-										<a class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-select', 'pmpro_btn-select' ); ?>" href="<?php echo pmpro_url("checkout", "?level=" . $pmpro_levels[ $level ]->id, "https")?>"><?php _e('Renew', 'paid-memberships-pro' );?></a>
+										<a class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-select', 'pmpro_btn-select' ); ?>" href="<?php echo pmpro_url("checkout", "?level=" . $pmpro_levels[ $level ]->id, "https")?>"><?php _e('Renew', 'pmpro-multiple-memberships-per-user' );?></a>
 									<?php
 								} else {
 									?>
-										<a class="<?php echo pmpro_get_element_class( 'pmpro_btn disabled', 'pmpro_btn' ); ?>" href="<?php echo pmpro_url("account")?>"><?php _e('Your&nbsp;Level', 'paid-memberships-pro' );?></a>
+										<a class="<?php echo pmpro_get_element_class( 'pmpro_btn disabled', 'pmpro_btn' ); ?>" href="<?php echo pmpro_url("account")?>"><?php _e('Your&nbsp;Level', 'pmpro-multiple-memberships-per-user' );?></a>
 									<?php
 								}								
 							}
@@ -125,9 +125,9 @@ if ( $pmpro_msg ) {
 <nav id="nav-below" class="navigation" role="navigation">
 	<div class="nav-previous alignleft">
 		<?php if ( ! empty( $current_user->membership_level->id ) ) { ?>
-			<a href="<?php echo pmpro_url( "account" ) ?>"><?php _e( '&larr; Return to Your Account', 'paid-memberships-pro' ); ?></a>
+			<a href="<?php echo pmpro_url( "account" ) ?>"><?php _e( '&larr; Return to Your Account', 'pmpro-multiple-memberships-per-user' ); ?></a>
 		<?php } else { ?>
-			<a href="<?php echo home_url() ?>"><?php _e( '&larr; Return to Home', 'paid-memberships-pro' ); ?></a>
+			<a href="<?php echo home_url() ?>"><?php _e( '&larr; Return to Home', 'pmpro-multiple-memberships-per-user' ); ?></a>
 		<?php } ?>
 	</div>
 </nav>
