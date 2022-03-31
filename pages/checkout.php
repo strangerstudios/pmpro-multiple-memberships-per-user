@@ -37,11 +37,14 @@
 	} else {
 		$pmpro_checkout_gateway_class = 'pmpro_checkout_gateway-' . $default_gateway;
 	}
-	
-	// Make sure we have a value for this.
-	if ( empty( $pmpro_checkout_levels ) && ! empty( $pmpro_level ) ) {
-		$pmpro_checkout_levels = array( $pmpro_level );
-	}
+
+    // Make sure we have a value for this.
+    if ( empty( $pmpro_checkout_levels ) && ! empty( $pmpro_level ) ) {
+        $pmpro_checkout_levels = array( $pmpro_level );
+    }
+    if ( empty( $pmpro_checkout_level_ids ) && ! empty( $pmpro_level->id ) ) {
+        $pmpro_checkout_level_ids = array( $pmpro_level->id );
+    }
 ?>
 <div id="pmpro_level-mmpu" class="<?php echo $pmpro_checkout_gateway_class; ?>">
 <form id="pmpro_form" class="pmpro_form" action="<?php if(!empty($_REQUEST['review'])) echo pmpro_url("checkout", "?level=" . $pmpro_checkout_level_ids); ?>" method="post">
