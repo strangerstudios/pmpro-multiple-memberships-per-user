@@ -131,7 +131,7 @@ if ( $pmpro_msg ) {
 			<div class="pmpro_mmpu_level">
 				<div class="pmpro_level-info"></div> <!-- end pmpro_level-info -->
 				<div class="pmpro_level-action">
-					<input class="pmpro_mmpu_checkout-button" type="button" value="Checkout" disabled="disabled">
+					<input class="pmpro_mmpu_checkout-button" type="button" value="<?php esc_attr_e( 'Checkout', 'pmpro-multiple-memberships-per-user' ) ?>" disabled="disabled">
 				</div> <!-- end pmpro_level-action -->
 			</div> <!-- end pmpro_mmpu_level -->
 		</div> <!-- end pmpro_mmpu_checkout -->
@@ -141,7 +141,7 @@ if ( $pmpro_msg ) {
 		<aside class="widget">
 			<h3 class="widget-title"><?php _e( 'Membership Selections', 'pmpro-multiple-memberships-per-user' ); ?></h3>
 			<div id="pmpro_mmpu_level_summary"><?php _e( 'Select levels to complete checkout.', 'pmpro-multiple-memberships-per-user' ); ?></div>
-			<p><input class="pmpro_mmpu_checkout-button" type="button" value="Checkout" disabled="disabled"></p>
+			<p><input class="pmpro_mmpu_checkout-button" type="button" value="<?php esc_attr_e( 'Checkout', 'pmpro-multiple-memberships-per-user' ) ?>" disabled="disabled"></p>
 		</aside>
 	</div> <!-- end pmpro_mmpu_level_selections -->
 </div> <!-- end #pmpro_mmpu_levels -->

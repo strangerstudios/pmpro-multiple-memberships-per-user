@@ -13,7 +13,7 @@ Domain Path: /languages
 /*
  * License:
 
- Copyright 2016-2019 - Stranger Studios, LLC
+ Copyright 2016-2022 - Stranger Studios, LLC
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License, version 2, as
