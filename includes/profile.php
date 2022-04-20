@@ -365,11 +365,11 @@ function pmprommpu_membership_level_profile_fields_update() {
 	if(array_key_exists('remove_levels_id', $_REQUEST)) {
 		foreach($_REQUEST['remove_levels_id'] as $leveltodel) {
 			// Check if we should cancel the subscription at the gateway.
-			if ( ! is_array( $_REQUEST['cancel_subscription'] ) || ! in_array( $leveltodel, $_REQUEST['cancel_subscription'] ) ) {
+			if ( empty( $_REQUEST['cancel_subscription'] ) || ! is_array( $_REQUEST['cancel_subscription'] ) || ! in_array( $leveltodel, $_REQUEST['cancel_subscription'] ) ) {
 				add_filter('pmpro_cancel_previous_subscriptions', 'pmpro_cancel_previous_subscriptions_false');
 			}
 			pmpro_cancelMembershipLevel($leveltodel, $user_id, 'admin_cancelled');
-			if ( ! is_array( $_REQUEST['cancel_subscription'] ) || ! in_array( $leveltodel, $_REQUEST['cancel_subscription'] ) ) {
+			if ( empty( $_REQUEST['cancel_subscription'] ) || ! is_array( $_REQUEST['cancel_subscription'] ) || ! in_array( $leveltodel, $_REQUEST['cancel_subscription'] ) ) {
 				remove_filter('pmpro_cancel_previous_subscriptions', 'pmpro_cancel_previous_subscriptions_false');
 			}
 
