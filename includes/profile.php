@@ -375,10 +375,6 @@ function pmprommpu_membership_level_profile_fields_update() {
 
 			//Send cancellation emails.
 			if ( is_array( $_REQUEST['send_cancellation_email'] ) && in_array( $leveltodel, $_REQUEST['send_cancellation_email'] ) ) {
- 				// Email to admin
- 				$pmproemail = new PMProEmail();
- 				$pmproemail->sendCancelEmail( get_userdata($user_id), $leveltodel );
-				
 				// Email to member
  				$pmproemail = new PMProEmail();
  				$pmproemail->sendCancelEmail( get_userdata($user_id), $leveltodel );
