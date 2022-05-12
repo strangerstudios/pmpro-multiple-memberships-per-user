@@ -106,7 +106,7 @@ function pmprommpu_addin_jquery_dialog( $pagehook ) {
 		PMPROMMPU_VER
 	);
 
-	wp_localize_script( 'pmprommpu-overrides', 'pmpro-multiple-memberships-per-user', array(
+	wp_localize_script( 'pmprommpu-overrides', 'pmprommpu', array(
 			'lang'     => array(
 				'confirm_delete' => __( 'Are you sure you want to delete this group? It cannot be undone.', 'pmpro-multiple-memberships-per-user' ),
 			),
