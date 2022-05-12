@@ -98,7 +98,7 @@ if ( $pmpro_msg ) {
 								<!-- change message class wrap to success for selected or error if removing -->
 								<label
 									class="pmpro_level-select <?php if ( pmpro_hasMembershipLevel( $pmpro_levels[ $level ]->id ) ) {
-										echo __( "pmpro_level-select-current", "pmpro-multiple-memberships-per-user" );
+										echo "pmpro_level-select-current";
 									} ?>" for="level-<?php echo $pmpro_levels[ $level ]->id ?>"><input type="checkbox"
 								                                                                       id="level-<?php echo $pmpro_levels[ $level ]->id ?>"
 								                                                                       data-groupid="<?php echo $group ?>" <?php checked( pmpro_hasMembershipLevel( $pmpro_levels[ $level ]->id ), true ); ?>>&nbsp;&nbsp;<?php _e( 'Add', 'pmpro-multiple-memberships-per-user' ); ?>
@@ -109,7 +109,7 @@ if ( $pmpro_msg ) {
 								<!-- change message class wrap to success for selected or error if removing -->
 								<label
 									class="pmpro_level-select <?php if ( pmpro_hasMembershipLevel( $pmpro_levels[ $level ]->id ) ) {
-										echo __( "pmpro_level-select-current", "pmpro-multiple-memberships-per-user" );
+										echo "pmpro_level-select-current";
 									} ?>" for="level-<?php echo $pmpro_levels[ $level ]->id ?>"><input type="checkbox"
 								                                                                       id="level-<?php echo $pmpro_levels[ $level ]->id ?>"
 								                                                                       data-groupid="<?php echo $group; ?>" <?php checked( pmpro_hasMembershipLevel( $pmpro_levels[ $level ]->id ), true ); ?>>&nbsp;&nbsp;<?php _e( 'Select', 'pmpro-multiple-memberships-per-user' ); ?>
