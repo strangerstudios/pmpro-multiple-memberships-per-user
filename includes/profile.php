@@ -58,10 +58,10 @@ global $current_user;
 	<table class="wp-list-table widefat fixed pmprommpu_levels" width="100%" cellpadding="0" cellspacing="0" border="0">
 	<thead>
 		<tr>
-			<th>Group</th>
-			<th>Membership Level</th>
-			<th>Expiration</th>
-			<th>&nbsp;</th>
+            <th><?php esc_html_e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></th>
+            <th><?php esc_html_e( 'Membership Level', 'pmpro-multiple-memberships-per-user' ); ?></th>
+            <th><?php esc_html_e( 'Expiration', 'pmpro-multiple-memberships-per-user' ); ?></th>
+            <th>&nbsp;</th>
 		</tr>
 	</thead>
 	<tbody>
