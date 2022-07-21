@@ -121,7 +121,7 @@ global $current_user;
 			<td><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmprommpu');?></a></td>
 		</tr>
 		<?php
-		$new_level_template_html = preg_replace('/\n\t+/', '', ob_get_contents());
+		$new_level_template_html = preg_replace('/[\n\t]+/', '', ob_get_contents());
 		ob_end_clean();
 
 		//set group for each level
