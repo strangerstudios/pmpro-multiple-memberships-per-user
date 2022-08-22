@@ -162,7 +162,7 @@ jQuery(document).ready( function() {
         var cancheckout = false;
 
         if (numOfPropsInObject(currentlevels) < 1 && numOfPropsInObject(removedlevels) < 1 && numOfPropsInObject(addedlevels) < 1) {
-            message = "No levels selected.";
+            message = pmprolvl.lang.no_levels_selected;
         } else {
             if (numOfPropsInObject(currentlevels) > 0) {
                 message += "<p class='mmpu_currentlevels'><label for='mmpu_currentlevels'>";

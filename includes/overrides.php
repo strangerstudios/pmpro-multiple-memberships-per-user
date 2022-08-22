@@ -108,7 +108,7 @@ function pmprommpu_addin_jquery_dialog( $pagehook ) {
 
 	wp_localize_script( 'pmprommpu-overrides', 'pmprommpu', array(
 			'lang'     => array(
-				'confirm_delete' => __( 'Are you sure you want to delete this group? It cannot be undone.', 'pmprommpu' ),
+				'confirm_delete' => __( 'Are you sure you want to delete this group? It cannot be undone.', 'pmpro-multiple-memberships-per-user' ),
 			),
 			'settings' => array(
 				'level_page_url' => add_query_arg( 'page', 'pmpro-membershiplevels', admin_url( 'admin.php' ) ),
@@ -188,11 +188,12 @@ function pmprommpu_frontend_scripts() {
 						'checkout_lnk' => esc_url_raw( pmpro_url( 'checkout', '' ) ),
 					),
 					'lang'           => array(
-						'selected_label' => __( 'Selected', 'pmpro-multiple-memberships-per-user' ),
-						'current_levels' => _x( 'Current Levels', 'title for currently selected levels', 'pmpro-multiple-memberships-per-user' ),
-						'added_levels'   => _x( 'Added Levels', 'title for added levels', 'pmpro-multiple-memberships-per-user' ),
-						'removed_levels' => _x( 'Removed Levels', 'title for removed levels', 'pmpro-multiple-memberships-per-user' ),
-						'none' => _x( 'None', 'value displayed when no levels selected', 'pmpro-multiple-memberships-per-user' ),
+						'selected_label'     => __( 'Selected', 'pmpro-multiple-memberships-per-user' ),
+						'current_levels'     => _x( 'Current Levels', 'title for currently selected levels', 'pmpro-multiple-memberships-per-user' ),
+						'added_levels'       => _x( 'Added Levels', 'title for added levels', 'pmpro-multiple-memberships-per-user' ),
+						'removed_levels'     => _x( 'Removed Levels', 'title for removed levels', 'pmpro-multiple-memberships-per-user' ),
+						'none'               => _x( 'None', 'value displayed when no levels selected', 'pmpro-multiple-memberships-per-user' ),
+						'no_levels_selected' => __( 'No levels selected.', 'pmpro-multiple-memberships-per-user' ),
 					),
 					'alllevels'   => $all_levels,
 					'selectedlevels' => $selected_levels,
@@ -215,7 +216,7 @@ function pmprommpu_checkout_level_text( $intext, $levelids_adding, $levelids_del
 	}
 
 	$levelarr  = pmpro_getAllLevels( true, true );
-	$outstring = '<p>' . _n( 'You have selected the following level', 'You have selected the following levels', count( $levelids_adding ), 'pmprommpu' ) . ':</p>';
+	$outstring = '<p>' . _n( 'You have selected the following level', 'You have selected the following levels', count( $levelids_adding ), 'pmpro-multiple-memberships-per-user' ) . ':</p>';
 	foreach ( $levelids_adding as $curlevelid ) {
 		$outstring .= "<p class='levellist'><strong><span class='levelnametext'>" . $levelarr[ $curlevelid ]->name . "</span></strong>";
 		if ( ! empty( $levelarr[ $curlevelid ]->description ) ) {
@@ -224,7 +225,7 @@ function pmprommpu_checkout_level_text( $intext, $levelids_adding, $levelids_del
 		$outstring .= "</p>";
 	}
 	if ( ! empty( $levelids_deleting ) && count( $levelids_deleting ) > 0 ) {
-		$outstring .= '<p>' . _n( 'You are removing the following level', 'You are removing the following levels', count( $levelids_deleting ), 'pmprommpu' ) . ':</p>';
+		$outstring .= '<p>' . _n( 'You are removing the following level', 'You are removing the following levels', count( $levelids_deleting ), 'pmpro-multiple-memberships-per-user' ) . ':</p>';
 		foreach ( $levelids_deleting as $curlevelid ) {
 			$outstring .= "<p class='levellist'><strong><span class='levelnametext'>" . $levelarr[ $curlevelid ]->name . "</span></strong>";
 			if ( ! empty( $levelarr[ $curlevelid ]->description ) ) {
@@ -371,7 +372,7 @@ function pmprommpu_pmpro_after_checkout( $user_id, $checkout_statuses ) {
 				$pmpro_processed = $morder->process();
 
 				if ( ! empty( $pmpro_processed ) ) {
-					$pmpro_msg       = __( "Payment accepted.", "pmpro" );
+					$pmpro_msg       = __( "Payment accepted.", 'pmpro-multiple-memberships-per-user' );
 					$pmpro_msgt      = "pmpro_success";
 					$pmpro_confirmed = true;
 				} else {
@@ -393,10 +394,10 @@ function pmprommpu_pmpro_after_checkout( $user_id, $checkout_statuses ) {
 					}
 
 					//set the error message
-					$pmpro_msg = __( "ERROR: This checkout included several payments. Some of them were processed successfully and some failed. We have attempted to refund any payments made. You should contact the site owner to resolve this issue.", "pmprommpu" );
+					$pmpro_msg = __( "ERROR: This checkout included several payments. Some of them were processed successfully and some failed. We have attempted to refund any payments made. You should contact the site owner to resolve this issue.", 'pmpro-multiple-memberships-per-user' );
 
 					if ( ! empty( $morder->error ) ) {
-						$pmpro_msg .= " " . __( "More information:", "pmprommpu" ) . " " . $morder->error;
+						$pmpro_msg .= " " . __( "More information:", 'pmpro-multiple-memberships-per-user' ) . " " . $morder->error;
 					}
 					$pmpro_msgt = "pmpro_error";
 
@@ -586,7 +587,7 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 	}
 	?>
 
-	<a id="add-new-group" class="add-new-h2" href="#"><?php _e( 'Add New Group', 'pmprommpu' ); ?></a>
+	<a id="add-new-group" class="add-new-h2" href="#"><?php _e( 'Add New Group', 'pmpro-multiple-memberships-per-user' ); ?></a>
 	<script>
 		jQuery(document).ready(function () {
 			jQuery('#add-new-group').insertBefore("hr.wp-header-end");
@@ -596,12 +597,12 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 	<table class="widefat mmpu-membership-levels membership-levels">
 		<thead>
 		<tr>
-			<th width="20%"><?php _e( 'Group', 'pmpro' ); ?></th>
-			<th><?php _e( 'ID', 'pmpro' ); ?></th>
-			<th><?php _e( 'Name', 'pmpro' ); ?></th>
-			<th><?php _e( 'Billing Details', 'pmpro' ); ?></th>
-			<th><?php _e( 'Expiration', 'pmpro' ); ?></th>
-			<th><?php _e( 'Allow Signups', 'pmpro' ); ?></th>
+			<th width="20%"><?php _e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></th>
+			<th><?php _e( 'ID', 'pmpro-multiple-memberships-per-user' ); ?></th>
+			<th><?php _e( 'Name', 'pmpro-multiple-memberships-per-user' ); ?></th>
+			<th><?php _e( 'Billing Details', 'pmpro-multiple-memberships-per-user' ); ?></th>
+			<th><?php _e( 'Expiration', 'pmpro-multiple-memberships-per-user' ); ?></th>
+			<th><?php _e( 'Allow Signups', 'pmpro-multiple-memberships-per-user' ); ?></th>
 		</tr>
 		</thead>
 		<?php
@@ -626,18 +627,18 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 					<h2><?php echo $groupname; ?></h2>
 					<input type="hidden" class="pmprommpu-allow-multi" name="allow_multi[]" value="<?php esc_attr_e( $groupallowsmult ); ?>">
 					<?php if ( ! $groupallowsmult ) { ?>
-						<p><em><?php _e( 'Users can only choose one level from this group.', 'pmprommpu' ); ?></em></p>
+						<p><em><?php _e( 'Users can only choose one level from this group.', 'pmpro-multiple-memberships-per-user' ); ?></em></p>
 					<?php } ?>
 					<p>
-						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'pmpro' ); ?>" href="#"
-						   class="editgrpbutt button-primary"><?php _e( 'edit', 'pmpro' ); ?></a>
+						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?>" href="#"
+						   class="editgrpbutt button-primary"><?php _e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?></a>
 						<!--
-						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'pmpro' ); ?>" href="admin.php?page=pmpro-membershiplevels&edit=<?php /* echo $level->id; */ ?>" class="editgrpbutt button-primary"><?php _e( 'edit', 'pmpro' ); ?></a>
+						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?>" href="admin.php?page=pmpro-membershiplevels&edit=<?php /* echo $level->id; */ ?>" class="editgrpbutt button-primary"><?php _e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?></a>
  -->
 						<?php if ( count( $itslevels ) == 0 ) { ?>
-							<a title="<?php _e( 'delete', 'pmpro' ); ?>" data-groupid="<?php echo $curgroup; ?>"
+							<a title="<?php _e( 'delete', 'pmpro-multiple-memberships-per-user' ); ?>" data-groupid="<?php echo $curgroup; ?>"
 							   href="javascript: void(0);"
-							   class="delgroupbutt button-secondary"><?php _e( 'delete', 'pmpro' ); ?></a>
+							   class="delgroupbutt button-secondary"><?php _e( 'delete', 'pmpro-multiple-memberships-per-user' ); ?></a>
 						<?php } ?>
 					</p>
 				</th>
@@ -669,23 +670,23 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 							<td class="level_name">
 								<a href="<?php echo $page_link; ?>"><strong><?php echo esc_attr( $level->name ); ?></strong></a>
 								<div class="row-actions">
-									<span><a title="<?php _e( 'Edit', 'pmpro' ); ?>" href="<?php echo $page_link; ?>"><?php _e( 'Edit', 'pmpro' ); ?></a> |</span>
-									<span><a title="<?php _e( 'Copy', 'pmpro' ); ?>" href="<?php echo add_query_arg( array(
+									<span><a title="<?php _e( 'Edit', 'pmpro-multiple-memberships-per-user' ); ?>" href="<?php echo $page_link; ?>"><?php _e( 'Edit', 'pmpro-multiple-memberships-per-user' ); ?></a> |</span>
+									<span><a title="<?php _e( 'Copy', 'pmpro-multiple-memberships-per-user' ); ?>" href="<?php echo add_query_arg( array(
 										'page' => 'pmpro-membershiplevels',
 										'copy' => $level->id,
 										'edit' => '-1'
-									), admin_url( 'admin.php' ) ); ?>"><?php _e( 'Copy', 'pmpro' ); ?></a> |</span>
-									<span><a title="<?php _e( 'Delete', 'pmpro' ); ?>"
-									href="javascript:askfirst('<?php echo str_replace( "'", "\'", sprintf( __( "Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", "pmpro" ), $level->name ) ); ?>', '<?php echo wp_nonce_url( add_query_arg( array(
+									), admin_url( 'admin.php' ) ); ?>"><?php _e( 'Copy', 'pmpro-multiple-memberships-per-user' ); ?></a> |</span>
+									<span><a title="<?php _e( 'Delete', 'pmpro-multiple-memberships-per-user' ); ?>"
+									href="javascript:askfirst('<?php echo str_replace( "'", "\'", sprintf( __( "Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", 'pmpro-multiple-memberships-per-user' ), $level->name ) ); ?>', '<?php echo wp_nonce_url( add_query_arg( array(
 										'page'     => 'pmpro-membershiplevels',
 										'action'   => 'delete_membership_level',
 										'deleteid' => $level->id
-									), admin_url( 'admin.php' ) ), 'delete_membership_level', 'pmpro_membershiplevels_nonce' ); ?>'); void(0);"><?php _e( 'Delete', 'pmpro' ); ?></a></span>
+									), admin_url( 'admin.php' ) ), 'delete_membership_level', 'pmpro_membershiplevels_nonce' ); ?>'); void(0);"><?php _e( 'Delete', 'pmpro-multiple-memberships-per-user' ); ?></a></span>
 								</div>
 							</td>
 							<td>
 								<?php if ( pmpro_isLevelFree( $level ) ) { ?>
-									<?php _e( 'FREE', 'pmpro' ); ?>
+									<?php _e( 'FREE', 'pmpro-multiple-memberships-per-user' ); ?>
 								<?php } else { ?>
 									<?php echo str_replace( 'The price for membership is', '', pmpro_getLevelCost( $level ) ); ?>
 								<?php } ?>
@@ -694,11 +695,11 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 								<?php if ( ! pmpro_isLevelExpiring( $level ) ) { ?>
 									--
 								<?php } else { ?>
-									<?php _e( 'After', 'pmpro' ); ?><?php echo $level->expiration_number ?><?php echo sornot( $level->expiration_period, $level->expiration_number ) ?>
+									<?php _e( 'After', 'pmpro-multiple-memberships-per-user' ); ?><?php echo $level->expiration_number ?><?php echo sornot( $level->expiration_period, $level->expiration_number ) ?>
 								<?php } ?>
 							</td>
 							<td><?php if ( $level->allow_signups ) { ?><a
-									href="<?php echo pmpro_url( "checkout", "?level=" . $level->id ); ?>"><?php _e( 'Yes', 'pmpro' ); ?></a><?php } else { ?><?php _e( 'No', 'pmpro' ); ?><?php } ?>
+									href="<?php echo pmpro_url( "checkout", "?level=" . $level->id ); ?>"><?php _e( 'Yes', 'pmpro-multiple-memberships-per-user' ); ?></a><?php } else { ?><?php _e( 'No', 'pmpro-multiple-memberships-per-user' ); ?><?php } ?>
 							</td>
 						</tr>
 						<?php
@@ -864,11 +865,11 @@ function pmprommpu_add_group_to_level_options() {
 	$allgroups = pmprommpu_get_groups();
 	$prevgroup = pmprommpu_get_group_for_level( $level );
 	?>
-	<h3 class="topborder"><?php _e( 'Group', 'mmpu' ); ?></h3>
+	<h3 class="topborder"><?php _e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></h3>
 	<table class="form-table">
 		<tbody>
 		<tr>
-			<th scope="row" valign="top"><label><?php _e( 'Group', 'mmpu' ); ?></label></th>
+			<th scope="row" valign="top"><label><?php _e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></label></th>
 			<td><select name="groupid">
 					<?php foreach ( $allgroups as $curgroup ) { ?>
 						<option value="<?php echo $curgroup->id; ?>" <?php if ( $curgroup->id == $prevgroup ) {
