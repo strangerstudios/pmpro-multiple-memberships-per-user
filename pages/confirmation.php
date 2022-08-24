@@ -69,7 +69,7 @@
 			<li><strong><?php _e('Membership Levels', 'mmpu');?>:</strong> <?php echo implode(', ', $levelnames); ?></li>
 		<?php } ?>
 		<?php if($current_user->membership_level->enddate) { ?>
-			<li><strong><?php _e('Membership Expires', 'paid-memberships-pro');?>:</strong> <?php echo pmpro_getLevelsExpiration($pmpro_invoice->membership_levels); ?></li>
+			<li><strong><?php _e('Membership Expires', 'paid-memberships-pro');?>:</strong> <?php echo pmpro_getLevelsExpiration( $theselevels ); ?></li>
 		<?php } ?>
 		<?php if($pmpro_invoice->getDiscountCode()) { ?>
 			<li><strong><?php _e('Discount Code', 'paid-memberships-pro');?>:</strong> <?php echo $pmpro_invoice->discount_code->code?></li>
