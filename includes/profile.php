@@ -48,7 +48,7 @@ global $current_user;
 	if(!$alllevels)
 		return "";
 ?>
-<h3><?php _e("Membership Levels", "pmprommpu"); ?></h3>
+<h3><?php _e("Membership Levels", 'pmpro-multiple-memberships-per-user'); ?></h3>
 <?php
 	$show_membership_level = true;
 	$show_membership_level = apply_filters("pmpro_profile_show_membership_level", $show_membership_level, $user);
@@ -58,10 +58,10 @@ global $current_user;
 	<table class="wp-list-table widefat fixed pmprommpu_levels" width="100%" cellpadding="0" cellspacing="0" border="0">
 	<thead>
 		<tr>
-			<th>Group</th>
-			<th>Membership Level</th>
-			<th>Expiration</th>
-			<th>&nbsp;</th>
+            <th><?php esc_html_e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></th>
+            <th><?php esc_html_e( 'Membership Level', 'pmpro-multiple-memberships-per-user' ); ?></th>
+            <th><?php esc_html_e( 'Expiration', 'pmpro-multiple-memberships-per-user' ); ?></th>
+            <th>&nbsp;</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -81,14 +81,14 @@ global $current_user;
 		<tr id="new_levels_tr_template" class="new_levels_tr">
 			<td>
 				<select class="new_levels_group" name="new_levels_group[]">
-					<option value="">-- <?php _e("Choose a Group", "pmpro");?> --</option>
+					<option value="">-- <?php _e("Choose a Group", 'pmpro-multiple-memberships-per-user');?> --</option>
 					<?php foreach($allgroups as $group) { ?>
 						<option value="<?php echo $group->id;?>"><?php echo $group->name;?></option>
 					<?php } ?>
 				</select>
 			</td>
 			<td>
-				<em><?php _e('Choose a group first.', 'pmprommpu');?></em>
+				<em><?php _e('Choose a group first.', 'pmpro-multiple-memberships-per-user');?></em>
 			</td>
 			<td>
 				<?php
@@ -99,8 +99,8 @@ global $current_user;
 					$selected_expires_year = (int)$current_year + 1;
 				?>
 				<select class="expires new_levels_expires" name="new_levels_expires[]">
-					<option value="0" <?php if(!$end_date) { ?>selected="selected"<?php } ?>><?php _e("No", "pmpro");?></option>
-					<option value="1" <?php if($end_date) { ?>selected="selected"<?php } ?>><?php _e("Yes", "pmpro");?></option>
+					<option value="0" <?php if(!$end_date) { ?>selected="selected"<?php } ?>><?php _e("No", 'pmpro-multiple-memberships-per-user');?></option>
+					<option value="1" <?php if($end_date) { ?>selected="selected"<?php } ?>><?php _e("Yes", 'pmpro-multiple-memberships-per-user');?></option>
 				</select>
 				<span class="expires_date new_levels_expires_date" <?php if(!$end_date) { ?>style="display: none;"<?php } ?>>
 					on
@@ -118,10 +118,10 @@ global $current_user;
 					<input name="new_levels_expires_year[]" type="text" size="4" value="<?php echo $selected_expires_year?>" />
 				</span>
 			</td>
-			<td><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmprommpu');?></a></td>
+			<td><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmpro-multiple-memberships-per-user');?></a></td>
 		</tr>
 		<?php
-		$new_level_template_html = preg_replace('/\n\t+/', '', ob_get_contents());
+		$new_level_template_html = preg_replace('/[\n\t]+/', '', ob_get_contents());
 		ob_end_clean();
 
 		//set group for each level
@@ -171,8 +171,8 @@ global $current_user;
 							}
 							?>
 							<select class="expires" name="expires[]">
-								<option value="0" <?php if(!$end_date) { ?>selected="selected"<?php } ?>><?php _e("No", "pmpro");?></option>
-								<option value="1" <?php if($end_date) { ?>selected="selected"<?php } ?>><?php _e("Yes", "pmpro");?></option>
+								<option value="0" <?php if(!$end_date) { ?>selected="selected"<?php } ?>><?php _e("No", 'pmpro-multiple-memberships-per-user');?></option>
+								<option value="1" <?php if($end_date) { ?>selected="selected"<?php } ?>><?php _e("Yes", 'pmpro-multiple-memberships-per-user');?></option>
 							</select>
 							<span class="expires_date" <?php if(!$end_date) { ?>style="display: none;"<?php } ?>>
 								on
@@ -190,13 +190,13 @@ global $current_user;
 								<input name="expires_year[]" type="text" size="4" value="<?php echo $selected_expires_year?>" />
 							</span>
 						</td>
-						<td width="25%"><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmprommpu');?></a></td>
+						<td width="25%"><a class="remove_level" href="javascript:void(0);"><?php _e('Remove', 'pmpro-multiple-memberships-per-user');?></a></td>
 					</tr>
 					<tr class="old_levels_delsettings_tr_template remove_level">
 						<td></td>
 						<td colspan="3">
-							<label for="send_admin_change_email"><input value="1" id="send_admin_change_email" name="send_admin_change_email[]" type="checkbox"> Send the user an email about this change.</label><br>
-			                <label for="cancel_subscription"><input value="1" id="cancel_subscription" name="cancel_subscription[]" type="checkbox"> Cancel this user's subscription at the gateway.</label>
+							<label for="send_cancellation_email"><input value="level_id_replace_in_js" name="send_cancellation_email[]" type="checkbox"> Send the user an email about this cancellation.</label><br>
+			                <label for="cancel_subscription"><input value="level_id_replace_in_js" name="cancel_subscription[]" type="checkbox"> Cancel this user's subscription at the gateway.</label>
 						</td>
 					</tr>
 					<?php
@@ -206,7 +206,7 @@ global $current_user;
 		}
 	?>
 	<tr>
-		<td colspan="4"><a href="javascript:void(0);" class="add_level">+ <?php _e('Add Level', 'pmprommpu');?></a></td>
+		<td colspan="4"><a href="javascript:void(0);" class="add_level">+ <?php _e('Add Level', 'pmpro-multiple-memberships-per-user');?></a></td>
 	</tr>
 	</tbody>
 	</table>
@@ -232,12 +232,12 @@ global $current_user;
 			if(group_id.length > 0) {
 				//add level select
 				var levelselect = jQuery('<select class="new_levels_level" name="new_levels_level[]"></select>').appendTo(leveltd);
-				levelselect.append('<option value="">-- ' + <?php echo json_encode(__('Choose a Level', 'pmprommpu'));?> + ' --</option>');
+				levelselect.append('<option value="">-- ' + <?php echo json_encode(__('Choose a Level', 'pmpro-multiple-memberships-per-user'));?> + ' --</option>');
 				for(item in levelsandgroups[group_id]) {
 					levelselect.append('<option value="'+alllevels[levelsandgroups[group_id][item]].id+'">'+alllevels[levelsandgroups[group_id][item]].name+'</option>');
 				}
 			} else {
-				leveltd.html('<em>' + <?php echo json_encode(__('Choose a group first.', 'pmprommpu'));?> + '</em>');
+				leveltd.html('<em>' + <?php echo json_encode(__('Choose a group first.', 'pmpro-multiple-memberships-per-user'));?> + '</em>');
 			}
 		}
 
@@ -251,16 +251,23 @@ global $current_user;
 				removetr.remove();
 			} else if(removetr.hasClass('remove_level')) {
 				removetr.removeClass('remove_level');
-				removelink.html(<?php echo json_encode(__('Remove', 'pmprommpu'));?>);
+				removelink.html(<?php echo json_encode(__('Remove', 'pmpro-multiple-memberships-per-user'));?>);
 				removelink.next('input').remove();
 				removetr.nextAll('.old_levels_delsettings_tr_template').first().remove();
 			} else {
 				//existing level? red it out and add to be removed
 				removetr.addClass('remove_level');
-				removelink.html(<?php echo json_encode(__('Undo', 'pmprommpu'));?>);
+				removelink.html(<?php echo json_encode(__('Undo', 'pmpro-multiple-memberships-per-user'));?>);
 				var olevelid = removelink.closest('tr').find('input.membership_level_id').val();
 				jQuery('<input type="hidden" name="remove_levels_id[]" value="'+olevelid+'">').insertAfter(removelink);
-				removetr.after(delsettingsrow.clone());
+
+				// Add the cancellation settings for this level.
+				var cancel_settings = delsettingsrow.clone();
+				cancel_settings.find('input').each(function() {
+					var input = jQuery(this);
+					input.attr('value', input.attr('value').replace('level_id_replace_in_js', olevelid));
+				});
+				removetr.after( cancel_settings );
 			}
 		}
 
@@ -307,7 +314,7 @@ global $current_user;
 	?>
 	<table class="form-table">	
 		<tr>
-			<th><label for="tos_consent_history"><?php _e("TOS Consent History", 'paid-memberships-pro' ); ?></label></th>
+			<th><label for="tos_consent_history"><?php _e("TOS Consent History", 'pmpro-multiple-memberships-per-user' ); ?></label></th>
 			<td id="tos_consent_history">
 				<?php
 					if( !empty( $consent_log ) ) {
@@ -322,7 +329,7 @@ global $current_user;
 						}
 						echo '</ul>';
 					} else {
-						echo __( 'N/A', 'paid-memberships-pro' );
+						echo __( 'N/A', 'pmpro-multiple-memberships-per-user' );
 					}
 				?>
 			</td>
@@ -356,35 +363,22 @@ function pmprommpu_membership_level_profile_fields_update() {
 	$droppedlevels = array();
 	$old_levels = pmpro_getMembershipLevelsForUser($user_id);
 	if(array_key_exists('remove_levels_id', $_REQUEST)) {
-		foreach($_REQUEST['remove_levels_id'] as $arraykey => $leveltodel) {
-// 			$subscription_id = -1;
-// 			foreach($old_levels as $checklevel) {
-// 				if($checklevel->id == $leveltodel) {
-// 					$subscription_id = $checklevel->subscription_id;
-// 					break;
-// 				}
-// 			}
-// 			$wpdb->query("UPDATE $wpdb->pmpro_memberships_users SET status ='admin_cancelled', enddate ='".current_time('mysql')."' WHERE id=$subscription_id");
-// 			if(is_array($_REQUEST['cancel_subscription']) && array_key_exists($arraykey, $_REQUEST['cancel_subscription']) && !empty($_REQUEST['cancel_subscription'][$arraykey])) {
-// 				$other_order_ids = $wpdb->get_col("SELECT id FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . $user_id . "' AND status = 'success' AND membership_id = $leveltodel ORDER BY id DESC");
-//
-// 				foreach($other_order_ids as $order_id)
-// 				{
-// 					$c_order = new MemberOrder($order_id);
-// 					$c_order->cancel();
-// 				}
-// 			}
-// 			//email to admin
-// 			$pmproemail = new PMProEmail();
-// 			$pmproemail->sendAdminChangeAdminEmail(get_userdata($user_id));
-//
-// 			//send email
-// 			if(is_array($_REQUEST['send_admin_change_email']) && array_key_exists($arraykey, $_REQUEST['send_admin_change_email']) && !empty($_REQUEST['send_admin_change_email'][$arraykey])) {
-// 				//email to member
-// 				$pmproemail = new PMProEmail();
-// 				$pmproemail->sendAdminChangeEmail(get_userdata($user_id));
-// 			}
+		foreach($_REQUEST['remove_levels_id'] as $leveltodel) {
+			// Check if we should cancel the subscription at the gateway.
+			if ( empty( $_REQUEST['cancel_subscription'] ) || ! is_array( $_REQUEST['cancel_subscription'] ) || ! in_array( $leveltodel, $_REQUEST['cancel_subscription'] ) ) {
+				add_filter('pmpro_cancel_previous_subscriptions', 'pmpro_cancel_previous_subscriptions_false');
+			}
 			pmpro_cancelMembershipLevel($leveltodel, $user_id, 'admin_cancelled');
+			if ( empty( $_REQUEST['cancel_subscription'] ) || ! is_array( $_REQUEST['cancel_subscription'] ) || ! in_array( $leveltodel, $_REQUEST['cancel_subscription'] ) ) {
+				remove_filter('pmpro_cancel_previous_subscriptions', 'pmpro_cancel_previous_subscriptions_false');
+			}
+
+			//Send cancellation emails.
+			if ( is_array( $_REQUEST['send_cancellation_email'] ) && in_array( $leveltodel, $_REQUEST['send_cancellation_email'] ) ) {
+				// Email to member
+ 				$pmproemail = new PMProEmail();
+ 				$pmproemail->sendCancelEmail( get_userdata($user_id), $leveltodel );
+ 			}
 			$droppedlevels[] = $leveltodel;
 		}
 	}

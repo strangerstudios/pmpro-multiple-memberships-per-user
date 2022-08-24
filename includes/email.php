@@ -34,7 +34,7 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 		// then we'll put the fields together for the user checkout e-mail
 		$pmproemail = new PMProEmail();
 		$pmproemail->email = $auser->user_email;
-		$pmproemail->subject = sprintf(__("Your membership confirmation for %s", "pmpro"), get_option("blogname"));
+		$pmproemail->subject = sprintf(__("Your membership confirmation for %s", 'pmpro-multiple-memberships-per-user'), get_option("blogname"));
 		
 		$pmproemail->data = array(
 								"subject" => $pmproemail->subject, 
@@ -89,7 +89,7 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 																 $invoice->billing->phone);
 			
 			if($invoice->getDiscountCode())
-				$pmproemail->data["discount_code"] = "<p>" . __("Discount Code", "pmpro") . ": " . $invoice->discount_code->code . "</p>\n";
+				$pmproemail->data["discount_code"] = "<p>" . __("Discount Code", 'pmpro-multiple-memberships-per-user') . ": " . $invoice->discount_code->code . "</p>\n";
 			else
 				$pmproemail->data["discount_code"] = "";
 		}
@@ -98,7 +98,7 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 			$pmproemail->template = "checkout_free";		
 			global $discount_code;
 			if(!empty($discount_code))
-				$pmproemail->data["discount_code"] = "<p>" . __("Discount Code", "pmpro") . ": " . $discount_code . "</p>\n";		
+				$pmproemail->data["discount_code"] = "<p>" . __("Discount Code", 'pmpro-multiple-memberships-per-user') . ": " . $discount_code . "</p>\n";		
 			else
 				$pmproemail->data["discount_code"] = "";		
 		}						
@@ -107,7 +107,7 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 			$pmproemail->template = "checkout_freetrial";
 			global $discount_code;
 			if(!empty($discount_code))
-				$pmproemail->data["discount_code"] = "<p>" . __("Discount Code", "pmpro") . ": " . $discount_code . "</p>\n";		
+				$pmproemail->data["discount_code"] = "<p>" . __("Discount Code", 'pmpro-multiple-memberships-per-user') . ": " . $discount_code . "</p>\n";		
 			else
 				$pmproemail->data["discount_code"] = "";	
 		}
@@ -122,7 +122,7 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 		if(empty($send)) { return true; }
 
 		$pmproemail->email = get_bloginfo("admin_email");
-		$pmproemail->subject = sprintf(__("Member Checkout at %s", "pmpro"), get_option("blogname"));
+		$pmproemail->subject = sprintf(__("Member Checkout at %s", 'pmpro-multiple-memberships-per-user'), get_option("blogname"));
 		$pmproemail->data['subject'] = $pmproemail->subject;
 		
 		if(!empty($invoice) && !pmpro_areLevelsFree($levels))
