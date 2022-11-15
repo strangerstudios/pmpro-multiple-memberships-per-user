@@ -13,7 +13,7 @@ Domain Path: /languages
 /*
  * License:
 
- Copyright 2016-2019 - Stranger Studios, LLC
+ Copyright 2016-2022 - Stranger Studios, LLC
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License, version 2, as
@@ -75,13 +75,17 @@ add_action( 'init', 'pmprommpu_load_plugin_text_domain' );
 function pmprommpu_activation() {
 	if ( !is_plugin_active( 'paid-memberships-pro/paid-memberships-pro.php' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
-		wp_die( "Paid Memberships Pro must be active in order to activate the MMPU add-on.", 'Plugin dependency check', array( 'back_link' => true ) );
+		wp_die(
+			__( 'Paid Memberships Pro must be active in order to activate the MMPU add-on.', 'pmpro-multiple-memberships-per-user' ),
+			__( 'Plugin dependency check', 'pmpro-multiple-memberships-per-user' ),
+			array( 'back_link' => true )
+		);
 	}
 
 	// No groups in the DB? Create one with all levels, to maintain backward-compatibility out of the box.
 	$curgroups = pmprommpu_get_groups();
 	if(count($curgroups)==0) {
-		$newgroupid = pmprommpu_create_group("Main Group", false);
+		$newgroupid = pmprommpu_create_group(__( 'Main Group' , 'pmpro-multiple-memberships-per-user' ), false);
 
 		$alllevels = pmpro_getAllLevels(true, true);
 		foreach($alllevels as $levelid => $leveldetail) {
