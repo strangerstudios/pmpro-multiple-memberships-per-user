@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, members, memberships, mmpu
 Requires at least: 5.2
-Tested up to: 5.8
-Stable tag: 0.8.1
+Tested up to: 6.1.1
+Stable tag: 0.8.2
 
 Updates the core Paid Memberships Pro plugin to allow users to have multiple memberships at the same time.
 
@@ -23,8 +23,15 @@ our add ons over time to support MMPU and will add notices here and on our websi
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
-= TBD =
+= 0.8.2 - 2022-12-02 =
+* BUG FIX/ENHANCEMENT: Fixed cases where the wrong text domain was used, which should improve localization efforts.
+* BUG FIX/ENHANCEMENT: Fixed notices on the confirmation page.
+* BUG FIX/ENHANCEMENT: Fixed warning on the checkout page when no level was passed in.
+* BUG FIX/ENHANCEMENT: Added back functionality for the "Send the user an email about this change" and "Cancel this user's subscription at the gateway" checkboxes when removing their membership level via the WP admin. There are still issues RE what's expected email-wise when changing many levels from the edit user page.
+* BUG FIX/ENHANCEMENT: Updated to use the new cache system for pmpro_getAllLevels, which improves performance of some pages.
+* BUG FIX: Fixed issue where checkout would fail when requiring billing fields at checkout with Stripe.
 * BUG FIX: Fixed issue where levels were not showing up correctly when adding/editing/copying from the Memberships -> Settings -> Levels page in the dashboard.
+* BUG FIX: Fixed issues where our template parsing REGEX was breaking JavaScript with some themes.
 
 = 0.8.1 - 2021-09-24 =
 * BUG FIX: Now showing the TOS consent history on the edit user page. This was hidden before when MMPU was active. (Thanks @femiyb on GitHub)
