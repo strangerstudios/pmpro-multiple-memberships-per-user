@@ -360,7 +360,7 @@
 			?>
 			<div class="pmpro_checkout-field pmpro_checkout-field-bcountry">
 				<label for="bcountry"><?php _e('Country', 'pmpro-multiple-memberships-per-user');?></label>
-				<select name="bcountry" class=" <?php echo pmpro_getClassForField("bcountry");?>">
+				<select name="bcountry" id="bcountry" class=" <?php echo pmpro_getClassForField("bcountry");?>">
 					<?php
 						global $pmpro_countries, $pmpro_default_country;
 						if(!$bcountry)
