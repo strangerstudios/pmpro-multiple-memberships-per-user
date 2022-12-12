@@ -1,21 +1,18 @@
-# Copyright (C) 2020 Square Lines LLC and Stranger Studios
+# Copyright (C) 2022 Square Lines LLC and Stranger Studios
 # This file is distributed under the same license as the Paid Memberships Pro - Multiple Memberships per User plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Multiple Memberships per User "
-"0.6.4\n"
+"Project-Id-Version: Paid Memberships Pro - Multiple Memberships per User 0.8.2\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
-"POT-Creation-Date: 2020-05-20T04:24:57+00:00\n"
-"PO-Revision-Date: 2020-05-20 06:27+0200\n"
-"Last-Translator: \n"
+"Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
-"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"POT-Creation-Date: 2022-12-12T11:17:41+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: pmpro-multiple-memberships-per-user\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. Plugin Name of the plugin
 msgid "Paid Memberships Pro - Multiple Memberships per User"
@@ -26,12 +23,8 @@ msgid "http://www.paidmembershipspro.com/pmpro-multiple-memberships-per-user/"
 msgstr "http://www.paidmembershipspro.com/pmpro-multiple-memberships-per-user/"
 
 #. Description of the plugin
-msgid ""
-"Update PMPro to allow users to checkout for and hold multiple memberships at "
-"the same time."
-msgstr ""
-"Mettre à jour PMPro afin de permettre aux utilisateurs de vérifier et de "
-"conserver plusieurs adhésions en même temps."
+msgid "Update PMPro to allow users to checkout for and hold multiple memberships at the same time."
+msgstr "Mettre à jour PMPro afin de permettre aux utilisateurs de vérifier et de conserver plusieurs adhésions en même temps."
 
 #. Author of the plugin
 msgid "Square Lines LLC and Stranger Studios"
@@ -42,69 +35,583 @@ msgid "http://www.square-lines.com"
 msgstr "http://www.square-lines.com"
 
 #: includes/overrides.php:199
+#: includes/overrides.php:191
 msgid "Selected"
 msgstr "Sélectionné"
 
 #: includes/overrides.php:200
+#: includes/overrides.php:192
 msgctxt "title for currently selected levels"
 msgid "Current Levels"
 msgstr "Niveaux actuels"
 
 #: includes/overrides.php:201
+#: includes/overrides.php:193
 msgctxt "title for added levels"
 msgid "Added Levels"
 msgstr "Niveaux ajoutés"
 
 #: includes/overrides.php:202
+#: includes/overrides.php:194
 msgctxt "title for removed levels"
 msgid "Removed Levels"
 msgstr "Niveaux supprimés"
 
 #: includes/overrides.php:203
+#: includes/overrides.php:195
 msgctxt "value displayed when no levels selected"
 msgid "None"
 msgstr "Aucun"
 
 #: includes/overrides.php:577
-msgid ""
-"The following levels were not yet in a group: %s. These levels have been "
-"added to the first group found."
-msgstr ""
-"Les niveaux suivants n'étaient pas encore dans un groupe : %s. Ces niveaux "
-"ont été ajoutés au premier groupe trouvé."
+#: includes/overrides.php:584
+msgid "The following levels were not yet in a group: %s. These levels have been added to the first group found."
+msgstr "Les niveaux suivants n'étaient pas encore dans un groupe : %s. Ces niveaux ont été ajoutés au premier groupe trouvé."
 
 #: includes/overrides.php:963
+#: includes/overrides.php:910
 msgid "Unable to delete the level from its group"
 msgstr "Impossible de supprimer le niveau de son groupe"
 
 #: pages/checkout.php:73
+#: includes/profile.php:51
+#: pages/checkout.php:76
+#: pages/confirmation.php:69
+#: pages/confirmation.php:131
 msgid "Membership Levels"
 msgstr "Niveaux d'adhésion"
 
 #: pages/levels.php:57
+#: pages/levels_multiselect.php:57
+#: pages/levels_single.php:57
 msgid "You can choose multiple levels from this group."
 msgstr "Vous pouvez choisir plusieurs niveaux dans ce groupe."
 
 #: pages/levels.php:59
+#: pages/levels_multiselect.php:59
+#: pages/levels_single.php:59
 msgid "You can only choose one level from this group."
 msgstr "Vous ne pouvez choisir qu'un seul niveau dans ce groupe."
 
-#: pages/levels.php:101 pages/levels.php:112
+#: pages/levels.php:101
+#: pages/levels.php:112
 msgid "pmpro_level-select-current"
 msgstr "pmpro_level-select-current"
 
 #: pages/levels.php:104
+#: pages/levels_multiselect.php:104
 msgid "Add"
 msgstr "Ajouter"
 
 #: pages/levels.php:115
+#: pages/levels_multiselect.php:115
+#: pages/levels_single.php:98
 msgid "Select"
 msgstr "Sélectionnez"
 
 #: pages/levels.php:142
+#: pages/levels_multiselect.php:142
 msgid "Membership Selections"
 msgstr "Sélections des membres"
 
 #: pages/levels.php:143
+#: pages/levels_multiselect.php:143
 msgid "Select levels to complete checkout."
 msgstr "Sélectionnez les niveaux pour compléter la commande."
+
+#: adminpages/level-groups.php:5
+msgid "You do not have permissions to perform this action."
+msgstr ""
+
+#: adminpages/level-groups.php:28
+msgid "Edit Level Group"
+msgstr ""
+
+#: adminpages/level-groups.php:30
+msgid "Add New Level Group"
+msgstr ""
+
+#: adminpages/level-groups.php:39
+#: includes/overrides.php:601
+msgid "ID"
+msgstr ""
+
+#: adminpages/level-groups.php:46
+#: includes/overrides.php:602
+msgid "Name"
+msgstr ""
+
+#: adminpages/level-groups.php:51
+msgid "Type"
+msgstr ""
+
+#: adminpages/level-groups.php:63
+msgid "Save Level Group"
+msgstr ""
+
+#: adminpages/level-groups.php:64
+msgid "Cancel"
+msgstr ""
+
+#: includes/email.php:37
+msgid "Your membership confirmation for %s"
+msgstr ""
+
+#: includes/email.php:92
+#: includes/email.php:101
+#: includes/email.php:110
+#: pages/checkout.php:114
+#: pages/checkout.php:121
+#: pages/checkout.php:513
+#: pages/confirmation.php:75
+msgid "Discount Code"
+msgstr ""
+
+#: includes/email.php:125
+msgid "Member Checkout at %s"
+msgstr ""
+
+#: includes/overrides.php:111
+msgid "Are you sure you want to delete this group? It cannot be undone."
+msgstr ""
+
+#: includes/overrides.php:196
+msgid "No levels selected."
+msgstr ""
+
+#: includes/overrides.php:219
+msgid "You have selected the following level"
+msgid_plural "You have selected the following levels"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/overrides.php:228
+msgid "You are removing the following level"
+msgid_plural "You are removing the following levels"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/overrides.php:251
+msgid "You cannot check out for multiple levels simultaniously while using this payment gateway. Please complete each checkout separately."
+msgstr ""
+
+#: includes/overrides.php:375
+msgid "Payment accepted."
+msgstr ""
+
+#: includes/overrides.php:397
+msgid "ERROR: This checkout included several payments. Some of them were processed successfully and some failed. We have attempted to refund any payments made. You should contact the site owner to resolve this issue."
+msgstr ""
+
+#: includes/overrides.php:400
+msgid "More information:"
+msgstr ""
+
+#: includes/overrides.php:590
+msgid "Add New Group"
+msgstr ""
+
+#: includes/overrides.php:600
+#: includes/overrides.php:868
+#: includes/overrides.php:872
+#: includes/profile.php:61
+msgid "Group"
+msgstr ""
+
+#: includes/overrides.php:603
+msgid "Billing Details"
+msgstr ""
+
+#: includes/overrides.php:604
+#: includes/profile.php:63
+#: pages/confirmation.php:106
+msgid "Expiration"
+msgstr ""
+
+#: includes/overrides.php:605
+msgid "Allow Signups"
+msgstr ""
+
+#: includes/overrides.php:630
+msgid "Users can only choose one level from this group."
+msgstr ""
+
+#: includes/overrides.php:633
+#: includes/overrides.php:634
+#: includes/overrides.php:636
+msgid "edit"
+msgstr ""
+
+#: includes/overrides.php:639
+#: includes/overrides.php:641
+msgid "delete"
+msgstr ""
+
+#: includes/overrides.php:673
+msgid "Edit"
+msgstr ""
+
+#: includes/overrides.php:674
+#: includes/overrides.php:678
+msgid "Copy"
+msgstr ""
+
+#: includes/overrides.php:679
+#: includes/overrides.php:684
+msgid "Delete"
+msgstr ""
+
+#: includes/overrides.php:680
+msgid "Are you sure you want to delete membership level %s? All subscriptions will be cancelled."
+msgstr ""
+
+#: includes/overrides.php:689
+msgid "FREE"
+msgstr ""
+
+#: includes/overrides.php:698
+msgid "After"
+msgstr ""
+
+#: includes/overrides.php:702
+#: includes/profile.php:103
+#: includes/profile.php:175
+msgid "Yes"
+msgstr ""
+
+#: includes/overrides.php:702
+#: includes/profile.php:102
+#: includes/profile.php:174
+msgid "No"
+msgstr ""
+
+#: includes/profile.php:62
+#: pages/checkout.php:78
+#: pages/confirmation.php:67
+#: pages/confirmation.php:87
+#: pages/confirmation.php:129
+msgid "Membership Level"
+msgstr ""
+
+#: includes/profile.php:84
+msgid "Choose a Group"
+msgstr ""
+
+#: includes/profile.php:91
+#: includes/profile.php:240
+msgid "Choose a group first."
+msgstr ""
+
+#: includes/profile.php:121
+#: includes/profile.php:193
+#: includes/profile.php:254
+msgid "Remove"
+msgstr ""
+
+#: includes/profile.php:209
+msgid "Add Level"
+msgstr ""
+
+#: includes/profile.php:235
+msgid "Choose a Level"
+msgstr ""
+
+#: includes/profile.php:260
+msgid "Undo"
+msgstr ""
+
+#: includes/profile.php:317
+msgid "TOS Consent History"
+msgstr ""
+
+#: includes/profile.php:332
+msgid "N/A"
+msgstr ""
+
+#: pages/checkout.php:70
+msgid "Almost done. Review the membership information and pricing below then <strong>click the \"Complete Payment\" button</strong> to finish your order."
+msgstr ""
+
+#: pages/checkout.php:80
+msgid "change"
+msgstr ""
+
+#: pages/checkout.php:84
+msgid "You have selected the <strong>%s</strong> membership level."
+msgstr ""
+
+#: pages/checkout.php:92
+msgid "<p class=\"pmpro_level_discount_applied\">The <strong>%s</strong> code has been applied to your order.</p>"
+msgstr ""
+
+#: pages/checkout.php:110
+msgid "Click here to change your discount code"
+msgstr ""
+
+#: pages/checkout.php:112
+msgid "Do you have a discount code?"
+msgstr ""
+
+#: pages/checkout.php:112
+msgid "Click here to enter your discount code"
+msgstr ""
+
+#: pages/checkout.php:123
+#: pages/checkout.php:515
+msgid "Apply"
+msgstr ""
+
+#: pages/checkout.php:145
+msgid "Account Information"
+msgstr ""
+
+#: pages/checkout.php:146
+msgid "Already have an account?"
+msgstr ""
+
+#: pages/checkout.php:146
+msgid "Log in here"
+msgstr ""
+
+#: pages/checkout.php:150
+msgid "Username"
+msgstr ""
+
+#: pages/checkout.php:159
+msgid "Password"
+msgstr ""
+
+#: pages/checkout.php:169
+msgid "Confirm Password"
+msgstr ""
+
+#: pages/checkout.php:187
+#: pages/checkout.php:401
+msgid "E-mail Address"
+msgstr ""
+
+#: pages/checkout.php:197
+msgid "Confirm E-mail Address"
+msgstr ""
+
+#: pages/checkout.php:215
+msgid "Full Name"
+msgstr ""
+
+#: pages/checkout.php:216
+msgid "LEAVE THIS BLANK"
+msgstr ""
+
+#: pages/checkout.php:228
+msgid "You are logged in as <strong>%s</strong>. If you would like to use a different account for this membership, <a href=\"%s\">log out now</a>."
+msgstr ""
+
+#: pages/checkout.php:244
+msgid "Choose your Payment Method"
+msgstr ""
+
+#: pages/checkout.php:249
+msgid "Check Out with a Credit Card Here"
+msgstr ""
+
+#: pages/checkout.php:253
+msgid "Check Out with PayPal"
+msgstr ""
+
+#: pages/checkout.php:267
+#: pages/confirmation.php:84
+msgid "Billing Address"
+msgstr ""
+
+#: pages/checkout.php:271
+msgid "First Name"
+msgstr ""
+
+#: pages/checkout.php:275
+msgid "Last Name"
+msgstr ""
+
+#: pages/checkout.php:279
+msgid "Address 1"
+msgstr ""
+
+#: pages/checkout.php:283
+msgid "Address 2"
+msgstr ""
+
+#: pages/checkout.php:292
+msgid "City"
+msgstr ""
+
+#: pages/checkout.php:296
+msgid "State"
+msgstr ""
+
+#: pages/checkout.php:300
+msgid "Postal Code"
+msgstr ""
+
+#: pages/checkout.php:309
+msgid "City, State Zip"
+msgstr ""
+
+#: pages/checkout.php:362
+msgid "Country"
+msgstr ""
+
+#: pages/checkout.php:387
+msgid "Phone"
+msgstr ""
+
+#: pages/checkout.php:410
+msgid "Confirm E-mail"
+msgstr ""
+
+#: pages/checkout.php:442
+msgid "Payment Information"
+msgstr ""
+
+#: pages/checkout.php:443
+msgid "We Accept %s"
+msgstr ""
+
+#: pages/checkout.php:455
+msgid "Card Type"
+msgstr ""
+
+#: pages/checkout.php:473
+msgid "Card Number"
+msgstr ""
+
+#: pages/checkout.php:477
+msgid "Expiration Date"
+msgstr ""
+
+#: pages/checkout.php:506
+msgid "CVV"
+msgstr ""
+
+#: pages/checkout.php:507
+msgid "what's this?"
+msgstr ""
+
+#: pages/checkout.php:551
+msgid "I agree to the %s"
+msgstr ""
+
+#: pages/checkout.php:585
+msgid "Complete Payment"
+msgstr ""
+
+#: pages/checkout.php:597
+msgid "Submit and Check Out"
+msgstr ""
+
+#: pages/checkout.php:597
+msgid "Submit and Confirm"
+msgstr ""
+
+#: pages/checkout.php:607
+msgid "Processing..."
+msgstr ""
+
+#: pages/confirmation.php:28
+msgid "Your payment has been submitted. Your membership will be activated shortly."
+msgstr ""
+
+#: pages/confirmation.php:30
+msgid "Thank you for your membership with %s. Your %s membership is now active."
+msgstr ""
+
+#: pages/confirmation.php:32
+msgid "Thank you for your membership with %s. Your %s memberships are now active."
+msgstr ""
+
+#: pages/confirmation.php:48
+msgid "Below are details about your membership account and a receipt for your initial membership invoice. A welcome email with a copy of your initial membership invoice has been sent to %s."
+msgstr ""
+
+#: pages/confirmation.php:60
+msgid "Invoice #%s on %s"
+msgstr ""
+
+#: pages/confirmation.php:62
+msgid "Print"
+msgstr ""
+
+#: pages/confirmation.php:65
+#: pages/confirmation.php:127
+msgid "Account"
+msgstr ""
+
+#: pages/confirmation.php:72
+msgid "Membership Expires"
+msgstr ""
+
+#: pages/confirmation.php:86
+msgid "Payment Method"
+msgstr ""
+
+#: pages/confirmation.php:88
+msgid "Total Billed"
+msgstr ""
+
+#: pages/confirmation.php:105
+msgid "ending in"
+msgstr ""
+
+#: pages/confirmation.php:120
+msgid "Below are details about your membership account. A welcome email has been sent to %s."
+msgstr ""
+
+#: pages/confirmation.php:129
+msgid "Pending"
+msgstr ""
+
+#: pages/confirmation.php:143
+msgid "View Your Membership Account &rarr;"
+msgstr ""
+
+#: pages/confirmation.php:145
+msgid "If your account is not activated within a few minutes, please contact the site owner."
+msgstr ""
+
+#: pages/levels_multiselect.php:77
+#: pages/levels_single.php:77
+msgid "Free"
+msgstr ""
+
+#: pages/levels_multiselect.php:134
+#: pages/levels_multiselect.php:144
+msgid "Checkout"
+msgstr ""
+
+#: pages/levels_multiselect.php:151
+#: pages/levels_single.php:128
+msgid "&larr; Return to Your Account"
+msgstr ""
+
+#: pages/levels_multiselect.php:153
+#: pages/levels_single.php:130
+msgid "&larr; Return to Home"
+msgstr ""
+
+#: pages/levels_single.php:104
+msgid "Renew"
+msgstr ""
+
+#: pages/levels_single.php:108
+msgid "Your&nbsp;Level"
+msgstr ""
+
+#: pmpro-multiple-memberships-per-user.php:79
+msgid "Paid Memberships Pro must be active in order to activate the MMPU add-on."
+msgstr ""
+
+#: pmpro-multiple-memberships-per-user.php:80
+msgid "Plugin dependency check"
+msgstr ""
+
+#: pmpro-multiple-memberships-per-user.php:88
+msgid "Main Group"
+msgstr ""
