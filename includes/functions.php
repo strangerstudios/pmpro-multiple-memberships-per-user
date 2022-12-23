@@ -80,7 +80,7 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 
 	$retarray = array();
 
-	$pmpro_levels = pmpro_getAllLevels($includehidden, true);
+	$pmpro_levels = pmpro_getAllLevels($includehidden, false, true);
 	$pmpro_level_order = pmpro_getOption('level_order');
 	$pmpro_levels = apply_filters('pmpro_levels_array', $pmpro_levels );
 
