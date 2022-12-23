@@ -118,9 +118,6 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 		$pmproemail->sendEmail();
 	
 		// and we'll modify the fields for the admin checkout e-mail
-		$send = pmpro_getOption("email_admin_checkout");
-		if(empty($send)) { return true; }
-
 		$pmproemail->email = get_bloginfo("admin_email");
 		$pmproemail->subject = sprintf(__("Member Checkout at %s", 'pmpro-multiple-memberships-per-user'), get_option("blogname"));
 		$pmproemail->data['subject'] = $pmproemail->subject;
