@@ -150,7 +150,6 @@ jQuery(document).ready(function ($) {
         helper: fixHelper,
         placeholder: 'testclass',
         forcePlaceholderSize: true,
-        connectWith: "tbody",
         update: update_level_and_group_order
     });
 
