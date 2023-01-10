@@ -865,7 +865,6 @@ function pmprommpu_add_group_to_level_options() {
 	$allgroups = pmprommpu_get_groups();
 	$prevgroup = pmprommpu_get_group_for_level( $level );
 	?>
-	<h3 class="topborder"><?php _e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></h3>
 	<table class="form-table">
 		<tbody>
 		<tr>
@@ -884,7 +883,7 @@ function pmprommpu_add_group_to_level_options() {
 	<?php
 }
 
-add_action( 'pmpro_membership_level_after_other_settings', 'pmprommpu_add_group_to_level_options' );
+add_action( 'pmpro_membership_level_after_general_information', 'pmprommpu_add_group_to_level_options' );
 
 //save options
 function pmprommpu_save_group_on_level_edit( $levelid ) {
