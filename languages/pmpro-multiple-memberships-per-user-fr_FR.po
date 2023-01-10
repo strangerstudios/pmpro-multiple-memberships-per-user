@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Square Lines LLC and Stranger Studios
+# Copyright (C) 2023 Square Lines LLC and Stranger Studios
 # This file is distributed under the same license as the Paid Memberships Pro - Multiple Memberships per User plugin.
 msgid ""
 msgstr ""
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-12-12T11:17:41+00:00\n"
+"POT-Creation-Date: 2023-01-10T17:29:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: pmpro-multiple-memberships-per-user\n"
@@ -70,6 +70,7 @@ msgstr "Les niveaux suivants n'étaient pas encore dans un groupe : %s. Ces nive
 
 #: includes/overrides.php:963
 #: includes/overrides.php:910
+#: includes/overrides.php:909
 msgid "Unable to delete the level from its group"
 msgstr "Impossible de supprimer le niveau de son groupe"
 
@@ -168,6 +169,7 @@ msgid "Discount Code"
 msgstr ""
 
 #: includes/email.php:125
+#: includes/email.php:122
 msgid "Member Checkout at %s"
 msgstr ""
 
@@ -215,6 +217,7 @@ msgstr ""
 #: includes/overrides.php:868
 #: includes/overrides.php:872
 #: includes/profile.php:61
+#: includes/overrides.php:871
 msgid "Group"
 msgstr ""
 
