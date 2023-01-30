@@ -131,8 +131,11 @@ function pmprommpu_frontend_scripts() {
 		return;
 	}
 
-	// Only load this on the checkout page
-	if ( is_page( $pmpro_pages['checkout'] ) ) {
+	/**
+	 * Only load this on the checkout page 
+	 * Make sure that the checkout page exists otherwise this fails
+	 */
+	if ( ! empty( $pmpro_pages['checkout'] ) && is_page( $pmpro_pages['checkout'] ) ) {
 
 		global $pmpro_show_discount_code;
 
