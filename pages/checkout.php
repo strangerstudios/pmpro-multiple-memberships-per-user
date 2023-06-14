@@ -1,6 +1,9 @@
 <?php
 /*
- * License:
+ * Template: Checkout
+ * Version: 2.0.2
+
+ License:
 
  Copyright 2016 - Stranger Studios, LLC
 
