@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, members, memberships, mmpu
 Requires at least: 5.2
-Tested up to: 6.1.1
-Stable tag: 0.8.3
+Tested up to: 6.2
+Stable tag: 0.8.4
 
 Updates the core Paid Memberships Pro plugin to allow users to have multiple memberships at the same time.
 
@@ -23,6 +23,10 @@ our add ons over time to support MMPU and will add notices here and on our websi
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+= 0.8.4 - 2023-06-14 =
+* BUG FIX: Added additional check to prevent JavaScript to prevent on pages other than the checkout page.
+* REFACTOR: Added version to Checkout page template to avoid outdated template warnings in PMPro v2.11+
+
 = 0.8.3 - 2023-01-10 =
 * ENHANCEMENT: Moved "Group" setting on "Edit Level" page to the "General Information" section.
 * BUG FIX: Fixed issue where the "Group" setting was not being saved when creating a new level.
