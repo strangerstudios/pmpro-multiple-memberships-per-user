@@ -24,7 +24,7 @@ our add ons over time to support MMPU and will add notices here and on our websi
 
 == Changelog ==
 = 0.8.4 - 2023-06-14 =
-* BUG FIX: Added additional check to prevent JavaScript to prevent on pages other than the checkout page.
+* BUG FIX: Added additional check to prevent JavaScript from loading on pages other than the checkout page.
 * REFACTOR: Added version to Checkout page template to avoid outdated template warnings in PMPro v2.11+
 
 = 0.8.3 - 2023-01-10 =
