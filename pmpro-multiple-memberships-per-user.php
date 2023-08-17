@@ -106,15 +106,18 @@ register_deactivation_hook(__FILE__, 'pmprommpu_deactivation');
 // Include stylesheets.
 function pmprommpu_init() {
 	if(is_admin()) {
-		$csspath = plugins_url("css/jquery-ui.min.css", __FILE__);
-		wp_enqueue_style( 'pmprommpu_jquery_ui', $csspath, array(), PMPROMMPU_VER, "screen");
-		$csspath = plugins_url("css/jquery-ui.structure.min.css", __FILE__);
-		wp_enqueue_style( 'pmprommpu_jquery_ui_structure', $csspath, array(), PMPROMMPU_VER, "screen");
-		$csspath = plugins_url("css/jquery-ui.theme.min.css", __FILE__);
-		wp_enqueue_style( 'pmprommpu_jquery_ui_theme', $csspath, array(), PMPROMMPU_VER, "screen");
+		//Only load our scripts on PMPro pages
+		if( ( isset( $_REQUEST['page'] ) && strpos( $_REQUEST['page'], 'pmpro' ) !== false ) ) {				
+			$csspath = plugins_url("css/jquery-ui.min.css", __FILE__);
+			wp_enqueue_style( 'pmprommpu_jquery_ui', $csspath, array(), PMPROMMPU_VER, "screen");
+			$csspath = plugins_url("css/jquery-ui.structure.min.css", __FILE__);
+			wp_enqueue_style( 'pmprommpu_jquery_ui_structure', $csspath, array(), PMPROMMPU_VER, "screen");
+			$csspath = plugins_url("css/jquery-ui.theme.min.css", __FILE__);
+			wp_enqueue_style( 'pmprommpu_jquery_ui_theme', $csspath, array(), PMPROMMPU_VER, "screen");
 
-		$csspath = plugins_url("css/admin.css", __FILE__);
-		wp_enqueue_style( 'pmprommpu_admin', $csspath, array(), PMPROMMPU_VER, "screen");
+			$csspath = plugins_url("css/admin.css", __FILE__);
+			wp_enqueue_style( 'pmprommpu_admin', $csspath, array(), PMPROMMPU_VER, "screen");
+		}
 	} else {
 		$csspath = plugins_url("css/frontend.css", __FILE__);
 		wp_enqueue_style( 'pmprommpu_frontend', $csspath, array(), PMPROMMPU_VER, "screen");
