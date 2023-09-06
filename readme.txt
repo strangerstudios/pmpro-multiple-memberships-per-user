@@ -2,7 +2,7 @@
 Contributors: strangerstudios
 Tags: pmpro, paid memberships pro, members, memberships, mmpu
 Requires at least: 5.2
-Tested up to: 6.2
+Tested up to: 6.3
 Stable tag: 0.8.4
 
 Updates the core Paid Memberships Pro plugin to allow users to have multiple memberships at the same time.
