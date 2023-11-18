@@ -144,7 +144,3 @@ function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {
 		return $pmproemail->sendEmail();
 	}
 }
-
-add_action( 'pmpro_after_all_checkouts', 'pmprommpu_send_checkout_emails', 10, 2);
-
-?>
