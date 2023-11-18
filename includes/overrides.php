@@ -489,7 +489,10 @@ function pmprommpu_pmpro_after_checkout( $user_id, $checkout_statuses ) {
 		}
 	}
 
-	pmprommpu_send_checkout_emails( $user_id, $pmpro_checkout_id );
+	// Need to send emails if we disabled the defaults earlier.
+	if ( pmprommpu_gateway_supports_multiple_level_checkout() ) {
+		pmprommpu_send_checkout_emails( $user_id, $pmpro_checkout_id );
+	}
 
 	//remove levels to be removed
 	if ( ! empty( $pmpro_checkout_del_level_ids ) ) {
@@ -923,10 +926,18 @@ add_action( 'wp_ajax_pmprommpu_edit_group', 'pmprommpu_edit_group' );
 add_action( 'wp_ajax_pmprommpu_del_group', 'pmprommpu_del_group' );
 add_action( 'wp_ajax_pmprommpu_update_level_and_group_order', 'pmprommpu_update_level_and_group_order' );
 
-function pmprommpu_stop_default_checkout_emails( $inflag ) {
-	return false;
+/**
+ * Stop the default PMPro checkout emails
+ * if using a gateway and config that supports
+ * multiple levels/orders at checkout.
+ * @since 0.8.6 Only stops emails if using a gateway that supports multiple levels at checkout.
+ */
+function pmprommpu_stop_default_checkout_emails( $send ) {
+	if ( pmprommpu_gateway_supports_multiple_level_checkout() ) {
+		$send = false;
+	}
+	return $send;
 }
-
 add_filter( 'pmpro_send_checkout_emails', 'pmprommpu_stop_default_checkout_emails', 10, 1 );
 
 function pmprommpu_show_multiple_levels_in_memlist( $inuser ) {
