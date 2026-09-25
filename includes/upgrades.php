@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 //	These functions are run on startup if user is an admin. They check for upgrades -
 //	and if it's a new install, everything is an upgrade!
 
@@ -11,6 +15,7 @@ function pmprommpu_setup_and_upgrade() {
 	//if we can't find the DB tables, reset version to 0
 	$wpdb->hide_errors();
 	$wpdb->pmpro_groups = $wpdb->prefix . 'pmpro_groups';
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Static table name built from $wpdb->prefix; install check.
 	$table_exists = $wpdb->query("SHOW TABLES LIKE '" . $wpdb->pmpro_groups . "'");
 	if(!$table_exists || $installed_version < 1) {
 		pmprommpu_setup_v1();
