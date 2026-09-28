@@ -199,9 +199,20 @@ function pmprommpu_set_group_for_level($levelid, $groupid) {
 	}
 }
 
+// Make sure the current user can manage level groups and the AJAX request has a valid nonce.
+function pmprommpu_check_group_ajax_permissions() {
+	if ( ! current_user_can( 'manage_options' ) && ! current_user_can( 'pmpro_membershiplevels' ) ) {
+		wp_die( -1, 403 );
+	}
+
+	check_ajax_referer( 'pmprommpu_groups', 'nonce' );
+}
+
 // Called by AJAX to add a group from the admin-side Membership Levels and Groups page. Incoming parms are name and mult (can users sign up for multiple levels in this group - 0/1).
 function pmprommpu_add_group() {
 	global $wpdb;
+
+	pmprommpu_check_group_ajax_permissions();
 
 	$displaynum = $wpdb->get_var("SELECT MAX(displayorder) FROM {$wpdb->pmpro_groups}"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Static query on the add-on's custom table.
 	if(! $displaynum || intval($displaynum)<1) { $displaynum = 1; } else { $displaynum = intval($displaynum); $displaynum++; }
@@ -225,6 +236,8 @@ function pmprommpu_add_group() {
 // Called by AJAX to edit a group from the admin-side Membership Levels and Groups page. Incoming parms are group (the ID #), name and mult (can users sign up for multiple levels in this group - 0/1).
 function pmprommpu_edit_group() {
 	global $wpdb;
+
+	pmprommpu_check_group_ajax_permissions();
 
 	if(array_key_exists("name", $_REQUEST) && array_key_exists("group", $_REQUEST) && intval($_REQUEST["group"])>0) {
 		$allowmult = 0;
@@ -252,6 +265,8 @@ function pmprommpu_edit_group() {
 function pmprommpu_del_group() {
 	global $wpdb;
 
+	pmprommpu_check_group_ajax_permissions();
+
 	if(array_key_exists("group", $_REQUEST) && intval($_REQUEST["group"])>0) {
 		$groupid = intval($_REQUEST["group"]);
 
@@ -266,6 +281,8 @@ function pmprommpu_del_group() {
 // Called by AJAX from the admin-facing levels page when the rows are reordered. Incoming parm (neworder) is an ordered array of objects (with two parms, group (scalar ID) and levels (ordered array of scalar level IDs))
 function pmprommpu_update_level_and_group_order() {
 	global $wpdb;
+
+	pmprommpu_check_group_ajax_permissions();
 
 	$grouparr = array();
 	$levelarr = array();

@@ -40,6 +40,7 @@ jQuery(document).ready(function ($) {
                         dialog.dialog("close");
                         $.post(ajaxurl, {
                             action: "pmprommpu_add_group",
+                            nonce: pmprommpu.settings.nonce,
                             name: groupname,
                             mult: allowmult
                         }, function () {
@@ -94,6 +95,7 @@ jQuery(document).ready(function ($) {
                             dialog.dialog("close");
                             $.post(ajaxurl, {
                                 action: "pmprommpu_edit_group",
+                                nonce: pmprommpu.settings.nonce,
                                 group: groupid,
                                 name: groupname,
                                 mult: allowmult
@@ -121,6 +123,7 @@ jQuery(document).ready(function ($) {
                     ajaxurl,
                     {
                         action: "pmprommpu_del_group",
+                        nonce: pmprommpu.settings.nonce,
                         group: groupid
                     },
                     function () {
@@ -166,6 +169,7 @@ jQuery(document).ready(function ($) {
 
         var data = {
             action: 'pmprommpu_update_level_and_group_order',
+            nonce: pmprommpu.settings.nonce,
             neworder: groupsnlevels
         };
         $.post(ajaxurl, data, function (response) {
