@@ -112,6 +112,7 @@ function pmprommpu_addin_jquery_dialog( $pagehook ) {
 			),
 			'settings' => array(
 				'level_page_url' => add_query_arg( 'page', 'pmpro-membershiplevels', admin_url( 'admin.php' ) ),
+				'nonce'          => wp_create_nonce( 'pmprommpu_groups' ),
 			)
 		)
 	);
