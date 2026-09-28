@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 //	Functions to modify core PMPro e-mail behaviors.
 
 function pmprommpu_send_checkout_emails($user_id, $checkout_id = -1) {

@@ -18,6 +18,10 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // This file has miscellaneous functions to help things run smoothly.
 
 //set up wpdb for the tables we need
@@ -43,7 +47,7 @@ function pmprommpu_plugin_dir() {
 function pmprommpu_get_groups() {
 	global $wpdb;
 
-	$allgroups = $wpdb->get_results("SELECT * FROM $wpdb->pmpro_groups ORDER BY id");
+	$allgroups = $wpdb->get_results("SELECT * FROM $wpdb->pmpro_groups ORDER BY id"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Static query on the add-on's custom table.
 	$grouparr = array();
 	foreach($allgroups as $curgroup) {
 		$grouparr[$curgroup->id] = $curgroup;
@@ -57,7 +61,7 @@ function pmprommpu_create_group($inname, $inallowmult = true) {
 	global $wpdb;
 
 	$allowmult = intval($inallowmult);
-	$result = $wpdb->insert($wpdb->pmpro_groups, array('name' => $inname, 'allow_multiple_selections' => $allowmult), array('%s', '%d'));
+	$result = $wpdb->insert($wpdb->pmpro_groups, array('name' => $inname, 'allow_multiple_selections' => $allowmult), array('%s', '%d')); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Insert into the add-on's custom table.
 
 	if($result) { return $wpdb->insert_id; } else { return false; }
 }
@@ -70,8 +74,8 @@ function pmprommpu_set_level_for_group($levelid, $groupid) {
 	$groupid = intval($groupid); // just to be safe
 
 	// TODO: Error checking would be smart.
-	$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array( 'level' => $levelid ) );
-	$wpdb->insert($wpdb->pmpro_membership_levels_groups, array('level' => $levelid, 'group' => $groupid), array('%d', '%d' ) );
+	$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array( 'level' => $levelid ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Write to the add-on's custom table.
+	$wpdb->insert($wpdb->pmpro_membership_levels_groups, array('level' => $levelid, 'group' => $groupid), array('%d', '%d' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Write to the add-on's custom table.
 }
 
 // Return an array of the groups and levels in display order - keys are group ID, and values are their levels, in display order
@@ -90,17 +94,18 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 		$include[] = $level->id;
 	}
 
-	$included = esc_sql( implode(',', $include) );
+	$included = implode( ',', array_map( 'intval', $include ) );
 
 	$order = array();
 	if(! empty($pmpro_level_order)) { $order = explode(',', $pmpro_level_order); }
 
-	$grouplist = $wpdb->get_col("SELECT id FROM {$wpdb->pmpro_groups} ORDER BY displayorder, id ASC");
+	$grouplist = $wpdb->get_col("SELECT id FROM {$wpdb->pmpro_groups} ORDER BY displayorder, id ASC"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Static query on the add-on's custom table.
 	if($grouplist) {
 		foreach($grouplist as $curgroup) {
 
 			$curgroup = intval($curgroup);
 
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Custom tables; the IN list is built from intval() level IDs.
 			$levelsingroup = $wpdb->get_col(
 				$wpdb->prepare( "
 					SELECT level 
@@ -113,6 +118,7 @@ function pmprommpu_get_levels_and_groups_in_order($includehidden = false) {
 				$curgroup
 				)
 			);
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 
 			if(count($order)>0) {
 
@@ -165,7 +171,7 @@ function pmprommpu_get_group_for_level($levelid) {
 
 	$levelid = intval($levelid); // just to be safe
 
-	$groupid = $wpdb->get_var( $wpdb->prepare( "SELECT mlg.group FROM {$wpdb->pmpro_membership_levels_groups} mlg WHERE level = %d", $levelid ) );
+	$groupid = $wpdb->get_var( $wpdb->prepare( "SELECT mlg.group FROM {$wpdb->pmpro_membership_levels_groups} mlg WHERE level = %d", $levelid ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Prepared query on the add-on's custom table.
 	if($groupid) {
 		$groupid = intval($groupid);
 	} else {
@@ -182,9 +188,9 @@ function pmprommpu_set_group_for_level($levelid, $groupid) {
 	$groupid = intval($groupid); // just to be safe
 
 	// TODO: Error checking would be smart.
-	$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array( 'level' => $levelid ) );
+	$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array( 'level' => $levelid ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Write to the add-on's custom table.
 
-	$success = $wpdb->insert( $wpdb->pmpro_membership_levels_groups, array('group' => $groupid, 'level' => $levelid ) );
+	$success = $wpdb->insert( $wpdb->pmpro_membership_levels_groups, array('group' => $groupid, 'level' => $levelid ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Write to the add-on's custom table.
 
 	if($success>0) {
 		return true;
@@ -208,14 +214,14 @@ function pmprommpu_add_group() {
 
 	pmprommpu_check_group_ajax_permissions();
 
-	$displaynum = $wpdb->get_var("SELECT MAX(displayorder) FROM {$wpdb->pmpro_groups}");
+	$displaynum = $wpdb->get_var("SELECT MAX(displayorder) FROM {$wpdb->pmpro_groups}"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Static query on the add-on's custom table.
 	if(! $displaynum || intval($displaynum)<1) { $displaynum = 1; } else { $displaynum = intval($displaynum); $displaynum++; }
 
 	if(array_key_exists("name", $_REQUEST)) {
 		$allowmult = 0;
 		if(array_key_exists("mult", $_REQUEST) && intval($_REQUEST["mult"])>0) { $allowmult = 1; }
-		$wpdb->insert($wpdb->pmpro_groups,
-			array(	'name' => $_REQUEST["name"],
+		$wpdb->insert($wpdb->pmpro_groups, // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Write to the add-on's custom table.
+			array(	'name' => sanitize_text_field( wp_unslash( $_REQUEST["name"] ) ),
 					'allow_multiple_selections' => $allowmult,
 					'displayorder' => $displaynum),
 			array(	'%s',
@@ -239,8 +245,8 @@ function pmprommpu_edit_group() {
 		$grouptoedit = intval($_REQUEST["group"]);
 
 		// TODO: Error checking would be smart.
-		$wpdb->update($wpdb->pmpro_groups,
-			array(	'name' => $_REQUEST["name"],
+		$wpdb->update($wpdb->pmpro_groups, // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Write to the add-on's custom table.
+			array(	'name' => sanitize_text_field( wp_unslash( $_REQUEST["name"] ) ),
 					'allow_multiple_selections' => $allowmult
 			), // SET
 			array(	'id' => $grouptoedit), // WHERE
@@ -265,8 +271,8 @@ function pmprommpu_del_group() {
 		$groupid = intval($_REQUEST["group"]);
 
 		// TODO: Error checking would be smart.
-		$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array('group' => $groupid ) );
-		$wpdb->delete( $wpdb->pmpro_groups, array( 'id' => $groupid) );
+		$wpdb->delete( $wpdb->pmpro_membership_levels_groups, array('group' => $groupid ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Write to the add-on's custom table.
+		$wpdb->delete( $wpdb->pmpro_groups, array( 'id' => $groupid) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Write to the add-on's custom table.
 	}
 
 	wp_die();
@@ -282,7 +288,8 @@ function pmprommpu_update_level_and_group_order() {
 	$levelarr = array();
 
 	if(array_key_exists("neworder", $_REQUEST) && is_array($_REQUEST["neworder"])) {
-		foreach($_REQUEST["neworder"] as $curgroup) {
+		$neworder = map_deep( wp_unslash( $_REQUEST["neworder"] ), 'intval' );
+		foreach($neworder as $curgroup) {
 			$grouparr[] = $curgroup["group"];
 			foreach($curgroup["levels"] as $curlevel) {
 				$levelarr[] = $curlevel;
@@ -294,7 +301,7 @@ function pmprommpu_update_level_and_group_order() {
 		foreach($grouparr as $orderedgroup) {
 
 			// TODO: Error checking would be smart.
-			$wpdb->update( $wpdb->pmpro_groups, array ( 'displayorder' => $ctr ), array( 'id' => $orderedgroup ) );
+			$wpdb->update( $wpdb->pmpro_groups, array ( 'displayorder' => $ctr ), array( 'id' => $orderedgroup ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Write to the add-on's custom table.
 			$ctr++;
 		}
 		pmpro_setOption('level_order', $levelarr);
@@ -327,13 +334,13 @@ function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to
 
 	$checkoutid = intval($checkout_id);
 	if($checkoutid<1) {
-		$checkoutid = $wpdb->get_var("SELECT MAX(checkout_id) FROM $wpdb->pmpro_membership_orders WHERE user_id=$user_id");
+		$checkoutid = $wpdb->get_var("SELECT MAX(checkout_id) FROM $wpdb->pmpro_membership_orders WHERE user_id=$user_id"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $user_id is intval() above; PMPro orders table.
 		if(empty($checkoutid) || intval($checkoutid)<1) { return $retval; }
 	}
 
 	$querySql = "SELECT membership_id FROM $wpdb->pmpro_membership_orders WHERE checkout_id = " . esc_sql( $checkoutid ) . " AND ( gateway = 'free' OR ";
 	if(!empty($statuses_to_check) && is_array($statuses_to_check)) {
-		$querySql .= "status IN('" . implode("','", $statuses_to_check) . "') ";
+		$querySql .= "status IN('" . implode("','", array_map( 'esc_sql', $statuses_to_check ) ) . "') ";
 	} elseif(!empty($statuses_to_check)) {
 		$querySql .= "status = '" . esc_sql($statuses_to_check) . "' ";
 	} else {
@@ -341,7 +348,7 @@ function pmprommpu_get_levels_from_latest_checkout($user_id = NULL, $statuses_to
 	}
 	$querySql .= " )";
 
-	$levelids = $wpdb->get_col($querySql);
+	$levelids = $wpdb->get_col($querySql); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $checkoutid is intval() and every status value is esc_sql() and quoted above.
 	foreach($levelids as $thelevel) {
 		if(array_key_exists($thelevel, $all_levels)) {
 			$retval[] = $all_levels[$thelevel];
@@ -451,7 +458,7 @@ function pmprommpu_addMembershipLevel($level = NULL, $user_id = NULL, $force_add
 
 		if(array_key_exists($groupid, $allgroups) && $allgroups[$groupid]->allow_multiple_selections<1) { // There can be only one.
 			// Do they already have one in this group?
-			$otherlevels = $wpdb->get_col( $wpdb->prepare( "SELECT mlg.level FROM {$wpdb->pmpro_membership_levels_groups} AS mlg WHERE mlg.group = %d AND mlg.level <>  %d", $groupid, $level_id ) );
+			$otherlevels = $wpdb->get_col( $wpdb->prepare( "SELECT mlg.level FROM {$wpdb->pmpro_membership_levels_groups} AS mlg WHERE mlg.group = %d AND mlg.level <>  %d", $groupid, $level_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Prepared query on the add-on's custom table.
 			if ( false !== pmpro_hasMembershipLevel( $otherlevels, $user_id ) ) { return $return; }
 		}
 	}

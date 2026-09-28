@@ -10,6 +10,10 @@ Text Domain: pmpro-multiple-memberships-per-user
 Domain Path: /languages
 */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /*
  * License:
 
@@ -76,8 +80,8 @@ function pmprommpu_activation() {
 	if ( !is_plugin_active( 'paid-memberships-pro/paid-memberships-pro.php' ) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 		wp_die(
-			__( 'Paid Memberships Pro must be active in order to activate the MMPU add-on.', 'pmpro-multiple-memberships-per-user' ),
-			__( 'Plugin dependency check', 'pmpro-multiple-memberships-per-user' ),
+			esc_html__( 'Paid Memberships Pro must be active in order to activate the MMPU add-on.', 'pmpro-multiple-memberships-per-user' ),
+			esc_html__( 'Plugin dependency check', 'pmpro-multiple-memberships-per-user' ),
 			array( 'back_link' => true )
 		);
 	}

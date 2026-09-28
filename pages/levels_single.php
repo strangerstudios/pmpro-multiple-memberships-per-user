@@ -18,6 +18,10 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 global $wpdb, $pmpro_msg, $pmpro_msgt, $current_user;
 
 global $pmpro_levels;
@@ -36,7 +40,7 @@ $pmpro_levels = apply_filters( "pmpro_levels_array", $pmpro_levels );
 
 if ( $pmpro_msg ) {
 	?>
-	<div class="pmpro_message <?php echo $pmpro_msgt ?>"><?php echo $pmpro_msg ?></div>
+	<div class="pmpro_message <?php echo esc_attr( $pmpro_msgt ); ?>"><?php echo wp_kses_post( $pmpro_msg ); ?></div>
 	<?php
 }
 ?>
@@ -48,15 +52,15 @@ if ( $pmpro_msg ) {
 
 			if ( !empty( $grouplevels )) {
 			?>
-			<div id="pmpro_mmpu_group-<?php echo $pmpro_groups[ $group ]->id; ?>"
+			<div id="pmpro_mmpu_group-<?php echo esc_attr( $pmpro_groups[ $group ]->id ); ?>"
 			     class="pmpro_mmpu_group <?php if ( intval( $pmpro_groups[ $group ]->allow_multiple_selections ) == 0 ) { ?>selectone<?php } ?>">
-				<h2 class="pmpro_mmpu_group-name"><?php echo $pmpro_groups[ $group ]->name ?></h2>
+				<h2 class="pmpro_mmpu_group-name"><?php echo esc_html( $pmpro_groups[ $group ]->name ); ?></h2>
 				<p class="pmpro_mmpu_group-type">
 					<?php
 					if ( intval( $pmpro_groups[ $group ]->allow_multiple_selections ) > 0 ) {
-						_e( 'You can choose multiple levels from this group.', 'pmpro-multiple-memberships-per-user' );
+						esc_html_e( 'You can choose multiple levels from this group.', 'pmpro-multiple-memberships-per-user' );
 					} else {
-						_e( 'You can only choose one level from this group.', 'pmpro-multiple-memberships-per-user' );
+						esc_html_e( 'You can only choose one level from this group.', 'pmpro-multiple-memberships-per-user' );
 					}
 					?>
 				</p>
@@ -65,18 +69,18 @@ if ( $pmpro_msg ) {
 				foreach ( $grouplevels as $level ) {
 
 					?>
-					<div id="pmpro_mmpu_level-<?php echo $pmpro_levels[ $level ]->id; ?>"
-					     class="pmpro_mmpu_level group<?php echo $group; ?> <?php if ( isset($pmpro_groups[ $group ]->allow_multiple_selections) && intval( $pmpro_groups[ $group ]->allow_multiple_selections ) == 0 ) {
+					<div id="pmpro_mmpu_level-<?php echo esc_attr( $pmpro_levels[ $level ]->id ); ?>"
+					     class="pmpro_mmpu_level group<?php echo esc_attr( $group ); ?> <?php if ( isset($pmpro_groups[ $group ]->allow_multiple_selections) && intval( $pmpro_groups[ $group ]->allow_multiple_selections ) == 0 ) {
 						     echo 'selectone';
 					     } ?>">
 						<div class="pmpro_level-info">
-							<h3 class="pmpro_level-name"><?php echo $pmpro_levels[ $level ]->name; ?></h3>
+							<h3 class="pmpro_level-name"><?php echo esc_html( $pmpro_levels[ $level ]->name ); ?></h3>
 							<p class="pmpro_level-price">
 								<?php
 								if ( pmpro_isLevelFree( $pmpro_levels[ $level ] ) ) {
-									_e( "Free", 'pmpro-multiple-memberships-per-user' );
+									esc_html_e( "Free", 'pmpro-multiple-memberships-per-user' );
 								} else {
-									echo pmpro_getLevelCost( $pmpro_levels[ $level ], true, true );
+									echo wp_kses_post( pmpro_getLevelCost( $pmpro_levels[ $level ], true, true ) );
 								}
 								?>
 							</p> <!-- end pmpro_level-price -->
@@ -85,7 +89,7 @@ if ( $pmpro_msg ) {
 							if ( ! empty( $expiration_text ) ) {
 								?>
 								<p class="pmpro_level-expiration">
-									<?php echo $expiration_text; ?>
+									<?php echo wp_kses_post( $expiration_text ); ?>
 								</p> <!-- end pmpro_level-expiration -->
 								<?php
 							}
@@ -95,17 +99,17 @@ if ( $pmpro_msg ) {
 							<?php 
 							if( ! pmpro_hasMembershipLevel( $pmpro_levels[ $level ]->id ) ) {
 								?>
-									<a class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-select', 'pmpro_btn-select' ); ?>" href="<?php echo pmpro_url("checkout", "?level=" . $pmpro_levels[ $level ]->id, "https")?>"><?php _e('Select', 'pmpro-multiple-memberships-per-user' );?></a>
+									<a class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn pmpro_btn-select', 'pmpro_btn-select' ) ); ?>" href="<?php echo esc_url( pmpro_url("checkout", "?level=" . $pmpro_levels[ $level ]->id, "https") ); ?>"><?php esc_html_e('Select', 'pmpro-multiple-memberships-per-user' );?></a>
 								<?php
 							} else {
 								//if it's a one-time-payment level, offer a link to renew				
 								if( pmpro_isLevelExpiringSoon( $pmpro_levels[ $level ] ) ) {
 									?>
-										<a class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-select', 'pmpro_btn-select' ); ?>" href="<?php echo pmpro_url("checkout", "?level=" . $pmpro_levels[ $level ]->id, "https")?>"><?php _e('Renew', 'pmpro-multiple-memberships-per-user' );?></a>
+										<a class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn pmpro_btn-select', 'pmpro_btn-select' ) ); ?>" href="<?php echo esc_url( pmpro_url("checkout", "?level=" . $pmpro_levels[ $level ]->id, "https") ); ?>"><?php esc_html_e('Renew', 'pmpro-multiple-memberships-per-user' );?></a>
 									<?php
 								} else {
 									?>
-										<a class="<?php echo pmpro_get_element_class( 'pmpro_btn disabled', 'pmpro_btn' ); ?>" href="<?php echo pmpro_url("account")?>"><?php _e('Your&nbsp;Level', 'pmpro-multiple-memberships-per-user' );?></a>
+										<a class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn disabled', 'pmpro_btn' ) ); ?>" href="<?php echo esc_url( pmpro_url("account") ); ?>"><?php esc_html_e('Your&nbsp;Level', 'pmpro-multiple-memberships-per-user' );?></a>
 									<?php
 								}								
 							}
@@ -125,9 +129,9 @@ if ( $pmpro_msg ) {
 <nav id="nav-below" class="navigation" role="navigation">
 	<div class="nav-previous alignleft">
 		<?php if ( ! empty( $current_user->membership_level->id ) ) { ?>
-			<a href="<?php echo pmpro_url( "account" ) ?>"><?php _e( '&larr; Return to Your Account', 'pmpro-multiple-memberships-per-user' ); ?></a>
+			<a href="<?php echo esc_url( pmpro_url( "account" ) ); ?>"><?php esc_html_e( '&larr; Return to Your Account', 'pmpro-multiple-memberships-per-user' ); ?></a>
 		<?php } else { ?>
-			<a href="<?php echo home_url() ?>"><?php _e( '&larr; Return to Home', 'pmpro-multiple-memberships-per-user' ); ?></a>
+			<a href="<?php echo esc_url( home_url() ); ?>"><?php esc_html_e( '&larr; Return to Home', 'pmpro-multiple-memberships-per-user' ); ?></a>
 		<?php } ?>
 	</div>
 </nav>

@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! class_exists( 'MemberOrder' ) ) {
 	return;
 }
@@ -18,9 +22,9 @@ class MemberInvoice extends MemberOrder {
 			return false;
 
 		//build query
-		$this->sqlQuery = "SELECT MAX(checkout_id) FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . $user_id . "' ";
+		$this->sqlQuery = "SELECT MAX(checkout_id) FROM $wpdb->pmpro_membership_orders WHERE user_id = '" . intval( $user_id ) . "' ";
 		if(!empty($status) && is_array($status))
-			$this->sqlQuery .= "AND (status IN('" . implode("','", $status) . "') ";
+			$this->sqlQuery .= "AND (status IN('" . implode("','", array_map( 'esc_sql', $status ) ) . "') ";
 		elseif(!empty($status))
 			$this->sqlQuery .= "AND (status = '" . esc_sql($status) . "' ";
 		else
@@ -30,12 +34,12 @@ class MemberInvoice extends MemberOrder {
 		$this->sqlQuery .= " OR gateway = 'free')";
 
 		//get id
-		$checkoutid = $wpdb->get_var($this->sqlQuery);
+		$checkoutid = $wpdb->get_var($this->sqlQuery); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $user_id is intval() and every status is esc_sql() and quoted above.
 		if(empty($checkoutid)) { return false; }
 		
-		$this->sqlQuery = "SELECT id FROM $wpdb->pmpro_membership_orders WHERE checkout_id=$checkoutid ";
+		$this->sqlQuery = "SELECT id FROM $wpdb->pmpro_membership_orders WHERE checkout_id=" . intval( $checkoutid ) . " ";
 		if(!empty($status) && is_array($status))
-			$this->sqlQuery .= "AND (status IN('" . implode("','", $status) . "') ";
+			$this->sqlQuery .= "AND (status IN('" . implode("','", array_map( 'esc_sql', $status ) ) . "') ";
 		elseif(!empty($status))
 			$this->sqlQuery .= "AND (status = '" . esc_sql($status) . "' ";
 		else
@@ -44,7 +48,7 @@ class MemberInvoice extends MemberOrder {
 		// need to add back in free orders, because they don't get a success status.
 		$this->sqlQuery .= " OR gateway = 'free')";
 
-		$idarray = $wpdb->get_col($this->sqlQuery);
+		$idarray = $wpdb->get_col($this->sqlQuery); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $checkoutid is intval() and every status is esc_sql() and quoted above.
 		$orderarray = array();
 		$ordercount = 1;
 		if(count($idarray)<1) { return false; }
@@ -82,7 +86,7 @@ class MemberInvoice extends MemberOrder {
 				$this->Address1 = $this->billing->street;
 
 				//get email from user_id
-				$this->Email = $wpdb->get_var("SELECT user_email FROM $wpdb->users WHERE ID = '" . $this->user_id . "' LIMIT 1");
+				$this->Email = $wpdb->get_var("SELECT user_email FROM $wpdb->users WHERE ID = '" . intval( $this->user_id ) . "' LIMIT 1"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- User ID is intval().
 				
 				if($ordercount == 1) { $this->subtotal = $temporder->subtotal; } else { $this->subtotal = (double)$this->subtotal + (double)$temporder->subtotal; }
 				if($ordercount == 1) { $this->tax = $temporder->tax; } else { $this->tax = (double)$this->tax + (double)$temporder->tax; }

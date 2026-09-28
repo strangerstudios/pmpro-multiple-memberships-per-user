@@ -18,10 +18,15 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // This file is where we override the default PMPro functionality & pages as needed. (Which is a lot.)
 
 // if a list of level ids is passed to checkout, pull out the first as the main level and save the rest
 function pmprommpu_init_checkout_levels() {
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Checkout routing; the level lists are reduced to intval() IDs below.
 	//update and save pmpro checkout levels
 	if ( ! is_admin() && ! empty( $_REQUEST['level'] ) && $_REQUEST['level'] != 'all' ) {
 		global $pmpro_checkout_level_ids, $pmpro_checkout_levels;
@@ -55,6 +60,7 @@ function pmprommpu_init_checkout_levels() {
 		$pmpro_checkout_del_level_ids = array();
 		$pmpro_checkout_del_level_ids = array_map( 'intval', explode( "+", preg_replace( "[^0-9\+]", "", $_REQUEST['dellevels'] ) ) );
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 }
 
 add_action( 'init', 'pmprommpu_init_checkout_levels', 100 );
@@ -66,7 +72,7 @@ function pmprommpu_template_redirect_dupe_level_check() {
 	global $pmpro_pages;
 
 	//on the checkout page?
-	if ( ! empty( $pmpro_checkout_level_ids ) && ! is_admin() && ! empty( $_REQUEST['level'] ) && ! is_page( $pmpro_pages['cancel'] ) ) {
+	if ( ! empty( $pmpro_checkout_level_ids ) && ! is_admin() && ! empty( $_REQUEST['level'] ) && ! is_page( $pmpro_pages['cancel'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing check.
 
 		$oktoproceed   = true;
 		$currentlevels = pmpro_getMembershipLevelsForUser();
@@ -77,7 +83,7 @@ function pmprommpu_template_redirect_dupe_level_check() {
 			}
 		}
 		if ( ! $oktoproceed ) {
-			wp_redirect( pmpro_url( "levels" ) );
+			wp_redirect( pmpro_url( "levels" ) ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- pmpro_url() is filterable and may point offsite (e.g. Network Subsite).
 			exit;
 		}
 	}
@@ -146,7 +152,7 @@ function pmprommpu_frontend_scripts() {
 			'settings' => array(
 				'ajaxurl'                 => admin_url( 'admin-ajax.php' ),
 				'timeout'                 => apply_filters( "pmpro_ajax_timeout", 5000, "applydiscountcode" ),
-				'processed_dc'            => ! empty( $_REQUEST['discount_code'] ),
+				'processed_dc'            => ! empty( $_REQUEST['discount_code'] ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only flag for the checkout script.
 				'show_main_discount_code' => $pmpro_show_discount_code,
 			)
 		) );
@@ -265,7 +271,7 @@ function pmprommpu_pmpro_deactivate_old_levels( $deactivate ) {
 	global $pmpro_pages;
 
 	//don't deactivate other levels, unless we're on the cancel page and set to cancel all
-	if ( ! is_page( $pmpro_pages['cancel'] ) || empty( $_REQUEST['levelstocancel'] ) || $_REQUEST['levelstocancel'] != 'all' ) {
+	if ( ! is_page( $pmpro_pages['cancel'] ) || empty( $_REQUEST['levelstocancel'] ) || $_REQUEST['levelstocancel'] != 'all' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only comparison; the cancel itself is nonce-checked in PMPro's cancel preheader.
 		$deactivate = false;
 	}
 
@@ -278,7 +284,7 @@ function pmprommpu_pmpro_cancel_previous_subscriptions( $cancel ) {
 	global $pmpro_pages;
 
 	//don't cancel other subscriptions, unless we're on the cancel page and set to cancel all
-	if ( ! is_page( $pmpro_pages['cancel'] ) || empty( $_REQUEST['levelstocancel'] ) || $_REQUEST['levelstocancel'] != 'all' ) {
+	if ( ! is_page( $pmpro_pages['cancel'] ) || empty( $_REQUEST['levelstocancel'] ) || $_REQUEST['levelstocancel'] != 'all' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only comparison; the cancel itself is nonce-checked in PMPro's cancel preheader.
 		$cancel = false;
 	}
 
@@ -457,7 +463,7 @@ function pmprommpu_pmpro_after_checkout( $user_id, $checkout_statuses ) {
 			//update membership_user table.
 			//(NOTE: we can avoid some DB calls by using the global $discount_code_id, but the core preheaders/checkout.php may have blanked it)
 			if ( ! empty( $discount_code ) && ! empty( $use_discount_code ) ) {
-				$discount_code_id = $wpdb->get_var( "SELECT id FROM $wpdb->pmpro_discount_codes WHERE code = '" . esc_sql( $discount_code ) . "' LIMIT 1" );
+				$discount_code_id = $wpdb->get_var( "SELECT id FROM $wpdb->pmpro_discount_codes WHERE code = '" . esc_sql( $discount_code ) . "' LIMIT 1" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Value is esc_sql() and quoted; PMPro discount codes table.
 			} else {
 				$discount_code_id = "";
 			}
@@ -585,13 +591,13 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 		}
 		?>
 		<div id="message" class="inline error">
-			<p><?php printf( __('The following levels were not yet in a group: %s. These levels have been added to the first group found.', 'pmpro-multiple-memberships-per-user' ), implode(', ', $orphaned_level_ids ) ); ?></p>
+			<p><?php printf( esc_html__('The following levels were not yet in a group: %s. These levels have been added to the first group found.', 'pmpro-multiple-memberships-per-user' ), esc_html( implode(', ', $orphaned_level_ids ) ) ); ?></p>
 		</div>
 		<?php
 	}
 	?>
 
-	<a id="add-new-group" class="add-new-h2" href="#"><?php _e( 'Add New Group', 'pmpro-multiple-memberships-per-user' ); ?></a>
+	<a id="add-new-group" class="add-new-h2" href="#"><?php esc_html_e( 'Add New Group', 'pmpro-multiple-memberships-per-user' ); ?></a>
 	<script>
 		jQuery(document).ready(function () {
 			jQuery('#add-new-group').insertBefore("hr.wp-header-end");
@@ -601,12 +607,12 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 	<table class="widefat mmpu-membership-levels membership-levels">
 		<thead>
 		<tr>
-			<th width="20%"><?php _e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></th>
-			<th><?php _e( 'ID', 'pmpro-multiple-memberships-per-user' ); ?></th>
-			<th><?php _e( 'Name', 'pmpro-multiple-memberships-per-user' ); ?></th>
-			<th><?php _e( 'Billing Details', 'pmpro-multiple-memberships-per-user' ); ?></th>
-			<th><?php _e( 'Expiration', 'pmpro-multiple-memberships-per-user' ); ?></th>
-			<th><?php _e( 'Allow Signups', 'pmpro-multiple-memberships-per-user' ); ?></th>
+			<th width="20%"><?php esc_html_e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></th>
+			<th><?php esc_html_e( 'ID', 'pmpro-multiple-memberships-per-user' ); ?></th>
+			<th><?php esc_html_e( 'Name', 'pmpro-multiple-memberships-per-user' ); ?></th>
+			<th><?php esc_html_e( 'Billing Details', 'pmpro-multiple-memberships-per-user' ); ?></th>
+			<th><?php esc_html_e( 'Expiration', 'pmpro-multiple-memberships-per-user' ); ?></th>
+			<th><?php esc_html_e( 'Allow Signups', 'pmpro-multiple-memberships-per-user' ); ?></th>
 		</tr>
 		</thead>
 		<?php
@@ -625,24 +631,24 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 				$groupallowsmult = $allgroups[ $curgroup ]->allow_multiple_selections;
 			}
 			?>
-			<tbody data-groupid="<?php echo $curgroup; ?>" class="membership-level-groups">
-			<tr class="grouprow <?php echo $onerowclass; ?>">
-				<th rowspan="<?php echo max( count( $itslevels ) + 1, 2 ); ?>" scope="rowgroup" valign="top">
-					<h2><?php echo $groupname; ?></h2>
+			<tbody data-groupid="<?php echo esc_attr( $curgroup ); ?>" class="membership-level-groups">
+			<tr class="grouprow <?php echo esc_attr( $onerowclass ); ?>">
+				<th rowspan="<?php echo esc_attr( max( count( $itslevels ) + 1, 2 ) ); ?>" scope="rowgroup" valign="top">
+					<h2><?php echo esc_html( $groupname ); ?></h2>
 					<input type="hidden" class="pmprommpu-allow-multi" name="allow_multi[]" value="<?php esc_attr_e( $groupallowsmult ); ?>">
 					<?php if ( ! $groupallowsmult ) { ?>
-						<p><em><?php _e( 'Users can only choose one level from this group.', 'pmpro-multiple-memberships-per-user' ); ?></em></p>
+						<p><em><?php esc_html_e( 'Users can only choose one level from this group.', 'pmpro-multiple-memberships-per-user' ); ?></em></p>
 					<?php } ?>
 					<p>
-						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?>" href="#"
-						   class="editgrpbutt button-primary"><?php _e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?></a>
+						<a data-groupid="<?php echo esc_attr( $curgroup ); ?>" title="<?php esc_attr_e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?>" href="#"
+						   class="editgrpbutt button-primary"><?php esc_html_e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?></a>
 						<!--
-						<a data-groupid="<?php echo $curgroup; ?>" title="<?php _e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?>" href="admin.php?page=pmpro-membershiplevels&edit=<?php /* echo $level->id; */ ?>" class="editgrpbutt button-primary"><?php _e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?></a>
+						<a data-groupid="<?php echo esc_attr( $curgroup ); ?>" title="<?php esc_attr_e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?>" href="admin.php?page=pmpro-membershiplevels&edit=<?php /* echo $level->id; */ ?>" class="editgrpbutt button-primary"><?php esc_html_e( 'edit', 'pmpro-multiple-memberships-per-user' ); ?></a>
  -->
 						<?php if ( count( $itslevels ) == 0 ) { ?>
-							<a title="<?php _e( 'delete', 'pmpro-multiple-memberships-per-user' ); ?>" data-groupid="<?php echo $curgroup; ?>"
+							<a title="<?php esc_attr_e( 'delete', 'pmpro-multiple-memberships-per-user' ); ?>" data-groupid="<?php echo esc_attr( $curgroup ); ?>"
 							   href="javascript: void(0);"
-							   class="delgroupbutt button-secondary"><?php _e( 'delete', 'pmpro-multiple-memberships-per-user' ); ?></a>
+							   class="delgroupbutt button-secondary"><?php esc_html_e( 'delete', 'pmpro-multiple-memberships-per-user' ); ?></a>
 						<?php } ?>
 					</p>
 				</th>
@@ -670,40 +676,40 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 						?>
 						<tr class="<?php if ( $count ++ % 2 == 1 ) { ?>alternate<?php } ?> levelrow <?php if ( ! $level->allow_signups ) { ?>pmpro_gray<?php } ?> <?php if ( ! pmpro_checkLevelForStripeCompatibility( $level ) || ! pmpro_checkLevelForBraintreeCompatibility( $level ) || ! pmpro_checkLevelForPayflowCompatibility( $level ) || ! pmpro_checkLevelForTwoCheckoutCompatibility( $level ) ) { ?>pmpro_error<?php } ?>">
 
-							<td class="levelid"><?php echo $level->id ?></td>
+							<td class="levelid"><?php echo esc_html( $level->id ); ?></td>
 							<td class="level_name">
-								<a href="<?php echo $page_link; ?>"><strong><?php echo esc_attr( $level->name ); ?></strong></a>
+								<a href="<?php echo esc_url( $page_link ); ?>"><strong><?php echo esc_attr( $level->name ); ?></strong></a>
 								<div class="row-actions">
-									<span><a title="<?php _e( 'Edit', 'pmpro-multiple-memberships-per-user' ); ?>" href="<?php echo $page_link; ?>"><?php _e( 'Edit', 'pmpro-multiple-memberships-per-user' ); ?></a> |</span>
-									<span><a title="<?php _e( 'Copy', 'pmpro-multiple-memberships-per-user' ); ?>" href="<?php echo add_query_arg( array(
+									<span><a title="<?php esc_attr_e( 'Edit', 'pmpro-multiple-memberships-per-user' ); ?>" href="<?php echo esc_url( $page_link ); ?>"><?php esc_html_e( 'Edit', 'pmpro-multiple-memberships-per-user' ); ?></a> |</span>
+									<span><a title="<?php esc_attr_e( 'Copy', 'pmpro-multiple-memberships-per-user' ); ?>" href="<?php echo esc_url( add_query_arg( array(
 										'page' => 'pmpro-membershiplevels',
 										'copy' => $level->id,
 										'edit' => '-1'
-									), admin_url( 'admin.php' ) ); ?>"><?php _e( 'Copy', 'pmpro-multiple-memberships-per-user' ); ?></a> |</span>
-									<span><a title="<?php _e( 'Delete', 'pmpro-multiple-memberships-per-user' ); ?>"
-									href="javascript:askfirst('<?php echo str_replace( "'", "\'", sprintf( __( "Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", 'pmpro-multiple-memberships-per-user' ), $level->name ) ); ?>', '<?php echo wp_nonce_url( add_query_arg( array(
+									), admin_url( 'admin.php' ) ) ); ?>"><?php esc_html_e( 'Copy', 'pmpro-multiple-memberships-per-user' ); ?></a> |</span>
+									<span><a title="<?php esc_attr_e( 'Delete', 'pmpro-multiple-memberships-per-user' ); ?>"
+									href="javascript:askfirst('<?php echo esc_js( sprintf( __( "Are you sure you want to delete membership level %s? All subscriptions will be cancelled.", 'pmpro-multiple-memberships-per-user' ), $level->name ) ); ?>', '<?php echo esc_js( wp_nonce_url( add_query_arg( array(
 										'page'     => 'pmpro-membershiplevels',
 										'action'   => 'delete_membership_level',
 										'deleteid' => $level->id
-									), admin_url( 'admin.php' ) ), 'delete_membership_level', 'pmpro_membershiplevels_nonce' ); ?>'); void(0);"><?php _e( 'Delete', 'pmpro-multiple-memberships-per-user' ); ?></a></span>
+									), admin_url( 'admin.php' ) ), 'delete_membership_level', 'pmpro_membershiplevels_nonce' ) ); ?>'); void(0);"><?php esc_html_e( 'Delete', 'pmpro-multiple-memberships-per-user' ); ?></a></span>
 								</div>
 							</td>
 							<td>
 								<?php if ( pmpro_isLevelFree( $level ) ) { ?>
-									<?php _e( 'FREE', 'pmpro-multiple-memberships-per-user' ); ?>
+									<?php esc_html_e( 'FREE', 'pmpro-multiple-memberships-per-user' ); ?>
 								<?php } else { ?>
-									<?php echo str_replace( 'The price for membership is', '', pmpro_getLevelCost( $level ) ); ?>
+									<?php echo wp_kses_post( str_replace( 'The price for membership is', '', pmpro_getLevelCost( $level ) ) ); ?>
 								<?php } ?>
 							</td>
 							<td>
 								<?php if ( ! pmpro_isLevelExpiring( $level ) ) { ?>
 									--
 								<?php } else { ?>
-									<?php _e( 'After', 'pmpro-multiple-memberships-per-user' ); ?><?php echo $level->expiration_number ?><?php echo sornot( $level->expiration_period, $level->expiration_number ) ?>
+									<?php esc_html_e( 'After', 'pmpro-multiple-memberships-per-user' ); ?><?php echo esc_html( $level->expiration_number ); ?><?php echo esc_html( sornot( $level->expiration_period, $level->expiration_number ) ); ?>
 								<?php } ?>
 							</td>
 							<td><?php if ( $level->allow_signups ) { ?><a
-									href="<?php echo pmpro_url( "checkout", "?level=" . $level->id ); ?>"><?php _e( 'Yes', 'pmpro-multiple-memberships-per-user' ); ?></a><?php } else { ?><?php _e( 'No', 'pmpro-multiple-memberships-per-user' ); ?><?php } ?>
+									href="<?php echo esc_url( pmpro_url( "checkout", "?level=" . $level->id ) ); ?>"><?php esc_html_e( 'Yes', 'pmpro-multiple-memberships-per-user' ); ?></a><?php } else { ?><?php esc_html_e( 'No', 'pmpro-multiple-memberships-per-user' ); ?><?php } ?>
 							</td>
 						</tr>
 						<?php
@@ -745,7 +751,7 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 									name: groupname,
 									mult: allowmult
 								}, function () {
-									window.location = "<?php echo add_query_arg( 'page', 'pmpro-membershiplevels', admin_url( 'admin.php' ) ); ?>";
+									window.location = "<?php echo esc_url( add_query_arg( 'page', 'pmpro-membershiplevels', admin_url( 'admin.php' ) ) ); ?>";
 								});
 							}
 						},
@@ -784,7 +790,7 @@ function pmprommpu_pmpro_membership_levels_table( $intablehtml, $inlevelarr ) {
 										name: groupname,
 										mult: allowmult
 									}, function () {
-										window.location = "<?php echo add_query_arg( 'page', 'pmpro-membershiplevels', admin_url( 'admin.php' ) ); ?>";
+										window.location = "<?php echo esc_url( add_query_arg( 'page', 'pmpro-membershiplevels', admin_url( 'admin.php' ) ) ); ?>";
 									});
 								}
 							},
@@ -865,19 +871,19 @@ add_filter( 'pmpro_membership_levels_table', 'pmprommpu_pmpro_membership_levels_
 */
 //add options
 function pmprommpu_add_group_to_level_options() {
-	$level     = $_REQUEST['edit'];
+	$level     = isset( $_REQUEST['edit'] ) ? intval( $_REQUEST['edit'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only; selects the level being displayed on the edit level page.
 	$allgroups = pmprommpu_get_groups();
 	$prevgroup = pmprommpu_get_group_for_level( $level );
 	?>
 	<table class="form-table">
 		<tbody>
 		<tr>
-			<th scope="row" valign="top"><label><?php _e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></label></th>
+			<th scope="row" valign="top"><label><?php esc_html_e( 'Group', 'pmpro-multiple-memberships-per-user' ); ?></label></th>
 			<td><select name="groupid">
 					<?php foreach ( $allgroups as $curgroup ) { ?>
-						<option value="<?php echo $curgroup->id; ?>" <?php if ( $curgroup->id == $prevgroup ) {
+						<option value="<?php echo esc_attr( $curgroup->id ); ?>" <?php if ( $curgroup->id == $prevgroup ) {
 							echo "selected";
-						} ?>><?php echo $curgroup->name; ?></option>
+						} ?>><?php echo esc_html( $curgroup->name ); ?></option>
 					<?php } ?>
 				</select></td>
 		</tr>
@@ -891,8 +897,8 @@ add_action( 'pmpro_membership_level_after_general_information', 'pmprommpu_add_g
 
 //save options
 function pmprommpu_save_group_on_level_edit( $levelid ) {
-	if ( array_key_exists( "groupid", $_REQUEST ) && intval( $_REQUEST["groupid"] ) > 0 ) {
-		pmprommpu_set_group_for_level( $levelid, $_REQUEST["groupid"] );
+	if ( array_key_exists( "groupid", $_REQUEST ) && intval( $_REQUEST["groupid"] ) > 0 ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Runs on pmpro_save_membership_level; PMPro verifies the pmpro_membershiplevels_nonce and capability before saving.
+		pmprommpu_set_group_for_level( $levelid, intval( $_REQUEST["groupid"] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- See above.
 	}
 }
 
@@ -906,7 +912,7 @@ function pmprommpu_on_del_level( $levelid ) {
 	$levelid = intval( $levelid );
 
 	// TODO: Error checking would be smart.
-	if ( false === $wpdb->delete( $wpdb->pmpro_membership_levels_groups, array( 'level' => $levelid ) ) ) {
+	if ( false === $wpdb->delete( $wpdb->pmpro_membership_levels_groups, array( 'level' => $levelid ) ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Write to the add-on's custom table.
 	    global $pmpro_msg;
 	    global $pmpro_msgt;
 
@@ -977,7 +983,7 @@ function pmprommpu_fill_memberslist_col_member_number( $colname, $user_id ) {
 		foreach ( $user_levels as $curlevel ) {
 			$memlevels[] = $curlevel->name;
 		}
-		echo( implode( ', ', $memlevels ) );
+		echo esc_html( implode( ', ', $memlevels ) );
 	}
 	if ( 'mmpu_membership_ids' === $colname ) {
 		$user_levels = pmpro_getMembershipLevelsForUser( $user_id );
@@ -985,7 +991,7 @@ function pmprommpu_fill_memberslist_col_member_number( $colname, $user_id ) {
 		foreach ( $user_levels as $curlevel ) {
 			$memlevels[] = $curlevel->id;
 		}
-		echo( implode( ', ', $memlevels ) );
+		echo esc_html( implode( ', ', $memlevels ) );
 	}
 }
 add_filter( 'pmpro_manage_memberslist_custom_column', 'pmprommpu_fill_memberslist_col_member_number', 10, 2 );
