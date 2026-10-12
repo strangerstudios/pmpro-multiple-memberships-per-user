@@ -72,7 +72,7 @@ function pmprommpu_template_redirect_dupe_level_check() {
 	global $pmpro_pages;
 
 	//on the checkout page?
-	if ( ! empty( $pmpro_checkout_level_ids ) && ! is_admin() && ! empty( $_REQUEST['level'] ) && ! is_page( $pmpro_pages['cancel'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing check.
+	if ( ! empty( $pmpro_checkout_level_ids ) && ! is_admin() && ! empty( $_REQUEST['level'] ) && ( empty( $pmpro_pages['cancel'] ) || ! is_page( $pmpro_pages['cancel'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing check.
 
 		$oktoproceed   = true;
 		$currentlevels = pmpro_getMembershipLevelsForUser();
@@ -271,7 +271,7 @@ function pmprommpu_pmpro_deactivate_old_levels( $deactivate ) {
 	global $pmpro_pages;
 
 	//don't deactivate other levels, unless we're on the cancel page and set to cancel all
-	if ( ! is_page( $pmpro_pages['cancel'] ) || empty( $_REQUEST['levelstocancel'] ) || $_REQUEST['levelstocancel'] != 'all' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only comparison; the cancel itself is nonce-checked in PMPro's cancel preheader.
+	if ( empty( $pmpro_pages['cancel'] ) || ! is_page( $pmpro_pages['cancel'] ) || empty( $_REQUEST['levelstocancel'] ) || $_REQUEST['levelstocancel'] != 'all' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only comparison; the cancel itself is nonce-checked in PMPro's cancel preheader.
 		$deactivate = false;
 	}
 
@@ -284,7 +284,7 @@ function pmprommpu_pmpro_cancel_previous_subscriptions( $cancel ) {
 	global $pmpro_pages;
 
 	//don't cancel other subscriptions, unless we're on the cancel page and set to cancel all
-	if ( ! is_page( $pmpro_pages['cancel'] ) || empty( $_REQUEST['levelstocancel'] ) || $_REQUEST['levelstocancel'] != 'all' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only comparison; the cancel itself is nonce-checked in PMPro's cancel preheader.
+	if ( empty( $pmpro_pages['cancel'] ) || ! is_page( $pmpro_pages['cancel'] ) || empty( $_REQUEST['levelstocancel'] ) || $_REQUEST['levelstocancel'] != 'all' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only comparison; the cancel itself is nonce-checked in PMPro's cancel preheader.
 		$cancel = false;
 	}
 
